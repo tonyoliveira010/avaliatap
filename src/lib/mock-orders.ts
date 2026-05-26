@@ -4,6 +4,14 @@ import type { OrderData } from "@/components/dashboard/ActiveOrderCard";
 const photo = (seed: string) =>
   `https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=320&q=70&auto=format&fit=crop&ixid=${seed}`;
 
+const today = new Date();
+const at = (offsetDays: number, hh: number, mm: number) => {
+  const d = new Date(today);
+  d.setDate(d.getDate() + offsetDays);
+  d.setHours(hh, mm, 0, 0);
+  return d.toISOString();
+};
+
 export const mockOrders: OrderData[] = [
   {
     id: "TMB-2841",
@@ -19,6 +27,11 @@ export const mockOrders: OrderData[] = [
       { id: "D-1042", occupancy: 40, photoToday: true, lastPhotoAt: "hoje · 09:11", photoUrl: photo("2") },
       { id: "D-1043", occupancy: 78, photoToday: false, lastPhotoAt: "ontem · 18:02", photoUrl: photo("3") },
     ],
+    events: [
+      { id: "e1", type: "delivery", label: "Tambores entregues", at: at(-1, 9, 12), note: "Recebido por João" },
+      { id: "e2", type: "in_use", label: "Em uso", at: at(-1, 9, 30) },
+      { id: "e3", type: "inspection", label: "Vistoria fotográfica registrada", at: at(0, 9, 11) },
+    ],
   },
   {
     id: "TMB-2839",
@@ -30,6 +43,11 @@ export const mockOrders: OrderData[] = [
     progress: 0,
     driver: { name: "Rafael S.", vehicle: "Ford Cargo · DEF-2270", etaMin: 8, rating: 4.8 },
     drums: [{ id: "D-1037", occupancy: 0, photoToday: true, photoUrl: photo("4") }],
+    events: [
+      { id: "e1", type: "scheduled", label: "Pedido confirmado", at: at(0, 13, 42) },
+      { id: "e2", type: "preparing", label: "Veículo carregado", at: at(0, 13, 58) },
+      { id: "e3", type: "enroute", label: "Motorista a caminho", at: at(0, 14, 12) },
+    ],
   },
   {
     id: "TMB-2820",
@@ -44,6 +62,11 @@ export const mockOrders: OrderData[] = [
       { id: "D-1020", occupancy: 88, photoToday: false, lastPhotoAt: "ontem · 16:20", photoUrl: photo("5") },
       { id: "D-1021", occupancy: 92, photoToday: false, lastPhotoAt: "ontem · 16:21", photoUrl: photo("6") },
     ],
+    events: [
+      { id: "e1", type: "delivery", label: "Tambores entregues", at: at(-6, 10, 5) },
+      { id: "e2", type: "in_use", label: "Em uso", at: at(-6, 10, 20) },
+      { id: "e3", type: "alert", label: "Aviso: 1 dia para vencer", at: at(0, 8, 0), note: "Solicite a retirada" },
+    ],
   },
   {
     id: "TMB-2799",
@@ -54,6 +77,12 @@ export const mockOrders: OrderData[] = [
     totalDays: 3,
     progress: 3,
     drums: [{ id: "D-0998", occupancy: 100, photoToday: true, photoUrl: photo("7") }],
+    events: [
+      { id: "e1", type: "delivery", label: "Tambor entregue", at: at(-4, 8, 30) },
+      { id: "e2", type: "in_use", label: "Em uso", at: at(-4, 8, 45) },
+      { id: "e3", type: "pickup", label: "Retirada realizada", at: at(-1, 17, 10) },
+      { id: "e4", type: "completed", label: "Pedido finalizado", at: at(-1, 17, 40), note: "Resíduo destinado corretamente" },
+    ],
   },
 ];
 
@@ -63,7 +92,6 @@ export const unavailableDates: Set<string> = new Set(
     const out: string[] = [];
     const base = new Date();
     base.setHours(0, 0, 0, 0);
-    // Make some days fully booked: +3, +4, +9, +10, +16, +22, +28
     [3, 4, 9, 10, 16, 22, 28, 35, 41].forEach((d) => {
       const x = new Date(base);
       x.setDate(x.getDate() + d);
@@ -74,7 +102,6 @@ export const unavailableDates: Set<string> = new Set(
 );
 
 export function getSlotsForDate(date: Date): { label: string; available: boolean }[] {
-  // Deterministic mock slots
   const day = date.getDate();
   return [
     { label: "08:00 – 10:00", available: day % 2 === 0 },

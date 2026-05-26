@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   Info,
   RefreshCw,
+  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,11 +24,14 @@ import { PromoCards } from "./PromoCards";
 import { PaymentModal, type OrderSummary } from "./PaymentModal";
 import { unavailableDates, getSlotsForDate } from "@/lib/mock-orders";
 import { cn } from "@/lib/utils";
-
+import { calcPricing } from "@/lib/pricing";
+import { workTypes, type WorkTypeId } from "@/lib/work-types";
+import { getMaterialIcon } from "@/lib/materials";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  workType?: WorkTypeId;
 }
 
 const materials = ["Entulho", "Areia", "Pedra", "Madeira", "Gesso", "Recicláveis", "Terra"];
@@ -37,10 +42,11 @@ const prazos = [
   { label: "Custom", days: 5 },
 ];
 
-export function RequestModal({ open, onClose }: Props) {
+export function RequestModal({ open, onClose, workType }: Props) {
   const [material, setMaterial] = useState("Entulho");
   const [qty, setQty] = useState(1);
   const [prazoIdx, setPrazoIdx] = useState(1);
+  const [customDays, setCustomDays] = useState(5);
   const [address, setAddress] = useState("R. Aspicuelta, 350 - Vila Madalena");
   const [date, setDate] = useState<Date | undefined>(() => {
     const d = new Date();
@@ -50,16 +56,25 @@ export function RequestModal({ open, onClose }: Props) {
   const [payOpen, setPayOpen] = useState(false);
   const [slot, setSlot] = useState<string | null>(null);
 
-  const diaria = 80;
-  const dias = prazos[prazoIdx].days;
-  const subtotal = diaria * dias * qty;
-  const logistica = 60 + (qty > 1 ? (qty - 1) * 15 : 0);
-  // Caução agora é cobrado somente em caso de demora/pendência — não entra no total
-  const caucao = 100 * qty;
-  const total = subtotal + logistica;
+  const isCustom = prazoIdx === 3;
+  const dias = isCustom ? customDays : prazos[prazoIdx].days;
+
+  const pricing = useMemo(
+    () => calcPricing({ qty, days: dias, workType }),
+    [qty, dias, workType],
+  );
+
+  const endDate = useMemo(() => {
+    if (!date) return undefined;
+    const e = new Date(date);
+    e.setDate(e.getDate() + dias);
+    return e;
+  }, [date, dias]);
 
   const slots = useMemo(() => (date ? getSlotsForDate(date) : []), [date]);
   const driverEta = useMemo(() => 18 + (qty - 1) * 4, [qty]);
+  void getMaterialIcon(material);
+  const wt = workType ? workTypes[workType] : null;
 
   const summary: OrderSummary = useMemo(
     () => ({
@@ -68,16 +83,21 @@ export function RequestModal({ open, onClose }: Props) {
       dias,
       address,
       reservationDate: date,
+      reservationEndDate: endDate,
       reservationSlot: slot ?? undefined,
       driverEta,
-      subtotal,
-      logistica,
-      caucao,
-      total,
+      subtotal: pricing.subtotal,
+      logistica: pricing.logistics,
+      handlingFee: pricing.handlingFee,
+      caucao: pricing.caucao,
+      caucaoChargedNow: pricing.caucaoChargedNow,
+      total: pricing.total,
+      pixTotal: pricing.pixTotal,
+      inPersonFreightReserve: pricing.inPersonFreightReserve,
+      workTypeLabel: wt?.label,
     }),
-    [material, qty, dias, address, date, slot, driverEta, subtotal, logistica, caucao, total],
+    [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt],
   );
-
 
   return (
     <>
@@ -111,7 +131,9 @@ export function RequestModal({ open, onClose }: Props) {
                     <h2 className="text-[18px] font-semibold text-foreground">
                       Solicitar tambor
                     </h2>
-                    <p className="text-[12px] text-muted-foreground">Configure seu pedido</p>
+                    <p className="text-[12px] text-muted-foreground">
+                      {wt ? `Obra: ${wt.label}` : "Configure seu pedido"}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -122,22 +144,36 @@ export function RequestModal({ open, onClose }: Props) {
                 </button>
               </div>
 
+              {wt && (
+                <div className="mx-5 mt-2 rounded-2xl border border-primary/30 bg-primary-soft/40 p-3 flex items-start gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
+                  <p className="text-[11.5px] text-foreground/85 leading-snug">
+                    Benefícios ativos para esta obra: <strong className="text-foreground">{wt.benefits.join(" · ")}</strong>
+                  </p>
+                </div>
+              )}
+
               <div className="px-5 pb-6 space-y-6 mt-3">
                 <Field label="Tipo de material">
                   <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
-                    {materials.map((m) => (
-                      <button
-                        key={m}
-                        onClick={() => setMaterial(m)}
-                        className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-medium border transition-all ${
-                          material === m
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-surface text-foreground border-border hover:border-primary/40"
-                        }`}
-                      >
-                        {m}
-                      </button>
-                    ))}
+                    {materials.map((m) => {
+                      const Icon = getMaterialIcon(m);
+                      const active = material === m;
+                      return (
+                        <button
+                          key={m}
+                          onClick={() => setMaterial(m)}
+                          className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-medium border transition-all ${
+                            active
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-surface text-foreground border-border hover:border-primary/40"
+                          }`}
+                        >
+                          <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
+                          {m}
+                        </button>
+                      );
+                    })}
                   </div>
                 </Field>
 
@@ -165,8 +201,11 @@ export function RequestModal({ open, onClose }: Props) {
                     >
                       <Package2 className="h-3.5 w-3.5 shrink-0 text-primary" />
                       <span>
-                        Será criado um <strong className="font-semibold">conjunto</strong> com{" "}
-                        {qty} tambores agrupados — vistoria e coleta unificadas.
+                        Conjunto com {qty} tambores · desconto de{" "}
+                        <strong className="font-semibold">
+                          {(pricing.conjuntoDiscount * 100).toFixed(0)}%
+                        </strong>{" "}
+                        na diária.
                       </span>
                     </motion.div>
                   )}
@@ -201,9 +240,78 @@ export function RequestModal({ open, onClose }: Props) {
                       </button>
                     ))}
                   </div>
+
+                  {/* Custom dias */}
+                  <AnimatePresence initial={false}>
+                    {isCustom && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 rounded-2xl border border-primary/30 bg-primary-soft/30 p-3.5">
+                          <p className="text-[11.5px] text-foreground/80 font-medium mb-2">
+                            Quantos dias deseja contratar?
+                          </p>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => setCustomDays(Math.max(1, customDays - 1))}
+                              className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center active:scale-95"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </button>
+                            <div className="flex-1 text-center">
+                              <p className="text-[28px] font-semibold tabular-nums leading-none text-foreground">
+                                {customDays}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground mt-1">
+                                {customDays === 1 ? "dia" : "dias"}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => setCustomDays(Math.min(60, customDays + 1))}
+                              className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center active:scale-95"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <input
+                            type="range"
+                            min={1}
+                            max={30}
+                            value={customDays}
+                            onChange={(e) => setCustomDays(Number(e.target.value))}
+                            className="mt-3 w-full accent-primary"
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {dias <= 3 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-2 rounded-xl bg-warning/10 border border-warning/30 px-3 py-2 text-[11.5px] text-foreground/80 leading-snug flex items-start gap-2"
+                    >
+                      <Info className="h-3.5 w-3.5 text-warning shrink-0 mt-0.5" />
+                      <span>
+                        Locações de <strong>1 a 3 dias</strong> têm uma pequena taxa de
+                        manuseio rápido (R$ {pricing.handlingFee}) para cobrir a logística
+                        ágil de descarte.
+                      </span>
+                    </motion.div>
+                  )}
+                  {pricing.weeklyDiscount > 0 && (
+                    <p className="mt-2 text-[11px] text-success font-semibold inline-flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      Promo semanal aplicada · {(pricing.weeklyDiscount * 100).toFixed(0)}% off na diária
+                    </p>
+                  )}
                 </Field>
 
-                <Field label="Reservar data de entrega">
+                <Field label="Reservar data de início">
                   <Popover>
                     <PopoverTrigger asChild>
                       <button
@@ -271,10 +379,17 @@ export function RequestModal({ open, onClose }: Props) {
                       </div>
                     </PopoverContent>
                   </Popover>
+
+                  {date && endDate && (
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <DateChip label="Início" date={date} />
+                      <DateChip label="Término" date={endDate} accent />
+                    </div>
+                  )}
                   {date && (
                     <p className="mt-2 text-[11px] text-muted-foreground inline-flex items-center gap-1.5">
                       <Info className="h-3 w-3 text-primary" />
-                      Você pode reagendar essa data até 24h antes da entrega, desde que haja janela disponível.
+                      Data de término calculada com base no prazo selecionado.
                     </p>
                   )}
                 </Field>
@@ -324,7 +439,6 @@ export function RequestModal({ open, onClose }: Props) {
                   </motion.div>
                 )}
 
-
                 <Field label="Foto da obra (opcional)">
                   <button className="w-full rounded-2xl border-2 border-dashed border-border bg-muted/40 px-4 py-5 flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-colors">
                     <Camera className="h-5 w-5 text-muted-foreground" />
@@ -343,29 +457,42 @@ export function RequestModal({ open, onClose }: Props) {
 
                   <CostLine
                     label="Diária"
-                    sub={`${dias} dia(s) × ${qty} tambor(es) × R$ ${diaria}`}
-                    value={`R$ ${subtotal}`}
-                    explanation="Valor cobrado por dia de permanência de cada tambor na obra. Inclui o uso do equipamento, manutenção e seguro contra danos parciais. Quanto mais dias contratados, melhor é o desconto progressivo no próximo aluguel."
+                    sub={`${dias} dia(s) × ${qty} tambor(es) × R$ ${pricing.daily}`}
+                    value={`R$ ${pricing.subtotal}`}
+                    explanation="Valor por dia de permanência de cada tambor. Conjuntos e prazos semanais recebem descontos progressivos automáticos."
                   />
                   <CostLine
                     label="Frete logístico"
                     sub={`Entrega + retirada · ${qty} item(ns)`}
-                    value={`R$ ${logistica}`}
-                    explanation="Custo de transporte do tambor até a obra e da retirada de volta ao centro logístico. O valor é estimado pela região, distância e quantidade de tambores. Pedidos com 2 ou mais tambores ganham otimização de rota."
+                    value={`R$ ${pricing.logistics}`}
+                    explanation="Custo de transporte até a obra e retirada. Pedidos com 2+ tambores ganham otimização de rota. Pagando presencialmente, 40% do frete fica como reserva antecipada."
                   />
+                  {pricing.handlingFee > 0 && (
+                    <CostLine
+                      label="Taxa de manuseio rápido"
+                      sub="Aplicada em locações de 1 a 3 dias"
+                      value={`R$ ${pricing.handlingFee}`}
+                      explanation="Cobre o ciclo logístico mais ágil de descarte. Para prazos a partir de 5 dias, essa taxa não é aplicada."
+                    />
+                  )}
                   <CostLine
-                    label="Caução (somente em demora)"
-                    sub="Não cobrado agora · garantia"
-                    value={`R$ ${caucao}`}
-                    muted
-                    explanation="O caução é uma garantia que NÃO é cobrada agora. Ele só será debitado caso você não solicite a retirada do tambor dentro do prazo combinado, evitando que o equipamento fique parado e bloqueie a logística de outros clientes. Solicitando a coleta dentro do prazo, nenhum valor adicional é cobrado."
+                    label={pricing.caucaoChargedNow ? "Caução (cobrada no ato)" : "Caução (isenta)"}
+                    sub={
+                      pricing.caucaoChargedNow
+                        ? "Devolvida ao final, sem ocorrências"
+                        : "Volume contratado dispensa caução"
+                    }
+                    value={pricing.caucaoChargedNow ? `R$ ${pricing.caucao}` : "Isenta"}
+                    muted={!pricing.caucaoChargedNow}
+                    explanation="A caução é uma garantia cobrada na contratação. Volumes maiores (conforme o tipo de obra) são isentos automaticamente. O valor é devolvido após a retirada sem ocorrências."
                   />
 
                   <div className="h-px bg-border my-2" />
-                  <Row label="Total previsto agora" value={`R$ ${total}`} bold />
-                  <p className="text-[10px] text-muted-foreground pt-1">
-                    Caução de R$ {caucao} fica reservado e só é debitado em caso de atraso na solicitação de retirada.
-                  </p>
+                  <Row label="Total previsto" value={`R$ ${pricing.total}`} bold />
+                  <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-success/10 text-success px-2.5 py-1 text-[11px] font-semibold">
+                    <ShieldCheck className="h-3 w-3" />
+                    PIX à vista: R$ {pricing.pixTotal} (‑20%)
+                  </div>
                 </div>
 
                 <motion.button
@@ -391,6 +518,26 @@ export function RequestModal({ open, onClose }: Props) {
         summary={summary}
       />
     </>
+  );
+}
+
+function DateChip({ label, date, accent }: { label: string; date: Date; accent?: boolean }) {
+  return (
+    <div
+      className={`rounded-2xl border px-3 py-2.5 ${
+        accent ? "border-primary/40 bg-primary-soft/30" : "border-border bg-surface"
+      }`}
+    >
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+        {label}
+      </p>
+      <p className="text-[13px] font-semibold text-foreground mt-0.5">
+        {date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "2-digit" })}
+      </p>
+      <p className="text-[10px] text-muted-foreground capitalize">
+        {date.toLocaleDateString("pt-BR", { weekday: "long" })}
+      </p>
+    </div>
   );
 }
 
@@ -470,7 +617,7 @@ function CostLine({
         </div>
         <span
           className={`tabular-nums text-[14px] font-semibold ${
-            muted ? "text-muted-foreground line-through decoration-1" : "text-foreground"
+            muted ? "text-muted-foreground" : "text-foreground"
           }`}
         >
           {value}

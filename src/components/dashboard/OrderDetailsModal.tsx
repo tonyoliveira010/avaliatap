@@ -5,15 +5,20 @@ import {
   CheckCircle2,
   Clock,
   MapPin,
-  Package2,
   ChevronRight,
   Truck,
   AlertTriangle,
+  CalendarClock,
+  PackageCheck,
+  PackageOpen,
+  History,
+  Flag,
 } from "lucide-react";
 import { useState } from "react";
-import type { DrumUnit, OrderData } from "./ActiveOrderCard";
+import type { DrumUnit, OrderData, OrderEvent, OrderEventType } from "./ActiveOrderCard";
 import { PhotoChecklistModal } from "./PhotoChecklistModal";
 import { DriverTrackingModal } from "./DriverTrackingModal";
+import { getMaterialIcon, getOrderTitle } from "@/lib/materials";
 
 interface Props {
   open: boolean;
@@ -59,23 +64,29 @@ export function OrderDetailsModal({ open, onClose, order }: Props) {
               </div>
 
               <div className="px-5 pt-3 pb-3 flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                    Pedido #{order.id}
-                  </p>
-                  <h2 className="text-[20px] font-semibold text-foreground mt-0.5">
-                    {order.drums.length >= 2
-                      ? `Conjunto · ${order.drums.length} tambores`
-                      : `1 tambor · ${order.material}`}
-                  </h2>
-                  <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate">{order.address}</span>
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="h-11 w-11 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                    {(() => {
+                      const Icon = getMaterialIcon(order.material);
+                      return <Icon className="h-5 w-5" strokeWidth={2.2} />;
+                    })()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                      Pedido #{order.id}
+                    </p>
+                    <h2 className="text-[19px] font-semibold text-foreground mt-0.5 leading-tight">
+                      {getOrderTitle(order.material, order.drums.length)}
+                    </h2>
+                    <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{order.address}</span>
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="h-9 w-9 rounded-full bg-muted flex items-center justify-center active:scale-95"
+                  className="h-9 w-9 rounded-full bg-muted flex items-center justify-center active:scale-95 shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -109,6 +120,9 @@ export function OrderDetailsModal({ open, onClose, order }: Props) {
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
                 )}
+
+                {/* Histórico de eventos */}
+                <EventHistory events={order.events ?? []} />
 
                 {/* Drums list */}
                 <div>
@@ -214,3 +228,76 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     </div>
   );
 }
+
+const eventIcon: Record<OrderEventType, typeof Truck> = {
+  scheduled: CalendarClock,
+  preparing: PackageOpen,
+  enroute: Truck,
+  delivery: PackageCheck,
+  in_use: Clock,
+  inspection: Camera,
+  alert: AlertTriangle,
+  pickup: PackageOpen,
+  completed: Flag,
+};
+
+const eventTone: Record<OrderEventType, string> = {
+  scheduled: "text-muted-foreground bg-muted",
+  preparing: "text-info bg-info/15",
+  enroute: "text-info bg-info/15",
+  delivery: "text-success bg-success/15",
+  in_use: "text-primary bg-primary-soft",
+  inspection: "text-primary bg-primary-soft",
+  alert: "text-destructive bg-destructive/15",
+  pickup: "text-warning bg-warning/15",
+  completed: "text-success bg-success/15",
+};
+
+function formatEventDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function EventHistory({ events }: { events: OrderEvent[] }) {
+  if (!events.length) return null;
+  const sorted = [...events].sort((a, b) => +new Date(b.at) - +new Date(a.at));
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold inline-flex items-center gap-1.5">
+          <History className="h-3 w-3" /> Histórico do pedido
+        </p>
+        <span className="text-[10px] text-muted-foreground">{sorted.length} eventos</span>
+      </div>
+      <ol className="rounded-3xl border border-border bg-background/30 overflow-hidden divide-y divide-border">
+        {sorted.map((e) => {
+          const Icon = eventIcon[e.type] ?? Clock;
+          return (
+            <li key={e.id} className="px-4 py-3 flex items-start gap-3">
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${eventTone[e.type] ?? "bg-muted text-foreground"}`}>
+                <Icon className="h-4 w-4" strokeWidth={2.2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[13px] font-semibold text-foreground truncate">{e.label}</p>
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums shrink-0">
+                    {formatEventDate(e.at)}
+                  </span>
+                </div>
+                {e.note && (
+                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{e.note}</p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+

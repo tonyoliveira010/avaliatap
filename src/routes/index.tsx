@@ -8,6 +8,7 @@ import { RequestModal } from "@/components/dashboard/RequestModal";
 import { PhotoChecklistModal } from "@/components/dashboard/PhotoChecklistModal";
 import { mockOrders } from "@/lib/mock-orders";
 import { Link } from "@tanstack/react-router";
+import { useOrderStatusNotifications } from "@/hooks/use-order-status-notifications";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,6 +26,8 @@ function Home() {
   const active = mockOrders.filter((o) => o.status !== "completed").slice(0, 2);
   const focusOrder = active[0];
   const focusDrum = focusOrder?.drums.find((d) => !d.photoToday) ?? focusOrder?.drums[0] ?? null;
+  useOrderStatusNotifications(mockOrders);
+
 
   return (
     <>

@@ -8,12 +8,18 @@ export interface OrderSummary {
   dias: number;
   address: string;
   reservationDate?: Date;
+  reservationEndDate?: Date;
   reservationSlot?: string;
   driverEta?: number;
   subtotal: number;
   logistica: number;
+  handlingFee?: number;
   caucao: number;
+  caucaoChargedNow?: boolean;
   total: number;
+  pixTotal?: number;
+  inPersonFreightReserve?: number;
+  workTypeLabel?: string;
 }
 
 
@@ -29,9 +35,9 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
   {
     id: "pix",
     icon: QrCode,
-    title: "Pix — Reserva",
-    desc: "Pague 40% do frete agora para reservar a data",
-    badge: "Recomendado",
+    title: "Pix — à vista",
+    desc: "Pague o valor integral via PIX e ganhe 20% de desconto",
+    badge: "‑20%",
   },
   {
     id: "card",
@@ -43,7 +49,7 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     id: "in_person",
     icon: Handshake,
     title: "Pagar pessoalmente",
-    desc: "No ato da entrega · pague reserva proporcional do frete",
+    desc: "No ato da entrega · cobramos 40% do frete agora para garantir a rota",
   },
 ];
 
@@ -51,12 +57,16 @@ export function PaymentModal({ open, onClose, summary }: Props) {
   const [method, setMethod] = useState<Method>("pix");
   const [stage, setStage] = useState<"select" | "success">("select");
 
-  // Reserva = 40% do frete logístico para garantir alocação da entrega
-  const reservaFrete = Math.round(summary.logistica * 0.4);
+  const reservaFrete = summary.inPersonFreightReserve ?? Math.round(summary.logistica * 0.4);
+  const pixTotal = summary.pixTotal ?? Math.round(summary.total * 0.8);
   const amountNow =
-    method === "pix" ? reservaFrete : method === "card" ? summary.total : reservaFrete;
+    method === "pix" ? pixTotal : method === "card" ? summary.total : reservaFrete;
   const amountLabel =
-    method === "card" ? "Total cobrado agora" : "Reserva da entrega agora";
+    method === "pix"
+      ? "Total à vista (PIX ‑20%)"
+      : method === "card"
+        ? "Total cobrado agora"
+        : "Reserva da entrega (40% do frete)";
 
   function handleClose() {
     onClose();
@@ -250,12 +260,21 @@ function SelectStage({
           })}
         </div>
 
-        {/* Aviso reserva */}
-        {method !== "card" && (
+        {/* Aviso por método */}
+        {method === "pix" && (() => {
+          const _pix = summary.pixTotal ?? Math.round(summary.total * 0.8);
+          return (
+            <div className="rounded-2xl bg-success/10 border border-success/30 px-4 py-3 text-[12px] text-foreground/85 leading-snug">
+              Pagando à vista no <strong className="text-success font-semibold">PIX</strong> você
+              economiza <strong>R$ {summary.total - _pix}</strong> (20% off do total).
+            </div>
+          );
+        })()}
+        {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Para garantir a alocação da entrega, cobramos uma{" "}
+            Para garantir a rota e janela de entrega, mesmo pagando pessoalmente cobramos uma{" "}
             <strong className="text-primary font-semibold">reserva de R$ {reservaFrete}</strong>{" "}
-            (40% do frete). O valor é abatido do total final.
+            (40% do frete) agora. O restante é quitado no ato da entrega.
           </div>
         )}
 
