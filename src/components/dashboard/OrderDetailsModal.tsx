@@ -5,15 +5,20 @@ import {
   CheckCircle2,
   Clock,
   MapPin,
-  Package2,
   ChevronRight,
   Truck,
   AlertTriangle,
+  CalendarClock,
+  PackageCheck,
+  PackageOpen,
+  History,
+  Flag,
 } from "lucide-react";
 import { useState } from "react";
-import type { DrumUnit, OrderData } from "./ActiveOrderCard";
+import type { DrumUnit, OrderData, OrderEvent, OrderEventType } from "./ActiveOrderCard";
 import { PhotoChecklistModal } from "./PhotoChecklistModal";
 import { DriverTrackingModal } from "./DriverTrackingModal";
+import { getMaterialIcon, getOrderTitle } from "@/lib/materials";
 
 interface Props {
   open: boolean;
