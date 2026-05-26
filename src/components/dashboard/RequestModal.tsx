@@ -639,6 +639,3 @@ function CostLine({
     </div>
   );
 }
-
-// Material icon import kept for future use; suppress unused warning
-void MaterialIconUnused;
