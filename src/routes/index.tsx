@@ -8,6 +8,7 @@ import { RequestModal } from "@/components/dashboard/RequestModal";
 import { PhotoChecklistModal } from "@/components/dashboard/PhotoChecklistModal";
 import { mockOrders } from "@/lib/mock-orders";
 import { Link } from "@tanstack/react-router";
+import { useOrderStatusNotifications } from "@/hooks/use-order-status-notifications";
 
 export const Route = createFileRoute("/")({
   head: () => ({
