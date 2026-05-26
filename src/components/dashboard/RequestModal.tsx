@@ -73,7 +73,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
   const slots = useMemo(() => (date ? getSlotsForDate(date) : []), [date]);
   const driverEta = useMemo(() => 18 + (qty - 1) * 4, [qty]);
-  const MaterialIcon = getMaterialIcon(material);
+  void getMaterialIcon(material);
   const wt = workType ? workTypes[workType] : null;
 
   const summary: OrderSummary = useMemo(
