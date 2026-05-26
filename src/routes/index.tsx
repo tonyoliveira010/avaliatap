@@ -26,6 +26,8 @@ function Home() {
   const active = mockOrders.filter((o) => o.status !== "completed").slice(0, 2);
   const focusOrder = active[0];
   const focusDrum = focusOrder?.drums.find((d) => !d.photoToday) ?? focusOrder?.drums[0] ?? null;
+  useOrderStatusNotifications(mockOrders);
+
 
   return (
     <>
