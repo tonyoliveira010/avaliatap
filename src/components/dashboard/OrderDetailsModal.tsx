@@ -64,23 +64,29 @@ export function OrderDetailsModal({ open, onClose, order }: Props) {
               </div>
 
               <div className="px-5 pt-3 pb-3 flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                    Pedido #{order.id}
-                  </p>
-                  <h2 className="text-[20px] font-semibold text-foreground mt-0.5">
-                    {order.drums.length >= 2
-                      ? `Conjunto · ${order.drums.length} tambores`
-                      : `1 tambor · ${order.material}`}
-                  </h2>
-                  <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate">{order.address}</span>
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="h-11 w-11 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                    {(() => {
+                      const Icon = getMaterialIcon(order.material);
+                      return <Icon className="h-5 w-5" strokeWidth={2.2} />;
+                    })()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                      Pedido #{order.id}
+                    </p>
+                    <h2 className="text-[19px] font-semibold text-foreground mt-0.5 leading-tight">
+                      {getOrderTitle(order.material, order.drums.length)}
+                    </h2>
+                    <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{order.address}</span>
+                    </div>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="h-9 w-9 rounded-full bg-muted flex items-center justify-center active:scale-95"
+                  className="h-9 w-9 rounded-full bg-muted flex items-center justify-center active:scale-95 shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </button>
