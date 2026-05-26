@@ -121,6 +121,9 @@ export function OrderDetailsModal({ open, onClose, order }: Props) {
                   </button>
                 )}
 
+                {/* Histórico de eventos */}
+                <EventHistory events={order.events ?? []} />
+
                 {/* Drums list */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
