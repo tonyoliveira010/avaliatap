@@ -261,12 +261,15 @@ function SelectStage({
         </div>
 
         {/* Aviso por método */}
-        {method === "pix" && (
-          <div className="rounded-2xl bg-success/10 border border-success/30 px-4 py-3 text-[12px] text-foreground/85 leading-snug">
-            Pagando à vista no <strong className="text-success font-semibold">PIX</strong> você
-            economiza <strong>R$ {summary.total - pixTotal}</strong> (20% off do total).
-          </div>
-        )}
+        {method === "pix" && (() => {
+          const _pix = summary.pixTotal ?? Math.round(summary.total * 0.8);
+          return (
+            <div className="rounded-2xl bg-success/10 border border-success/30 px-4 py-3 text-[12px] text-foreground/85 leading-snug">
+              Pagando à vista no <strong className="text-success font-semibold">PIX</strong> você
+              economiza <strong>R$ {summary.total - _pix}</strong> (20% off do total).
+            </div>
+          );
+        })()}
         {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
             Para garantir a rota e janela de entrega, mesmo pagando pessoalmente cobramos uma{" "}
