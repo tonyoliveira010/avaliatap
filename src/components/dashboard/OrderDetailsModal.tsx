@@ -228,3 +228,76 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
     </div>
   );
 }
+
+const eventIcon: Record<OrderEventType, typeof Truck> = {
+  scheduled: CalendarClock,
+  preparing: PackageOpen,
+  enroute: Truck,
+  delivery: PackageCheck,
+  in_use: Clock,
+  inspection: Camera,
+  alert: AlertTriangle,
+  pickup: PackageOpen,
+  completed: Flag,
+};
+
+const eventTone: Record<OrderEventType, string> = {
+  scheduled: "text-muted-foreground bg-muted",
+  preparing: "text-info bg-info/15",
+  enroute: "text-info bg-info/15",
+  delivery: "text-success bg-success/15",
+  in_use: "text-primary bg-primary-soft",
+  inspection: "text-primary bg-primary-soft",
+  alert: "text-destructive bg-destructive/15",
+  pickup: "text-warning bg-warning/15",
+  completed: "text-success bg-success/15",
+};
+
+function formatEventDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function EventHistory({ events }: { events: OrderEvent[] }) {
+  if (!events.length) return null;
+  const sorted = [...events].sort((a, b) => +new Date(b.at) - +new Date(a.at));
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold inline-flex items-center gap-1.5">
+          <History className="h-3 w-3" /> Histórico do pedido
+        </p>
+        <span className="text-[10px] text-muted-foreground">{sorted.length} eventos</span>
+      </div>
+      <ol className="rounded-3xl border border-border bg-background/30 overflow-hidden divide-y divide-border">
+        {sorted.map((e) => {
+          const Icon = eventIcon[e.type] ?? Clock;
+          return (
+            <li key={e.id} className="px-4 py-3 flex items-start gap-3">
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${eventTone[e.type] ?? "bg-muted text-foreground"}`}>
+                <Icon className="h-4 w-4" strokeWidth={2.2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[13px] font-semibold text-foreground truncate">{e.label}</p>
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums shrink-0">
+                    {formatEventDate(e.at)}
+                  </span>
+                </div>
+                {e.note && (
+                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{e.note}</p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
