@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
-import { X, MapPin, Truck, Phone, MessageCircle, Navigation, CheckCircle2, Clock, Star } from "lucide-react";
+import { X, MapPin, Phone, MessageCircle, Navigation, CheckCircle2, Clock, Star, Radio } from "lucide-react";
 import type { OrderData } from "./ActiveOrderCard";
+import { useLiveDriverTracking } from "@/hooks/use-live-driver-tracking";
 
 interface Props {
   open: boolean;
@@ -17,6 +18,13 @@ const stages = [
 
 export function DriverTrackingModal({ open, onClose, order }: Props) {
   const driver = order?.driver;
+  const live = useLiveDriverTracking({
+    enabled: open && !!driver,
+    initialEtaMin: driver?.etaMin ?? 22,
+    notify: open,
+    orderId: order?.id,
+  });
+
   return (
     <AnimatePresence>
       {open && (
@@ -39,9 +47,9 @@ export function DriverTrackingModal({ open, onClose, order }: Props) {
               <div className="mx-auto h-1.5 w-10 rounded-full bg-border" />
             </div>
 
-            {/* Large map */}
+            {/* Mapa grande com tracking ao vivo */}
             <div className="relative h-[280px] mx-4 mt-2 rounded-3xl overflow-hidden border border-border">
-              <BigMap />
+              <BigMap progress={live.progress} />
               <button
                 onClick={onClose}
                 className="absolute top-3 right-3 h-9 w-9 rounded-full bg-black/60 backdrop-blur flex items-center justify-center text-white"
@@ -55,24 +63,39 @@ export function DriverTrackingModal({ open, onClose, order }: Props) {
               <div className="absolute bottom-3 left-3 right-3 rounded-2xl bg-black/70 backdrop-blur-xl border border-white/10 px-3.5 py-2.5 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] text-white/60 uppercase tracking-wider">Distância</p>
-                  <p className="text-[15px] font-semibold text-white">3,2 km</p>
+                  <p className="text-[15px] font-semibold text-white tabular-nums">
+                    {live.distanceKm.toFixed(1)} km
+                  </p>
                 </div>
                 <div className="h-7 w-px bg-white/15" />
                 <div className="text-center">
                   <p className="text-[10px] text-white/60 uppercase tracking-wider">Chegada</p>
-                  <p className="text-[15px] font-semibold text-white tabular-nums">
-                    {driver?.etaMin ?? 22} min
-                  </p>
+                  <motion.p
+                    key={live.etaMin}
+                    initial={{ opacity: 0.3, y: -3 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-[15px] font-semibold text-white tabular-nums"
+                  >
+                    {live.etaMin} min
+                  </motion.p>
                 </div>
                 <div className="h-7 w-px bg-white/15" />
                 <div>
                   <p className="text-[10px] text-white/60 uppercase tracking-wider">Velocidade</p>
-                  <p className="text-[15px] font-semibold text-white">42 km/h</p>
+                  <p className="text-[15px] font-semibold text-white tabular-nums">
+                    {live.speedKmh} km/h
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="px-5 pt-4 pb-7 space-y-5">
+            <div className="px-5 pt-3 pb-7 space-y-5">
+              <p className="text-[10.5px] inline-flex items-center gap-1.5 text-success font-semibold">
+                <Radio className="h-3 w-3 animate-pulse" />
+                ETA recalculado às{" "}
+                {live.lastUpdate.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+              </p>
+
               {/* Driver card */}
               <div className="rounded-3xl bg-muted/40 border border-border p-4 flex items-center gap-3">
                 <div className="h-14 w-14 rounded-2xl bg-primary-soft text-primary text-[16px] font-bold flex items-center justify-center">
@@ -140,7 +163,7 @@ export function DriverTrackingModal({ open, onClose, order }: Props) {
                         </div>
                         {active && (
                           <p className="mt-0.5 text-[11px] text-primary">
-                            Motorista se aproximando · ETA atualizada
+                            Motorista se aproximando · ETA {live.etaMin} min
                           </p>
                         )}
                       </li>
@@ -181,7 +204,40 @@ export function DriverTrackingModal({ open, onClose, order }: Props) {
   );
 }
 
-function BigMap() {
+/**
+ * Curva da rota — usamos um único path para a rota completa e posicionamos o caminhão
+ * em `progress` (0..1) usando getPointAtLength via cálculo aproximado de bezier quadrática.
+ * Para simplicidade, interpolamos os pontos de uma polilinha pré-computada.
+ */
+const routePoints: Array<[number, number]> = (() => {
+  // Geramos uma polilinha amostrando a curva quadrática usada no SVG (M40 230 Q90 220 140 180 T 260 80)
+  const samples: Array<[number, number]> = [];
+  const N = 60;
+  for (let i = 0; i <= N; i++) {
+    const t = i / N;
+    // Aproximação: dois beziers em sequência (origem → meio → destino)
+    if (t < 0.5) {
+      const u = t / 0.5;
+      const x = (1 - u) * (1 - u) * 40 + 2 * (1 - u) * u * 90 + u * u * 140;
+      const y = (1 - u) * (1 - u) * 230 + 2 * (1 - u) * u * 220 + u * u * 180;
+      samples.push([x, y]);
+    } else {
+      const u = (t - 0.5) / 0.5;
+      const x = (1 - u) * (1 - u) * 140 + 2 * (1 - u) * u * 200 + u * u * 260;
+      const y = (1 - u) * (1 - u) * 180 + 2 * (1 - u) * u * 130 + u * u * 80;
+      samples.push([x, y]);
+    }
+  }
+  return samples;
+})();
+
+function BigMap({ progress }: { progress: number }) {
+  const idx = Math.min(routePoints.length - 1, Math.floor(progress * (routePoints.length - 1)));
+  const [tx, ty] = routePoints[idx];
+  // path traveled (dasharray trick)
+  const totalLen = 360;
+  const traveled = totalLen * progress;
+
   return (
     <svg viewBox="0 0 320 280" className="absolute inset-0 h-full w-full">
       <defs>
@@ -195,7 +251,6 @@ function BigMap() {
         </radialGradient>
       </defs>
       <rect width="320" height="280" fill="url(#bg-bg)" />
-      {/* streets */}
       <g stroke="oklch(1 0 0 / 0.06)" strokeWidth="1">
         {Array.from({ length: 8 }).map((_, i) => (
           <path key={`h-${i}`} d={`M0 ${i * 36} H320`} />
@@ -204,40 +259,40 @@ function BigMap() {
           <path key={`v-${i}`} d={`M${i * 36} 0 V280`} />
         ))}
       </g>
-      {/* main arteries */}
       <g stroke="oklch(1 0 0 / 0.13)" strokeWidth="3" fill="none" strokeLinecap="round">
         <path d="M0 180 Q120 170 200 140 T320 60" />
         <path d="M40 0 Q60 100 140 160 T280 280" />
       </g>
-      {/* route */}
+      {/* rota completa (planejada) */}
+      <path
+        d="M40 230 Q90 220 140 180 T260 80"
+        stroke="oklch(0.78 0.18 158 / 0.35)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* rota percorrida (animada) */}
       <path
         d="M40 230 Q90 220 140 180 T260 80"
         stroke="oklch(0.78 0.18 158)"
         strokeWidth="3.5"
         strokeLinecap="round"
-        strokeDasharray="0"
         fill="none"
+        strokeDasharray={`${traveled} ${totalLen}`}
       />
-      <path
-        d="M40 230 Q90 220 140 180"
-        stroke="oklch(1 0 0 / 0.8)"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* origin */}
+      {/* destino */}
       <circle cx="260" cy="80" r="22" fill="url(#pulse)" />
       <circle cx="260" cy="80" r="6" fill="oklch(0.78 0.18 158)" stroke="white" strokeWidth="2" />
-      {/* truck */}
-      <g transform="translate(140 180)">
+      {/* caminhão (posição animada) */}
+      <motion.g
+        animate={{ x: tx, y: ty }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
+      >
         <circle r="20" fill="url(#pulse)" />
         <circle r="11" fill="white" />
-        <path
-          d="M-5 -3 H3 V1 H5 L7 3 V5 H-7 V-3 Z"
-          fill="oklch(0.78 0.18 158)"
-        />
-      </g>
-      {/* destination flag */}
+        <path d="M-5 -3 H3 V1 H5 L7 3 V5 H-7 V-3 Z" fill="oklch(0.78 0.18 158)" />
+      </motion.g>
+      {/* origem */}
       <g transform="translate(40 230)">
         <circle r="7" fill="white" stroke="oklch(0.78 0.18 158)" strokeWidth="2" />
         <circle r="3" fill="oklch(0.78 0.18 158)" />
