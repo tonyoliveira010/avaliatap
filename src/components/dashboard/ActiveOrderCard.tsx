@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Clock, MapPin, Image as ImageIcon, Layers, Camera, CheckCircle2 } from "lucide-react";
 import { OrderDetailsModal } from "./OrderDetailsModal";
 import { PhotoChecklistModal } from "./PhotoChecklistModal";
+import { getMaterialIcon, getOrderTitle } from "@/lib/materials";
 
 export type OrderStatus =
   | "active"
@@ -36,6 +37,26 @@ export interface DriverInfo {
   rating: number;
 }
 
+export type OrderEventType =
+  | "scheduled"
+  | "preparing"
+  | "enroute"
+  | "delivery"
+  | "in_use"
+  | "inspection"
+  | "alert"
+  | "pickup"
+  | "completed";
+
+export interface OrderEvent {
+  id: string;
+  type: OrderEventType;
+  label: string;
+  /** ISO date string */
+  at: string;
+  note?: string;
+}
+
 export interface OrderData {
   id: string;
   status: OrderStatus;
@@ -46,6 +67,7 @@ export interface OrderData {
   progress: number;
   drums: DrumUnit[];
   driver?: DriverInfo;
+  events?: OrderEvent[];
 }
 
 export function ActiveOrderCard({ order }: { order: OrderData }) {
@@ -58,32 +80,24 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
     order.drums.reduce((a, d) => a + d.occupancy, 0) / order.drums.length,
   );
   const heroDrum = order.drums.find((d) => d.photoUrl) ?? order.drums[0];
-
-  function handleClick() {
-    if (isGroup) {
-      setDetailsOpen(true);
-    } else {
-      // Single drum: open details with inspection right away
-      setDetailsOpen(true);
-    }
-  }
+  const MaterialIcon = getMaterialIcon(order.material);
+  const title = getOrderTitle(order.material, order.drums.length);
 
   return (
     <>
       <motion.button
         type="button"
-        onClick={handleClick}
+        onClick={() => setDetailsOpen(true)}
         initial={{ y: 10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.35 }}
         whileTap={{ scale: 0.99 }}
         className="w-full text-left bg-surface rounded-[28px] border border-border shadow-soft overflow-hidden hover:border-primary/30 transition-colors relative"
       >
-        {/* Group badge top-right */}
         {isGroup && (
           <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2 py-1 text-[10px] font-bold shadow-glow">
             <Layers className="h-3 w-3" />
-            {order.drums.length}
+            {order.drums.length} conj.
           </span>
         )}
 
@@ -114,13 +128,20 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
                 #{order.id}
               </p>
               <h4 className="mt-0.5 text-[15px] font-semibold text-foreground leading-tight">
-                {isGroup
-                  ? `Conjunto · ${order.drums.length} tambores`
-                  : `1 tambor · ${order.material}`}
+                {title}
               </h4>
-              {isGroup && (
-                <p className="text-[11px] text-muted-foreground mt-0.5">{order.material}</p>
-              )}
+              <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-foreground/80">
+                  <MaterialIcon className="h-3 w-3 text-primary" strokeWidth={2.2} />
+                  {order.material}
+                </span>
+                {isGroup && (
+                  <span className="inline-flex items-center gap-1 text-foreground/70">
+                    <Layers className="h-3 w-3" />
+                    {order.drums.length} tambores
+                  </span>
+                )}
+              </div>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <MapPin className="h-3 w-3 shrink-0" />
                 <span className="truncate">{order.address}</span>
@@ -128,7 +149,6 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
             </div>
           </div>
 
-          {/* Status pill row */}
           <div className="mt-3 flex items-center gap-2">
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold ${s.pill}`}
@@ -147,7 +167,6 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
             )}
           </div>
 
-          {/* Timeline */}
           <div className="mt-4">
             <div className="flex items-center">
               {steps.map((step, i) => (
