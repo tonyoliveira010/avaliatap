@@ -260,12 +260,18 @@ function SelectStage({
           })}
         </div>
 
-        {/* Aviso reserva */}
-        {method !== "card" && (
+        {/* Aviso por método */}
+        {method === "pix" && (
+          <div className="rounded-2xl bg-success/10 border border-success/30 px-4 py-3 text-[12px] text-foreground/85 leading-snug">
+            Pagando à vista no <strong className="text-success font-semibold">PIX</strong> você
+            economiza <strong>R$ {summary.total - pixTotal}</strong> (20% off do total).
+          </div>
+        )}
+        {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Para garantir a alocação da entrega, cobramos uma{" "}
+            Para garantir a rota e janela de entrega, mesmo pagando pessoalmente cobramos uma{" "}
             <strong className="text-primary font-semibold">reserva de R$ {reservaFrete}</strong>{" "}
-            (40% do frete). O valor é abatido do total final.
+            (40% do frete) agora. O restante é quitado no ato da entrega.
           </div>
         )}
 
