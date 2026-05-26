@@ -8,12 +8,18 @@ export interface OrderSummary {
   dias: number;
   address: string;
   reservationDate?: Date;
+  reservationEndDate?: Date;
   reservationSlot?: string;
   driverEta?: number;
   subtotal: number;
   logistica: number;
+  handlingFee?: number;
   caucao: number;
+  caucaoChargedNow?: boolean;
   total: number;
+  pixTotal?: number;
+  inPersonFreightReserve?: number;
+  workTypeLabel?: string;
 }
 
 
