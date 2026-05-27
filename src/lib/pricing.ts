@@ -1,18 +1,20 @@
 import { workTypes, type WorkTypeId } from "./work-types";
+import { getMaterialMultiplier } from "./materials";
 
 const DAILY_BASE = 80;
 const FREIGHT_BASE = 60;
 const FREIGHT_EXTRA_PER_UNIT = 15;
-const CAUCAO_PER_UNIT = 100;
+const GARANTIA_PER_UNIT = 100;
 /** Taxa de manuseio para locações curtas (1–3 dias), por tambor */
 const SHORT_HANDLING_FEE_PER_UNIT = 35;
 const PIX_DISCOUNT = 0.2;
-const IN_PERSON_FREIGHT_RESERVE = 0.4;
 
 export interface PricingInput {
   qty: number;
   days: number;
   workType?: WorkTypeId | null;
+  /** Material descartado — afeta a diária */
+  material?: string;
 }
 
 export interface PricingResult {
@@ -20,27 +22,32 @@ export interface PricingResult {
   subtotal: number;
   logistics: number;
   handlingFee: number;
-  caucao: number;
-  /** Caução é cobrada no ato? (não se for grande volume) */
-  caucaoChargedNow: boolean;
+  /** Garantia Tambor (antes "caução") */
+  garantia: number;
+  /** Garantia é cobrada no ato? (não se for grande volume) */
+  garantiaChargedNow: boolean;
   total: number;
-  /** Total com 20% off PIX */
+  /** Total com 20% off PIX — aplicável também a grandes volumes */
   pixTotal: number;
-  /** Valor antecipado da reserva quando é pagamento presencial */
-  inPersonFreightReserve: number;
-  /** Se desconto progressivo de conjunto se aplica */
+  /** Valor pago antecipado como Garantia ao escolher pagamento presencial.
+   *  Este valor é abatido do total no ato da entrega. */
+  inPersonReserve: number;
+  /** Desconto progressivo de conjunto */
   conjuntoDiscount: number;
-  /** Se desconto semanal (>=7 dias) se aplica */
+  /** Desconto semanal (>=7 dias) */
   weeklyDiscount: number;
+  /** Multiplicador do material aplicado */
+  materialMultiplier: number;
 }
 
-export function calcPricing({ qty, days, workType }: PricingInput): PricingResult {
+export function calcPricing({ qty, days, workType, material }: PricingInput): PricingResult {
   const wt = workType ? workTypes[workType] : null;
-  const dailyMultiplier = wt?.dailyMultiplier ?? 1;
+  const workMultiplier = wt?.dailyMultiplier ?? 1;
   const logisticsDiscount = wt?.logisticsDiscount ?? 0;
-  const cauçaoFreeFromQty = wt?.cauçaoFreeFromQty ?? 6;
+  const garantiaFreeFromQty = wt?.garantiaFreeFromQty ?? 6;
+  const materialMultiplier = material ? getMaterialMultiplier(material) : 1;
 
-  const daily = Math.round(DAILY_BASE * dailyMultiplier);
+  const daily = Math.round(DAILY_BASE * workMultiplier * materialMultiplier);
 
   // Desconto progressivo para conjuntos
   let conjuntoDiscount = 0;
@@ -62,31 +69,38 @@ export function calcPricing({ qty, days, workType }: PricingInput): PricingResul
   // Taxa para 1–3 dias mesmo em conjunto
   const handlingFee = days <= 3 ? SHORT_HANDLING_FEE_PER_UNIT * qty : 0;
 
-  const caucao = CAUCAO_PER_UNIT * qty;
-  const caucaoChargedNow = qty < cauçaoFreeFromQty;
+  const garantia = GARANTIA_PER_UNIT * qty;
+  const garantiaChargedNow = qty < garantiaFreeFromQty;
 
-  const totalBeforeCaucao = subtotal + logistics + handlingFee;
-  const total = totalBeforeCaucao + (caucaoChargedNow ? caucao : 0);
+  const totalBeforeGarantia = subtotal + logistics + handlingFee;
+  const total = totalBeforeGarantia + (garantiaChargedNow ? garantia : 0);
+  // PIX à vista: 20% off do total — válido inclusive para grandes volumes
   const pixTotal = Math.round(total * (1 - PIX_DISCOUNT));
-  const inPersonFreightReserve = Math.round(logistics * IN_PERSON_FREIGHT_RESERVE);
+  // No pagamento presencial, a Garantia Tambor é cobrada via PIX como reserva
+  // e abatida do total no ato. Para grandes volumes (sem garantia) cai pra zero.
+  const inPersonReserve = garantiaChargedNow ? garantia : 0;
 
   return {
     daily,
     subtotal,
     logistics,
     handlingFee,
-    caucao,
-    caucaoChargedNow,
+    garantia,
+    garantiaChargedNow,
     total,
     pixTotal,
-    inPersonFreightReserve,
+    inPersonReserve,
     conjuntoDiscount,
     weeklyDiscount,
+    materialMultiplier,
   };
 }
 
 export const PRICING_CONSTANTS = {
   PIX_DISCOUNT,
-  IN_PERSON_FREIGHT_RESERVE,
   SHORT_HANDLING_FEE_PER_UNIT,
+  GARANTIA_PER_UNIT,
 };
+
+/** Nome de marca da nossa garantia — substitui o termo "caução". */
+export const GARANTIA_BRAND = "Garantia Tambor";

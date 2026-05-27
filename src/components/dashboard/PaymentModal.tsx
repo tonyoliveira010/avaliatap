@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { X, QrCode, CreditCard, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck } from "lucide-react";
 import { useState } from "react";
+import { GARANTIA_BRAND } from "@/lib/pricing";
 
 export interface OrderSummary {
   material: string;
@@ -14,11 +15,13 @@ export interface OrderSummary {
   subtotal: number;
   logistica: number;
   handlingFee?: number;
-  caucao: number;
-  caucaoChargedNow?: boolean;
+  /** Garantia Tambor (antes "caução") */
+  garantia: number;
+  garantiaChargedNow?: boolean;
   total: number;
   pixTotal?: number;
-  inPersonFreightReserve?: number;
+  /** Valor da Garantia Tambor cobrado via PIX como reserva no pagamento presencial */
+  inPersonReserve?: number;
   workTypeLabel?: string;
 }
 
@@ -36,20 +39,20 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     id: "pix",
     icon: QrCode,
     title: "Pix — à vista",
-    desc: "Pague o valor integral via PIX e ganhe 20% de desconto",
+    desc: "Pague o valor integral via PIX e ganhe 20% de desconto (válido para qualquer volume)",
     badge: "‑20%",
   },
   {
     id: "card",
     icon: CreditCard,
     title: "Cartão de crédito",
-    desc: "Em até 3x sem juros · caução pré-autorizada",
+    desc: "Em até 3x sem juros · Garantia Tambor pré-autorizada",
   },
   {
     id: "in_person",
     icon: Handshake,
     title: "Pagar pessoalmente",
-    desc: "No ato da entrega · cobramos 40% do frete agora para garantir a rota",
+    desc: `No ato da entrega · cobramos a ${GARANTIA_BRAND} via PIX agora como reserva (abatida do total)`,
   },
 ];
 
@@ -57,16 +60,16 @@ export function PaymentModal({ open, onClose, summary }: Props) {
   const [method, setMethod] = useState<Method>("pix");
   const [stage, setStage] = useState<"select" | "success">("select");
 
-  const reservaFrete = summary.inPersonFreightReserve ?? Math.round(summary.logistica * 0.4);
+  const reservaGarantia = summary.inPersonReserve ?? (summary.garantiaChargedNow ? summary.garantia : 0);
   const pixTotal = summary.pixTotal ?? Math.round(summary.total * 0.8);
   const amountNow =
-    method === "pix" ? pixTotal : method === "card" ? summary.total : reservaFrete;
+    method === "pix" ? pixTotal : method === "card" ? summary.total : reservaGarantia;
   const amountLabel =
     method === "pix"
       ? "Total à vista (PIX ‑20%)"
       : method === "card"
         ? "Total cobrado agora"
-        : "Reserva da entrega (40% do frete)";
+        : `Reserva ${GARANTIA_BRAND} (PIX)`;
 
   function handleClose() {
     onClose();
@@ -104,7 +107,7 @@ export function PaymentModal({ open, onClose, summary }: Props) {
                 summary={summary}
                 amountNow={amountNow}
                 amountLabel={amountLabel}
-                reservaFrete={reservaFrete}
+                reservaGarantia={reservaGarantia}
               />
             ) : (
               <SuccessStage
@@ -129,7 +132,7 @@ function SelectStage({
   summary,
   amountNow,
   amountLabel,
-  reservaFrete,
+  reservaGarantia,
 }: {
   onClose: () => void;
   onPay: () => void;
@@ -138,7 +141,7 @@ function SelectStage({
   summary: OrderSummary;
   amountNow: number;
   amountLabel: string;
-  reservaFrete: number;
+  reservaGarantia: number;
 }) {
   return (
     <>
@@ -207,7 +210,7 @@ function SelectStage({
           <div className="mt-3 pt-3 border-t border-border space-y-1.5">
             <Row label={`Diária × ${summary.qty}`} value={`R$ ${summary.subtotal}`} />
             <Row label="Frete logístico" value={`R$ ${summary.logistica}`} />
-            <Row label="Caução" value={`R$ ${summary.caucao}`} muted />
+            <Row label={GARANTIA_BRAND} value={`R$ ${summary.garantia}`} muted={!summary.garantiaChargedNow} />
             <div className="h-px bg-border my-1" />
             <Row label="Total previsto" value={`R$ ${summary.total}`} bold />
           </div>
@@ -266,15 +269,16 @@ function SelectStage({
           return (
             <div className="rounded-2xl bg-success/10 border border-success/30 px-4 py-3 text-[12px] text-foreground/85 leading-snug">
               Pagando à vista no <strong className="text-success font-semibold">PIX</strong> você
-              economiza <strong>R$ {summary.total - _pix}</strong> (20% off do total).
+              economiza <strong>R$ {summary.total - _pix}</strong> (20% off do total — válido também para grandes volumes).
             </div>
           );
         })()}
         {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Para garantir a rota e janela de entrega, mesmo pagando pessoalmente cobramos uma{" "}
-            <strong className="text-primary font-semibold">reserva de R$ {reservaFrete}</strong>{" "}
-            (40% do frete) agora. O restante é quitado no ato da entrega.
+            Para garantir sua entrega cobramos a{" "}
+            <strong className="text-primary font-semibold">{GARANTIA_BRAND}</strong> de{" "}
+            <strong>R$ {reservaGarantia}</strong> via PIX agora. Esse valor é{" "}
+            <strong>abatido do total</strong> no ato da entrega — você só paga a diferença presencialmente.
           </div>
         )}
 
