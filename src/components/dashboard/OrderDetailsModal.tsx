@@ -189,7 +189,7 @@ export function OrderDetailsModal({ open, onClose, order }: Props) {
 
                 <div className="rounded-2xl bg-muted/30 border border-border p-3 flex items-center gap-2 text-[11px] text-muted-foreground">
                   <Clock className="h-3.5 w-3.5 shrink-0" />
-                  Prazo total: <strong className="text-foreground font-semibold">{order.totalDays} dias</strong> · solicite a retirada antes do vencimento para evitar caução por demora.
+                  Prazo total: <strong className="text-foreground font-semibold">{order.totalDays} dias</strong> · solicite a retirada antes do vencimento para evitar cobrança extra da Garantia Tambor.
                 </div>
               </div>
             </motion.div>
