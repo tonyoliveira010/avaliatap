@@ -25,20 +25,25 @@ interface Offer {
 }
 
 const offersByType: Record<WorkTypeId, Offer[]> = {
-  residencial: [
-    { title: "Tambor 240L · Entulho leve", desc: "Ideal para demolição parcial em apartamentos", tag: "Mais pedido" },
+  reforma: [
+    { title: "Tambor 240L · Entulho leve", desc: "Ideal para reforma parcial em apartamentos", tag: "Mais pedido" },
     { title: "Conjunto 2 tambores · 5 dias", desc: "Combo para obra de até 40m² com 5% off" },
     { title: "Plano fim de semana", desc: "Entrega sexta · retirada segunda" },
   ],
   demolicao: [
     { title: "Conjunto 3 tambores · expresso", desc: "Trocas em até 4h · 10% off no conjunto", tag: "Premium" },
-    { title: "Conjunto 5 tambores · 1 semana", desc: "Logística reforçada + caução isenta" },
+    { title: "Conjunto 5 tambores · 1 semana", desc: "Logística reforçada + Garantia Tambor isenta" },
     { title: "Caçamba 5m³ + 2 tambores", desc: "Pico de demolição estrutural" },
   ],
-  comercial: [
+  limpeza: [
+    { title: "Tambor + faxina pós-obra", desc: "Equipe limpa o local e retira os tambores", tag: "Combo" },
+    { title: "Conjunto 2 tambores · jardim", desc: "Poda, terra e folhagem · sacos inclusos" },
+    { title: "Retirada bruta no mesmo dia", desc: "Para volumes menores em até 6h" },
+  ],
+  planos: [
     { title: "Plano mensal de obra", desc: "Faturamento na nota · gestor exclusivo", tag: "B2B" },
-    { title: "Conjunto 4 tambores · sem caução", desc: "Volume corporativo isenta a caução" },
-    { title: "Coleta recorrente semanal", desc: "Equipe semanal automatizada · ‑8%" },
+    { title: "Conjunto recorrente · sem garantia", desc: "Volume corporativo isenta a Garantia Tambor" },
+    { title: "Coleta recorrente semanal", desc: "Equipe semanal automatizada · ‑12% logística" },
   ],
 };
 
