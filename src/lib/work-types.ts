@@ -1,4 +1,4 @@
-export type WorkTypeId = "residencial" | "demolicao" | "comercial";
+export type WorkTypeId = "reforma" | "demolicao" | "limpeza" | "planos";
 
 export interface WorkType {
   id: WorkTypeId;
@@ -9,15 +9,15 @@ export interface WorkType {
   dailyMultiplier: number;
   /** Desconto extra na logística (0..1) */
   logisticsDiscount: number;
-  /** Volume mínimo (qty) a partir do qual a caução é dispensada */
-  cauçaoFreeFromQty: number;
+  /** Volume mínimo (qty) a partir do qual a Garantia Tambor é dispensada */
+  garantiaFreeFromQty: number;
 }
 
 export const workTypes: Record<WorkTypeId, WorkType> = {
-  residencial: {
-    id: "residencial",
-    label: "Reforma residencial",
-    description: "Volumes menores, entulho leve",
+  reforma: {
+    id: "reforma",
+    label: "Reforma",
+    description: "Reformas residenciais e comerciais leves",
     benefits: [
       "Tambores 240L compactos",
       "Janelas flexíveis sábado/domingo",
@@ -25,7 +25,7 @@ export const workTypes: Record<WorkTypeId, WorkType> = {
     ],
     dailyMultiplier: 1,
     logisticsDiscount: 0,
-    cauçaoFreeFromQty: 8,
+    garantiaFreeFromQty: 8,
   },
   demolicao: {
     id: "demolicao",
@@ -38,19 +38,32 @@ export const workTypes: Record<WorkTypeId, WorkType> = {
     ],
     dailyMultiplier: 1.15,
     logisticsDiscount: 0.1,
-    cauçaoFreeFromQty: 5,
+    garantiaFreeFromQty: 5,
   },
-  comercial: {
-    id: "comercial",
-    label: "Comercial / Outros",
-    description: "Empresas e obras especiais",
+  limpeza: {
+    id: "limpeza",
+    label: "Limpeza",
+    description: "Limpeza bruta, faxina pós-obra e jardim",
+    benefits: [
+      "Equipe de limpeza inclusa opcional",
+      "Sacos resistentes incluídos",
+      "Retirada no mesmo dia para volumes pequenos",
+    ],
+    dailyMultiplier: 0.9,
+    logisticsDiscount: 0.05,
+    garantiaFreeFromQty: 6,
+  },
+  planos: {
+    id: "planos",
+    label: "Planos",
+    description: "Mensal, recorrente e corporativo",
     benefits: [
       "Faturamento mensal disponível",
-      "Caução isenta a partir de 4 tambores",
+      "Garantia Tambor isenta para o ciclo",
       "Gestor de conta exclusivo",
     ],
     dailyMultiplier: 1.05,
-    logisticsDiscount: 0.05,
-    cauçaoFreeFromQty: 4,
+    logisticsDiscount: 0.12,
+    garantiaFreeFromQty: 3,
   },
 };
