@@ -6,6 +6,8 @@ import { QuickCategories } from "@/components/dashboard/QuickCategories";
 import { ActiveOrderCard } from "@/components/dashboard/ActiveOrderCard";
 import { RequestModal } from "@/components/dashboard/RequestModal";
 import { PhotoChecklistModal } from "@/components/dashboard/PhotoChecklistModal";
+import { CleanupServiceCard } from "@/components/dashboard/CleanupServiceCard";
+import { BagsCard } from "@/components/dashboard/BagsCard";
 import { mockOrders } from "@/lib/mock-orders";
 import { Link } from "@tanstack/react-router";
 import { useOrderStatusNotifications } from "@/hooks/use-order-status-notifications";
@@ -39,7 +41,11 @@ function Home() {
         order={focusOrder}
       />
 
+      <CleanupServiceCard />
+
       <QuickCategories />
+
+      <BagsCard />
 
       <section className="px-5 mt-7">
         <div className="flex items-center justify-between mb-3">
