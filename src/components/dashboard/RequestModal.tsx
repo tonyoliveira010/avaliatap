@@ -60,8 +60,8 @@ export function RequestModal({ open, onClose, workType }: Props) {
   const dias = isCustom ? customDays : prazos[prazoIdx].days;
 
   const pricing = useMemo(
-    () => calcPricing({ qty, days: dias, workType }),
-    [qty, dias, workType],
+    () => calcPricing({ qty, days: dias, workType, material }),
+    [qty, dias, workType, material],
   );
 
   const endDate = useMemo(() => {
@@ -89,11 +89,11 @@ export function RequestModal({ open, onClose, workType }: Props) {
       subtotal: pricing.subtotal,
       logistica: pricing.logistics,
       handlingFee: pricing.handlingFee,
-      caucao: pricing.caucao,
-      caucaoChargedNow: pricing.caucaoChargedNow,
+      garantia: pricing.garantia,
+      garantiaChargedNow: pricing.garantiaChargedNow,
       total: pricing.total,
       pixTotal: pricing.pixTotal,
-      inPersonFreightReserve: pricing.inPersonFreightReserve,
+      inPersonReserve: pricing.inPersonReserve,
       workTypeLabel: wt?.label,
     }),
     [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt],
@@ -241,7 +241,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     ))}
                   </div>
 
-                  {/* Custom dias */}
+                  {/* Custom dias — visual distinto do contador de tambores */}
                   <AnimatePresence initial={false}>
                     {isCustom && (
                       <motion.div
@@ -250,40 +250,59 @@ export function RequestModal({ open, onClose, workType }: Props) {
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="mt-3 rounded-2xl border border-primary/30 bg-primary-soft/30 p-3.5">
-                          <p className="text-[11.5px] text-foreground/80 font-medium mb-2">
-                            Quantos dias deseja contratar?
-                          </p>
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={() => setCustomDays(Math.max(1, customDays - 1))}
-                              className="h-10 w-10 rounded-xl bg-surface border border-border flex items-center justify-center active:scale-95"
-                            >
-                              <Minus className="h-4 w-4" />
-                            </button>
-                            <div className="flex-1 text-center">
-                              <p className="text-[28px] font-semibold tabular-nums leading-none text-foreground">
-                                {customDays}
+                        <div className="mt-3 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary-soft/40 to-surface p-4">
+                          <div className="flex items-end justify-between mb-3">
+                            <div>
+                              <p className="text-[10.5px] uppercase tracking-wider text-muted-foreground font-semibold">
+                                Período personalizado
                               </p>
-                              <p className="text-[10px] text-muted-foreground mt-1">
-                                {customDays === 1 ? "dia" : "dias"}
+                              <p className="text-[11.5px] text-foreground/80 mt-0.5">
+                                Quantos dias deseja contratar?
                               </p>
                             </div>
-                            <button
-                              onClick={() => setCustomDays(Math.min(60, customDays + 1))}
-                              className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center active:scale-95"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </button>
+                            <div className="text-right">
+                              <p className="text-[32px] font-semibold tabular-nums leading-none text-primary">
+                                {customDays}
+                                <span className="text-[12px] text-muted-foreground font-medium ml-1">
+                                  {customDays === 1 ? "dia" : "dias"}
+                                </span>
+                              </p>
+                            </div>
                           </div>
-                          <input
-                            type="range"
-                            min={1}
-                            max={30}
-                            value={customDays}
-                            onChange={(e) => setCustomDays(Number(e.target.value))}
-                            className="mt-3 w-full accent-primary"
-                          />
+
+                          {/* Pílulas de atalho */}
+                          <div className="flex gap-1.5 overflow-x-auto -mx-1 px-1 pb-2 no-scrollbar mb-2">
+                            {[2, 5, 10, 15, 20, 30].map((d) => (
+                              <button
+                                key={d}
+                                onClick={() => setCustomDays(d)}
+                                className={`shrink-0 rounded-full px-3 py-1.5 text-[11px] font-semibold border transition-all ${
+                                  customDays === d
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : "bg-surface text-foreground/70 border-border hover:border-primary/40"
+                                }`}
+                              >
+                                {d}d
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Slider de precisão */}
+                          <div className="relative">
+                            <input
+                              type="range"
+                              min={1}
+                              max={30}
+                              value={customDays}
+                              onChange={(e) => setCustomDays(Number(e.target.value))}
+                              className="w-full accent-primary"
+                            />
+                            <div className="flex justify-between text-[9px] text-muted-foreground mt-0.5 px-0.5">
+                              <span>1d</span>
+                              <span>15d</span>
+                              <span>30d</span>
+                            </div>
+                          </div>
                         </div>
                       </motion.div>
                     )}
@@ -465,7 +484,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     label="Frete logístico"
                     sub={`Entrega + retirada · ${qty} item(ns)`}
                     value={`R$ ${pricing.logistics}`}
-                    explanation="Custo de transporte até a obra e retirada. Pedidos com 2+ tambores ganham otimização de rota. Pagando presencialmente, 40% do frete fica como reserva antecipada."
+                    explanation="Custo de transporte até a obra e retirada. Pedidos com 2+ tambores ganham otimização de rota."
                   />
                   {pricing.handlingFee > 0 && (
                     <CostLine
@@ -476,22 +495,22 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     />
                   )}
                   <CostLine
-                    label={pricing.caucaoChargedNow ? "Caução (cobrada no ato)" : "Caução (isenta)"}
+                    label={pricing.garantiaChargedNow ? "Garantia Tambor (no ato)" : "Garantia Tambor (isenta)"}
                     sub={
-                      pricing.caucaoChargedNow
-                        ? "Devolvida ao final, sem ocorrências"
-                        : "Volume contratado dispensa caução"
+                      pricing.garantiaChargedNow
+                        ? "Reserva sua entrega · abatida no pagamento presencial"
+                        : "Volume contratado dispensa a Garantia"
                     }
-                    value={pricing.caucaoChargedNow ? `R$ ${pricing.caucao}` : "Isenta"}
-                    muted={!pricing.caucaoChargedNow}
-                    explanation="A caução é uma garantia cobrada na contratação. Volumes maiores (conforme o tipo de obra) são isentos automaticamente. O valor é devolvido após a retirada sem ocorrências."
+                    value={pricing.garantiaChargedNow ? `R$ ${pricing.garantia}` : "Isenta"}
+                    muted={!pricing.garantiaChargedNow}
+                    explanation="A Garantia Tambor é uma reserva que confirma sua contratação e cobre custos logísticos caso o pedido seja cancelado. Volumes maiores (conforme o tipo de obra) são isentos. Se você pagar presencialmente, esse valor é cobrado via PIX agora e abatido do total no ato da entrega."
                   />
 
                   <div className="h-px bg-border my-2" />
                   <Row label="Total previsto" value={`R$ ${pricing.total}`} bold />
                   <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-success/10 text-success px-2.5 py-1 text-[11px] font-semibold">
                     <ShieldCheck className="h-3 w-3" />
-                    PIX à vista: R$ {pricing.pixTotal} (‑20%)
+                    PIX à vista: R$ {pricing.pixTotal} (‑20%, válido para todo volume)
                   </div>
                 </div>
 
