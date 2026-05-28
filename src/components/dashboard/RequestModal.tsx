@@ -190,6 +190,43 @@ export function RequestModal({ open, onClose, workType }: Props) {
                       );
                     })}
                   </div>
+
+                  {/* Explicação de impacto do material na diária */}
+                  <motion.div
+                    key={material}
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-2 rounded-2xl border border-border bg-muted/30 px-3 py-2.5 flex items-start gap-2.5"
+                  >
+                    {(() => {
+                      const Icon = getMaterialIcon(material);
+                      return (
+                        <div className="h-8 w-8 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4" strokeWidth={2.2} />
+                        </div>
+                      );
+                    })()}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[12.5px] font-semibold text-foreground">
+                        {material} · diária R$ {pricing.daily}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                        {materialDelta === 0 ? (
+                          <>Material padrão · sem ajuste sobre a diária base.</>
+                        ) : materialDelta > 0 ? (
+                          <>
+                            Material exige manuseio especial:{" "}
+                            <strong className="text-warning">+{materialDelta}%</strong> na diária e no total previsto.
+                          </>
+                        ) : (
+                          <>
+                            Material com incentivo de descarte sustentável:{" "}
+                            <strong className="text-success">{materialDelta}%</strong> na diária e no total previsto.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
                 </Field>
 
                 <Field label="Quantidade de tambores">
