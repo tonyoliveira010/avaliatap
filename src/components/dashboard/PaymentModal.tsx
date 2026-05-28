@@ -357,7 +357,8 @@ function SelectStage({
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={onPay}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-2xl px-5 py-3.5 font-semibold text-[14px] shadow-glow"
+            disabled={method === "credits" && insufficientCredits}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-2xl px-5 py-3.5 font-semibold text-[14px] shadow-glow disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Confirmar
             <ChevronRight className="h-4 w-4" />
