@@ -26,7 +26,9 @@ import { unavailableDates, getSlotsForDate } from "@/lib/mock-orders";
 import { cn } from "@/lib/utils";
 import { calcPricing } from "@/lib/pricing";
 import { workTypes, type WorkTypeId } from "@/lib/work-types";
-import { getMaterialIcon } from "@/lib/materials";
+import { getMaterialIcon, getMaterialMultiplier } from "@/lib/materials";
+import { bagBundles } from "@/lib/bag-bundles";
+import { ShoppingBag } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -55,6 +57,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
   });
   const [payOpen, setPayOpen] = useState(false);
   const [slot, setSlot] = useState<string | null>(null);
+  const [bagBundleId, setBagBundleId] = useState<string | null>(null);
 
   const isCustom = prazoIdx === 3;
   const dias = isCustom ? customDays : prazos[prazoIdx].days;
@@ -63,6 +66,14 @@ export function RequestModal({ open, onClose, workType }: Props) {
     () => calcPricing({ qty, days: dias, workType, material }),
     [qty, dias, workType, material],
   );
+
+  const bagBundle = useMemo(
+    () => bagBundles.find((b) => b.id === bagBundleId) ?? null,
+    [bagBundleId],
+  );
+  const bagsCost = bagBundle?.price ?? 0;
+  const totalWithBags = pricing.total + bagsCost;
+  const pixTotalWithBags = Math.round(totalWithBags * 0.8);
 
   const endDate = useMemo(() => {
     if (!date) return undefined;
@@ -73,6 +84,8 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
   const slots = useMemo(() => (date ? getSlotsForDate(date) : []), [date]);
   const driverEta = useMemo(() => 18 + (qty - 1) * 4, [qty]);
+  const materialMultiplier = getMaterialMultiplier(material);
+  const materialDelta = Math.round((materialMultiplier - 1) * 100);
   void getMaterialIcon(material);
   const wt = workType ? workTypes[workType] : null;
 
@@ -91,12 +104,14 @@ export function RequestModal({ open, onClose, workType }: Props) {
       handlingFee: pricing.handlingFee,
       garantia: pricing.garantia,
       garantiaChargedNow: pricing.garantiaChargedNow,
-      total: pricing.total,
-      pixTotal: pricing.pixTotal,
+      total: totalWithBags,
+      pixTotal: pixTotalWithBags,
       inPersonReserve: pricing.inPersonReserve,
       workTypeLabel: wt?.label,
+      bagsLabel: bagBundle ? `Sacos · ${bagBundle.qty}× ${bagBundle.size}` : undefined,
+      bagsCost: bagsCost || undefined,
     }),
-    [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt],
+    [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt, totalWithBags, pixTotalWithBags, bagBundle, bagsCost],
   );
 
   return (
@@ -175,6 +190,43 @@ export function RequestModal({ open, onClose, workType }: Props) {
                       );
                     })}
                   </div>
+
+                  {/* Explicação de impacto do material na diária */}
+                  <motion.div
+                    key={material}
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-2 rounded-2xl border border-border bg-muted/30 px-3 py-2.5 flex items-start gap-2.5"
+                  >
+                    {(() => {
+                      const Icon = getMaterialIcon(material);
+                      return (
+                        <div className="h-8 w-8 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4" strokeWidth={2.2} />
+                        </div>
+                      );
+                    })()}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[12.5px] font-semibold text-foreground">
+                        {material} · diária R$ {pricing.daily}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                        {materialDelta === 0 ? (
+                          <>Material padrão · sem ajuste sobre a diária base.</>
+                        ) : materialDelta > 0 ? (
+                          <>
+                            Material exige manuseio especial:{" "}
+                            <strong className="text-warning">+{materialDelta}%</strong> na diária e no total previsto.
+                          </>
+                        ) : (
+                          <>
+                            Material com incentivo de descarte sustentável:{" "}
+                            <strong className="text-success">{materialDelta}%</strong> na diária e no total previsto.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
                 </Field>
 
                 <Field label="Quantidade de tambores">
@@ -469,6 +521,63 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
                 <PromoCards />
 
+                <Field label="Adicionar sacos de entulho (opcional)">
+                  <p className="text-[11px] text-muted-foreground -mt-1 mb-2">
+                    Inclua sacos no mesmo pedido · enviados junto ao tambor, sem frete extra.
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar snap-x snap-mandatory">
+                    <button
+                      onClick={() => setBagBundleId(null)}
+                      className={`snap-start shrink-0 w-[120px] rounded-2xl border p-3 text-left transition-all ${
+                        bagBundleId === null
+                          ? "border-primary bg-primary-soft/40"
+                          : "border-border bg-surface hover:border-primary/30"
+                      }`}
+                    >
+                      <div className="h-8 w-8 rounded-xl bg-muted flex items-center justify-center">
+                        <X className="h-4 w-4" />
+                      </div>
+                      <p className="mt-2 text-[12.5px] font-semibold text-foreground">Sem sacos</p>
+                      <p className="text-[10.5px] text-muted-foreground">Apenas o tambor</p>
+                    </button>
+                    {bagBundles.map((b) => {
+                      const active = bagBundleId === b.id;
+                      return (
+                        <button
+                          key={b.id}
+                          onClick={() => setBagBundleId(b.id)}
+                          className={`snap-start shrink-0 w-[140px] rounded-2xl border p-3 text-left transition-all ${
+                            active
+                              ? "border-primary bg-primary-soft/40"
+                              : "border-border bg-surface hover:border-primary/30"
+                          }`}
+                        >
+                          <div
+                            className={`h-8 w-8 rounded-xl flex items-center justify-center ${
+                              active ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+                            }`}
+                          >
+                            <ShoppingBag className="h-4 w-4" />
+                          </div>
+                          <p className="mt-2 text-[13px] font-semibold text-foreground tabular-nums">
+                            {b.qty}{" "}
+                            <span className="text-[10px] text-muted-foreground font-medium">sacos</span>
+                          </p>
+                          <p className="text-[10px] text-muted-foreground truncate">{b.size}</p>
+                          <p className="mt-1 text-[12.5px] font-bold text-foreground tabular-nums">
+                            +R$ {b.price}
+                          </p>
+                          {b.highlight && (
+                            <span className="mt-1 inline-block rounded-full bg-success/15 text-success px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                              {b.highlight}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Field>
+
                 <div className="rounded-3xl bg-muted/40 border border-border p-4 space-y-1">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
                     Resumo da cobrança
@@ -505,12 +614,20 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     muted={!pricing.garantiaChargedNow}
                     explanation="A Garantia Tambor é uma reserva que confirma sua contratação e cobre custos logísticos caso o pedido seja cancelado. Volumes maiores (conforme o tipo de obra) são isentos. Se você pagar presencialmente, esse valor é cobrado via PIX agora e abatido do total no ato da entrega."
                   />
+                  {bagBundle && (
+                    <CostLine
+                      label={`Sacos · ${bagBundle.qty}×`}
+                      sub={`${bagBundle.size} · entregue junto ao tambor`}
+                      value={`R$ ${bagBundle.price}`}
+                      explanation="Pacote de sacos comprado junto ao tambor. Sem custo extra de frete — segue na mesma entrega."
+                    />
+                  )}
 
                   <div className="h-px bg-border my-2" />
-                  <Row label="Total previsto" value={`R$ ${pricing.total}`} bold />
+                  <Row label="Total previsto" value={`R$ ${totalWithBags}`} bold />
                   <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-success/10 text-success px-2.5 py-1 text-[11px] font-semibold">
                     <ShieldCheck className="h-3 w-3" />
-                    PIX à vista: R$ {pricing.pixTotal} (‑20%, válido para todo volume)
+                    PIX à vista: R$ {pixTotalWithBags} (‑20%, válido para todo volume)
                   </div>
                 </div>
 

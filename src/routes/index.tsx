@@ -6,7 +6,7 @@ import { QuickCategories } from "@/components/dashboard/QuickCategories";
 import { ActiveOrderCard } from "@/components/dashboard/ActiveOrderCard";
 import { RequestModal } from "@/components/dashboard/RequestModal";
 import { PhotoChecklistModal } from "@/components/dashboard/PhotoChecklistModal";
-import { CleanupServiceCard } from "@/components/dashboard/CleanupServiceCard";
+
 import { BagsCard } from "@/components/dashboard/BagsCard";
 import { mockOrders } from "@/lib/mock-orders";
 import { Link } from "@tanstack/react-router";
@@ -40,8 +40,6 @@ function Home() {
         onPhoto={() => setPhotoOpen(true)}
         order={focusOrder}
       />
-
-      <CleanupServiceCard />
 
       <QuickCategories />
 
