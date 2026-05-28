@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { ArrowDownLeft, ArrowUpRight, CreditCard, Download, TrendingUp, Wallet } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, CreditCard, Download, TrendingUp, Wallet, Coins, Sparkles, Check } from "lucide-react";
 import { motion } from "motion/react";
+import { creditPackages, userCredits } from "@/lib/credits";
 
 export const Route = createFileRoute("/financeiro")({
   head: () => ({ meta: [{ title: "Financeiro · Tambor" }] }),
