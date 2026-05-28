@@ -27,6 +27,7 @@ const services: Service[] = [
     title: "Limpeza bruta de entulho",
     desc: "Removemos resíduos pesados da obra (gesso, madeira, restos de alvenaria).",
     basePrice: 280,
+    baseHours: 4,
     bullets: ["Equipe com EPI", "Sacos reforçados inclusos", "Retirada no mesmo dia"],
     badge: "Mais pedido",
   },
@@ -36,6 +37,7 @@ const services: Service[] = [
     title: "Faxina pós-obra",
     desc: "Limpeza fina após a obra: poeira, manchas de tinta, vidros e pisos.",
     basePrice: 360,
+    baseHours: 5,
     bullets: ["Produtos profissionais", "2 diaristas + supervisor", "Janelas e rodapés"],
   },
   {
@@ -44,6 +46,7 @@ const services: Service[] = [
     title: "Pequenas demolições + limpeza",
     desc: "Quebra de parede ou piso pontual com retirada do material no mesmo serviço.",
     basePrice: 540,
+    baseHours: 8,
     bullets: ["Cobertura para risco", "Inclui 1 tambor 240L", "Orçamento sem compromisso"],
   },
   {
@@ -52,6 +55,7 @@ const services: Service[] = [
     title: "Limpeza de jardim e quintal",
     desc: "Poda leve, terra, folhas e galhos retirados com sacos próprios.",
     basePrice: 220,
+    baseHours: 3,
     bullets: ["Sacos biodegradáveis", "Ideal pré-mudança", "Equipe enxuta"],
   },
 ];
