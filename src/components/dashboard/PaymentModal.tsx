@@ -325,7 +325,7 @@ function SuccessStage({
   summary: OrderSummary;
 }) {
   const methodLabel =
-    method === "pix" ? "Pix · Reserva" : method === "card" ? "Cartão de crédito" : "Presencial";
+    method === "pix" ? "Pix · à vista" : method === "credits" ? "Créditos Tambor" : "Presencial";
   const paymentId = "TMB" + Math.floor(Math.random() * 9_000_000 + 1_000_000);
 
   return (
