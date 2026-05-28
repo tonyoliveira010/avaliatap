@@ -190,6 +190,7 @@ export function HeroScroller({ onRequest, onPhoto, order }: Props) {
       </section>
 
       <DriverTrackingModal open={trackOpen} onClose={() => setTrackOpen(false)} order={order} />
+      <CleanupModal open={cleanupOpen} onClose={() => setCleanupOpen(false)} />
     </>
   );
 }
