@@ -26,7 +26,9 @@ import { unavailableDates, getSlotsForDate } from "@/lib/mock-orders";
 import { cn } from "@/lib/utils";
 import { calcPricing } from "@/lib/pricing";
 import { workTypes, type WorkTypeId } from "@/lib/work-types";
-import { getMaterialIcon } from "@/lib/materials";
+import { getMaterialIcon, getMaterialMultiplier } from "@/lib/materials";
+import { bagBundles } from "@/lib/bag-bundles";
+import { ShoppingBag } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -55,6 +57,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
   });
   const [payOpen, setPayOpen] = useState(false);
   const [slot, setSlot] = useState<string | null>(null);
+  const [bagBundleId, setBagBundleId] = useState<string | null>(null);
 
   const isCustom = prazoIdx === 3;
   const dias = isCustom ? customDays : prazos[prazoIdx].days;
