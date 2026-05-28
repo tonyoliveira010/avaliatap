@@ -521,6 +521,63 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
                 <PromoCards />
 
+                <Field label="Adicionar sacos de entulho (opcional)">
+                  <p className="text-[11px] text-muted-foreground -mt-1 mb-2">
+                    Inclua sacos no mesmo pedido · enviados junto ao tambor, sem frete extra.
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar snap-x snap-mandatory">
+                    <button
+                      onClick={() => setBagBundleId(null)}
+                      className={`snap-start shrink-0 w-[120px] rounded-2xl border p-3 text-left transition-all ${
+                        bagBundleId === null
+                          ? "border-primary bg-primary-soft/40"
+                          : "border-border bg-surface hover:border-primary/30"
+                      }`}
+                    >
+                      <div className="h-8 w-8 rounded-xl bg-muted flex items-center justify-center">
+                        <X className="h-4 w-4" />
+                      </div>
+                      <p className="mt-2 text-[12.5px] font-semibold text-foreground">Sem sacos</p>
+                      <p className="text-[10.5px] text-muted-foreground">Apenas o tambor</p>
+                    </button>
+                    {bagBundles.map((b) => {
+                      const active = bagBundleId === b.id;
+                      return (
+                        <button
+                          key={b.id}
+                          onClick={() => setBagBundleId(b.id)}
+                          className={`snap-start shrink-0 w-[140px] rounded-2xl border p-3 text-left transition-all ${
+                            active
+                              ? "border-primary bg-primary-soft/40"
+                              : "border-border bg-surface hover:border-primary/30"
+                          }`}
+                        >
+                          <div
+                            className={`h-8 w-8 rounded-xl flex items-center justify-center ${
+                              active ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+                            }`}
+                          >
+                            <ShoppingBag className="h-4 w-4" />
+                          </div>
+                          <p className="mt-2 text-[13px] font-semibold text-foreground tabular-nums">
+                            {b.qty}{" "}
+                            <span className="text-[10px] text-muted-foreground font-medium">sacos</span>
+                          </p>
+                          <p className="text-[10px] text-muted-foreground truncate">{b.size}</p>
+                          <p className="mt-1 text-[12.5px] font-bold text-foreground tabular-nums">
+                            +R$ {b.price}
+                          </p>
+                          {b.highlight && (
+                            <span className="mt-1 inline-block rounded-full bg-success/15 text-success px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                              {b.highlight}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Field>
+
                 <div className="rounded-3xl bg-muted/40 border border-border p-4 space-y-1">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
                     Resumo da cobrança
