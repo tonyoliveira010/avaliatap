@@ -192,16 +192,51 @@ export function CleanupModal({ open, onClose }: Props) {
               </div>
             </div>
 
+            {(() => {
+              const svc = services.find((s) => s.id === selected) ?? services[0];
+              const crewMultiplier = 1 + (crew - 2) * 0.18;
+              const total = Math.max(svc.basePrice, Math.round(svc.basePrice * crewMultiplier + (crew - 1) * 90));
+              const hours = Math.max(1, Math.round(svc.baseHours * (2 / Math.max(1, crew))));
+              const pix = Math.round(total * 0.8);
+              return (
+                <div className="mx-5 mb-5 rounded-3xl border border-success/30 bg-success/10 p-4">
+                  <p className="text-[10.5px] uppercase tracking-wider text-success/90 font-bold">
+                    Estimativa para este serviço
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Total estimado</p>
+                      <p className="text-[22px] font-semibold text-foreground tabular-nums leading-none mt-0.5">
+                        R$ {total}
+                      </p>
+                      <p className="text-[10.5px] text-success font-semibold mt-1">
+                        PIX à vista: R$ {pix}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Prazo previsto</p>
+                      <p className="text-[22px] font-semibold text-foreground tabular-nums leading-none mt-0.5">
+                        ~{hours}h
+                      </p>
+                      <p className="text-[10.5px] text-muted-foreground mt-1">
+                        {crew} {crew === 1 ? "profissional" : "profissionais"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="px-5 pb-7">
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-success text-white py-4 font-semibold text-[14px] shadow-glow"
               >
-                Solicitar orçamento da limpeza
+                Solicitar limpeza
                 <ChevronRight className="h-4 w-4" />
               </motion.button>
               <p className="text-[10.5px] text-muted-foreground text-center mt-2">
-                Você recebe a proposta em até 30 min · sem compromisso
+                Estimativa preliminar · confirmamos o valor exato após a vistoria
               </p>
             </div>
           </motion.div>
