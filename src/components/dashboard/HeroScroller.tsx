@@ -59,6 +59,38 @@ export function HeroScroller({ onRequest, onPhoto, order }: Props) {
             </div>
           </motion.article>
 
+          {/* Cleanup service */}
+          <motion.button
+            initial={{ y: 14, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.04, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setCleanupOpen(true)}
+            className="snap-start shrink-0 w-[82%] text-left rounded-4xl border border-success/30 bg-gradient-to-br from-success/20 via-surface to-surface p-5 shadow-soft relative overflow-hidden"
+          >
+            <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-success/20 blur-3xl pointer-events-none" />
+            <div className="absolute right-5 top-5 h-14 w-14 rounded-2xl border border-success/20 bg-success/10 backdrop-blur-sm pointer-events-none rotate-12 flex items-center justify-center">
+              <Brush className="h-6 w-6 text-success" strokeWidth={2} />
+            </div>
+            <div className="relative">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 text-success border border-success/25 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase">
+                <Sparkles className="h-2.5 w-2.5" />
+                Serviço novo
+              </span>
+              <h2 className="mt-3 text-[19px] font-semibold leading-[1.15] tracking-tight text-foreground max-w-[210px]">
+                Limpeza de entulho<br />& faxina pós-obra
+              </h2>
+              <p className="mt-1.5 text-[11.5px] text-muted-foreground leading-relaxed max-w-[230px]">
+                Nossa equipe retira resíduos e faz a faxina fina do local.
+              </p>
+              <div className="mt-4 inline-flex items-center gap-2 bg-success text-white rounded-2xl px-4 py-2.5 font-semibold text-[12.5px] shadow-glow">
+                <Brush className="h-3.5 w-3.5" strokeWidth={2.4} />
+                Contratar limpeza
+                <ArrowRight className="h-3.5 w-3.5" />
+              </div>
+            </div>
+          </motion.button>
+
           {/* Vistoria diária */}
           <motion.button
             initial={{ y: 14, opacity: 0 }}
