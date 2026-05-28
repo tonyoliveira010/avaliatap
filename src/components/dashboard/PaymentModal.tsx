@@ -217,7 +217,17 @@ function SelectStage({
           <div className="mt-3 pt-3 border-t border-border space-y-1.5">
             <Row label={`Diária × ${summary.qty}`} value={`R$ ${summary.subtotal}`} />
             <Row label="Frete logístico" value={`R$ ${summary.logistica}`} />
-            <Row label={GARANTIA_BRAND} value={`R$ ${summary.garantia}`} muted={!summary.garantiaChargedNow} />
+            {summary.handlingFee ? (
+              <Row label="Taxa manuseio rápido" value={`R$ ${summary.handlingFee}`} />
+            ) : null}
+            {summary.bagsCost ? (
+              <Row label={summary.bagsLabel ?? "Sacos de entulho"} value={`R$ ${summary.bagsCost}`} />
+            ) : null}
+            <Row
+              label={summary.garantiaChargedNow ? GARANTIA_BRAND : `${GARANTIA_BRAND} · isenta`}
+              value={summary.garantiaChargedNow ? `R$ ${summary.garantia}` : "Isenta"}
+              muted={!summary.garantiaChargedNow}
+            />
             <div className="h-px bg-border my-1" />
             <Row label="Total previsto" value={`R$ ${summary.total}`} bold />
           </div>
