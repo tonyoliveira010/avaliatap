@@ -115,6 +115,8 @@ export function PaymentModal({ open, onClose, summary }: Props) {
                 amountNow={amountNow}
                 amountLabel={amountLabel}
                 reservaGarantia={reservaGarantia}
+                creditsCost={creditsCost}
+                insufficientCredits={insufficientCredits}
               />
             ) : (
               <SuccessStage
