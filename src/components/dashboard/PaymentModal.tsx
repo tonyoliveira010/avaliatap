@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { X, QrCode, Coins, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck, ShoppingBag, AlertTriangle } from "lucide-react";
+import { X, QrCode, Coins, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { GARANTIA_BRAND } from "@/lib/pricing";
 import { userCredits, priceInCredits, CREDITS_DISCOUNT } from "@/lib/credits";
