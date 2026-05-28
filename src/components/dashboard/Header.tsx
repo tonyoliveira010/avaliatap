@@ -1,5 +1,7 @@
-import { Bell, MapPin } from "lucide-react";
+import { Bell, MapPin, Coins } from "lucide-react";
 import { motion } from "motion/react";
+import { Link } from "@tanstack/react-router";
+import { userCredits } from "@/lib/credits";
 
 export function Header() {
   return (
@@ -21,10 +23,24 @@ export function Header() {
           </div>
         </div>
 
-        <button className="relative h-11 w-11 rounded-full bg-surface border border-border flex items-center justify-center hover:bg-muted transition-colors active:scale-95">
-          <Bell className="h-[18px] w-[18px] text-foreground" />
-          <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-surface" />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/financeiro"
+            className="relative inline-flex items-center gap-1.5 h-11 rounded-full bg-warning/15 border border-warning/40 pl-2.5 pr-3 text-warning hover:bg-warning/20 transition-colors active:scale-95"
+            aria-label={`${userCredits.balance} créditos disponíveis`}
+          >
+            <span className="h-7 w-7 rounded-full bg-warning text-background flex items-center justify-center">
+              <Coins className="h-3.5 w-3.5" strokeWidth={2.4} />
+            </span>
+            <span className="text-[13px] font-bold tabular-nums leading-none">
+              {userCredits.balance}
+            </span>
+          </Link>
+          <button className="relative h-11 w-11 rounded-full bg-surface border border-border flex items-center justify-center hover:bg-muted transition-colors active:scale-95">
+            <Bell className="h-[18px] w-[18px] text-foreground" />
+            <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-surface" />
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 flex items-center gap-1.5 text-[13px] text-muted-foreground">
