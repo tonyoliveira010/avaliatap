@@ -1,8 +1,9 @@
-import { ArrowRight, Truck, Camera, MapPin, CheckCircle2, Clock } from "lucide-react";
+import { ArrowRight, Truck, Camera, MapPin, CheckCircle2, Brush, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import type { OrderData } from "./ActiveOrderCard";
 import { DriverTrackingModal } from "./DriverTrackingModal";
+import { CleanupModal } from "./CleanupModal";
 
 interface Props {
   onRequest: () => void;
@@ -12,6 +13,7 @@ interface Props {
 
 export function HeroScroller({ onRequest, onPhoto, order }: Props) {
   const [trackOpen, setTrackOpen] = useState(false);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
   const occupancy = order?.drums[0]?.occupancy ?? 65;
   const pending = order?.drums.filter((d) => !d.photoToday).length ?? 0;
 
