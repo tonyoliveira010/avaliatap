@@ -299,6 +299,45 @@ function SelectStage({
           </div>
         )}
 
+        {method === "credits" && (
+          <div className={`rounded-2xl px-4 py-3 text-[12px] leading-snug border ${
+            insufficientCredits
+              ? "bg-destructive/10 border-destructive/30 text-foreground/85"
+              : "bg-warning/10 border-warning/30 text-foreground/85"
+          }`}>
+            {insufficientCredits ? (
+              <span className="inline-flex items-center gap-2">
+                <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" />
+                Saldo insuficiente. Você tem <strong>{userCredits.balance}</strong> créditos · precisa de <strong>{creditsCost}</strong>.
+                {" "}Compre um pacote em <strong>Financeiro</strong>.
+              </span>
+            ) : (
+              <>
+                Saldo atual: <strong>{userCredits.balance} créditos</strong>. Pagando com créditos
+                você economiza <strong>{Math.round(CREDITS_DISCOUNT * 100)}%</strong> sobre o total
+                (R$ {summary.total - creditsCost}).
+              </>
+            )}
+          </div>
+        )}
+        {method === "in_person" && (
+          <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
+            {summary.garantiaChargedNow ? (
+              <>
+                Para garantir sua entrega cobramos a{" "}
+                <strong className="text-primary font-semibold">{GARANTIA_BRAND}</strong> de{" "}
+                <strong>R$ {reservaGarantia}</strong> via PIX agora. Esse valor é{" "}
+                <strong>abatido do total</strong> no ato da entrega — você só paga a diferença presencialmente.
+              </>
+            ) : (
+              <>
+                Seu volume contratado dispensa a {GARANTIA_BRAND}.{" "}
+                <strong>Nenhuma reserva via PIX será cobrada</strong> — você paga o valor integral no ato da entrega.
+              </>
+            )}
+          </div>
+        )}
+
         {/* CTA */}
         <div className="rounded-3xl bg-muted/50 p-4 flex items-center justify-between">
           <div>
@@ -306,7 +345,7 @@ function SelectStage({
               {amountLabel}
             </p>
             <p className="text-[24px] font-semibold text-foreground tabular-nums mt-0.5">
-              R$ {amountNow}
+              {method === "credits" ? `${amountNow} créditos` : `R$ ${amountNow}`}
             </p>
           </div>
           <motion.button
