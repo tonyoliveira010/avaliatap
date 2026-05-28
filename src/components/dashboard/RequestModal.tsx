@@ -67,6 +67,14 @@ export function RequestModal({ open, onClose, workType }: Props) {
     [qty, dias, workType, material],
   );
 
+  const bagBundle = useMemo(
+    () => bagBundles.find((b) => b.id === bagBundleId) ?? null,
+    [bagBundleId],
+  );
+  const bagsCost = bagBundle?.price ?? 0;
+  const totalWithBags = pricing.total + bagsCost;
+  const pixTotalWithBags = Math.round(totalWithBags * 0.8);
+
   const endDate = useMemo(() => {
     if (!date) return undefined;
     const e = new Date(date);
@@ -76,6 +84,8 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
   const slots = useMemo(() => (date ? getSlotsForDate(date) : []), [date]);
   const driverEta = useMemo(() => 18 + (qty - 1) * 4, [qty]);
+  const materialMultiplier = getMaterialMultiplier(material);
+  const materialDelta = Math.round((materialMultiplier - 1) * 100);
   void getMaterialIcon(material);
   const wt = workType ? workTypes[workType] : null;
 
@@ -94,12 +104,14 @@ export function RequestModal({ open, onClose, workType }: Props) {
       handlingFee: pricing.handlingFee,
       garantia: pricing.garantia,
       garantiaChargedNow: pricing.garantiaChargedNow,
-      total: pricing.total,
-      pixTotal: pricing.pixTotal,
+      total: totalWithBags,
+      pixTotal: pixTotalWithBags,
       inPersonReserve: pricing.inPersonReserve,
       workTypeLabel: wt?.label,
+      bagsLabel: bagBundle ? `Sacos · ${bagBundle.qty}× ${bagBundle.size}` : undefined,
+      bagsCost: bagsCost || undefined,
     }),
-    [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt],
+    [material, qty, dias, address, date, endDate, slot, driverEta, pricing, wt, totalWithBags, pixTotalWithBags, bagBundle, bagsCost],
   );
 
   return (
