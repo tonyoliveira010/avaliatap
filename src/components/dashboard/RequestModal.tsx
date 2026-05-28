@@ -614,12 +614,20 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     muted={!pricing.garantiaChargedNow}
                     explanation="A Garantia Tambor é uma reserva que confirma sua contratação e cobre custos logísticos caso o pedido seja cancelado. Volumes maiores (conforme o tipo de obra) são isentos. Se você pagar presencialmente, esse valor é cobrado via PIX agora e abatido do total no ato da entrega."
                   />
+                  {bagBundle && (
+                    <CostLine
+                      label={`Sacos · ${bagBundle.qty}×`}
+                      sub={`${bagBundle.size} · entregue junto ao tambor`}
+                      value={`R$ ${bagBundle.price}`}
+                      explanation="Pacote de sacos comprado junto ao tambor. Sem custo extra de frete — segue na mesma entrega."
+                    />
+                  )}
 
                   <div className="h-px bg-border my-2" />
-                  <Row label="Total previsto" value={`R$ ${pricing.total}`} bold />
+                  <Row label="Total previsto" value={`R$ ${totalWithBags}`} bold />
                   <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-success/10 text-success px-2.5 py-1 text-[11px] font-semibold">
                     <ShieldCheck className="h-3 w-3" />
-                    PIX à vista: R$ {pricing.pixTotal} (‑20%, válido para todo volume)
+                    PIX à vista: R$ {pixTotalWithBags} (‑20%, válido para todo volume)
                   </div>
                 </div>
 
