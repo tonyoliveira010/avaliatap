@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from "motion/react";
-import { X, QrCode, CreditCard, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck } from "lucide-react";
+import { X, QrCode, Coins, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck, ShoppingBag, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { GARANTIA_BRAND } from "@/lib/pricing";
+import { userCredits, priceInCredits, CREDITS_DISCOUNT } from "@/lib/credits";
 
 export interface OrderSummary {
   material: string;
@@ -23,6 +24,9 @@ export interface OrderSummary {
   /** Valor da Garantia Tambor cobrado via PIX como reserva no pagamento presencial */
   inPersonReserve?: number;
   workTypeLabel?: string;
+  /** Sacos de entulho adicionados ao pedido */
+  bagsLabel?: string;
+  bagsCost?: number;
 }
 
 
@@ -32,7 +36,7 @@ interface Props {
   summary: OrderSummary;
 }
 
-type Method = "pix" | "card" | "in_person";
+type Method = "pix" | "credits" | "in_person";
 
 const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; badge?: string }[] = [
   {
@@ -43,10 +47,11 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     badge: "‑20%",
   },
   {
-    id: "card",
-    icon: CreditCard,
-    title: "Cartão de crédito",
-    desc: "Em até 3x sem juros · Garantia Tambor pré-autorizada",
+    id: "credits",
+    icon: Coins,
+    title: "Descontar dos créditos",
+    desc: "Use seus créditos comprados em pacote e ganhe 10% de desconto sobre o total",
+    badge: "‑10%",
   },
   {
     id: "in_person",
