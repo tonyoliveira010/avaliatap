@@ -67,13 +67,15 @@ export function PaymentModal({ open, onClose, summary }: Props) {
 
   const reservaGarantia = summary.inPersonReserve ?? (summary.garantiaChargedNow ? summary.garantia : 0);
   const pixTotal = summary.pixTotal ?? Math.round(summary.total * 0.8);
+  const creditsCost = priceInCredits(summary.total);
+  const insufficientCredits = userCredits.balance < creditsCost;
   const amountNow =
-    method === "pix" ? pixTotal : method === "card" ? summary.total : reservaGarantia;
+    method === "pix" ? pixTotal : method === "credits" ? creditsCost : reservaGarantia;
   const amountLabel =
     method === "pix"
       ? "Total à vista (PIX ‑20%)"
-      : method === "card"
-        ? "Total cobrado agora"
+      : method === "credits"
+        ? "Cobrado em créditos"
         : `Reserva ${GARANTIA_BRAND} (PIX)`;
 
   function handleClose() {
