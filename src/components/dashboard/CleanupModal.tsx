@@ -14,6 +14,8 @@ interface Service {
   title: string;
   desc: string;
   basePrice: number;
+  /** Prazo base em horas para 2 profissionais */
+  baseHours: number;
   bullets: string[];
   badge?: string;
 }
