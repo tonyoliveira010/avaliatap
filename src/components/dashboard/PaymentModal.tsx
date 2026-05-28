@@ -142,6 +142,8 @@ function SelectStage({
   amountNow,
   amountLabel,
   reservaGarantia,
+  creditsCost,
+  insufficientCredits,
 }: {
   onClose: () => void;
   onPay: () => void;
@@ -151,6 +153,8 @@ function SelectStage({
   amountNow: number;
   amountLabel: string;
   reservaGarantia: number;
+  creditsCost: number;
+  insufficientCredits: boolean;
 }) {
   return (
     <>
