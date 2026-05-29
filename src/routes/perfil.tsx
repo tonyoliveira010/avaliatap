@@ -48,9 +48,13 @@ const groups = [
 ];
 
 function ProfilePage() {
+  const { theme, toggle } = useTheme();
+  const isLight = theme === "light";
+
   return (
     <>
       <PageHeader title="Perfil" subtitle="Conta e preferências" />
+
 
       {/* User card */}
       <motion.section
