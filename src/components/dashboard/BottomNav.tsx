@@ -27,10 +27,10 @@ export function BottomNav() {
     <>
       <nav className="fixed bottom-0 inset-x-0 z-40">
         <div
-          className="max-w-md mx-auto border-t border-white/8 px-2 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]"
+          className="max-w-md mx-auto border-t px-2 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]"
           style={{
-            background:
-              "linear-gradient(180deg, oklch(0.13 0.012 162 / 0.96), oklch(0.07 0.006 160 / 0.98))",
+            background: "var(--nav-gradient)",
+            borderColor: "var(--nav-border)",
             backdropFilter: "blur(32px) saturate(180%)",
           }}
         >
