@@ -521,17 +521,27 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
                 <PromoCards />
 
-                <Field label="Adicionar sacos de entulho (opcional)">
-                  <p className="text-[11px] text-muted-foreground -mt-1 mb-2">
+                <div className="rounded-3xl border border-warning/40 bg-warning/10 p-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[13px] font-semibold text-foreground inline-flex items-center gap-1.5">
+                      <ShoppingBag className="h-4 w-4 text-warning" />
+                      Adicionar sacos de entulho
+                    </p>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-warning text-background px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider shadow-soft">
+                      <Sparkles className="h-2.5 w-2.5" />
+                      Talvez você goste
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-foreground/70 mb-2.5">
                     Inclua sacos no mesmo pedido · enviados junto ao tambor, sem frete extra.
                   </p>
-                  <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar snap-x snap-mandatory">
+                  <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 no-scrollbar snap-x snap-mandatory">
                     <button
                       onClick={() => setBagBundleId(null)}
                       className={`snap-start shrink-0 w-[120px] rounded-2xl border p-3 text-left transition-all ${
                         bagBundleId === null
                           ? "border-primary bg-primary-soft/40"
-                          : "border-border bg-surface hover:border-primary/30"
+                          : "border-warning/30 bg-surface hover:border-primary/30"
                       }`}
                     >
                       <div className="h-8 w-8 rounded-xl bg-muted flex items-center justify-center">
@@ -549,12 +559,12 @@ export function RequestModal({ open, onClose, workType }: Props) {
                           className={`snap-start shrink-0 w-[140px] rounded-2xl border p-3 text-left transition-all ${
                             active
                               ? "border-primary bg-primary-soft/40"
-                              : "border-border bg-surface hover:border-primary/30"
+                              : "border-warning/30 bg-surface hover:border-primary/30"
                           }`}
                         >
                           <div
                             className={`h-8 w-8 rounded-xl flex items-center justify-center ${
-                              active ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+                              active ? "bg-primary text-primary-foreground" : "bg-warning/20 text-warning"
                             }`}
                           >
                             <ShoppingBag className="h-4 w-4" />
@@ -576,7 +586,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
                       );
                     })}
                   </div>
-                </Field>
+                </div>
 
                 <div className="rounded-3xl bg-muted/40 border border-border p-4 space-y-1">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
