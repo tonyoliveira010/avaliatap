@@ -42,7 +42,7 @@ export function BottomNav() {
                   <li key={t.id} className="flex-1 flex justify-center">
                     <motion.button
                       whileTap={{ scale: 0.92 }}
-                      onClick={() => setRequestOpen(true)}
+                      onClick={() => setChoiceOpen(true)}
                       className="-mt-6 h-[58px] w-[58px] rounded-2xl bg-primary text-primary-foreground flex flex-col items-center justify-center shadow-glow border-2 border-background"
                       aria-label="Solicitar tambor"
                     >
