@@ -7,11 +7,15 @@ import {
   HelpCircle,
   LogOut,
   MapPin,
+  Moon,
   Settings,
   Shield,
   Star,
+  Sun,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useTheme } from "@/hooks/use-theme";
+
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({ meta: [{ title: "Perfil · Tambor" }] }),
