@@ -296,14 +296,8 @@ function SelectStage({
             </div>
           );
         })()}
-        {method === "in_person" && (
-          <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Para garantir sua entrega cobramos a{" "}
-            <strong className="text-primary font-semibold">{GARANTIA_BRAND}</strong> de{" "}
-            <strong>R$ {reservaGarantia}</strong> via PIX agora. Esse valor é{" "}
-            <strong>abatido do total</strong> no ato da entrega — você só paga a diferença presencialmente.
-          </div>
-        )}
+
+
 
         {method === "credits" && (
           <div className={`rounded-2xl px-4 py-3 text-[12px] leading-snug border ${
