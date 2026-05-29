@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { RequestModal } from "./RequestModal";
+import { CleanupModal } from "./CleanupModal";
+import { RequestChoiceModal } from "./RequestChoiceModal";
 
 type Tab = { id: string; to: string; icon: typeof Home; label: string; center?: boolean };
 
