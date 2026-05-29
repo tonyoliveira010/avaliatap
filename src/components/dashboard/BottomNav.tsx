@@ -18,7 +18,10 @@ const tabs: Tab[] = [
 
 export function BottomNav() {
   const { pathname } = useLocation();
+  const [choiceOpen, setChoiceOpen] = useState(false);
   const [requestOpen, setRequestOpen] = useState(false);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
+
 
   return (
     <>
