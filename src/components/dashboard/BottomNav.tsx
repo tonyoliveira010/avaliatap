@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { RequestModal } from "./RequestModal";
+import { CleanupModal } from "./CleanupModal";
+import { RequestChoiceModal } from "./RequestChoiceModal";
 
 type Tab = { id: string; to: string; icon: typeof Home; label: string; center?: boolean };
 
@@ -16,16 +18,19 @@ const tabs: Tab[] = [
 
 export function BottomNav() {
   const { pathname } = useLocation();
+  const [choiceOpen, setChoiceOpen] = useState(false);
   const [requestOpen, setRequestOpen] = useState(false);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
+
 
   return (
     <>
       <nav className="fixed bottom-0 inset-x-0 z-40">
         <div
-          className="max-w-md mx-auto border-t border-white/8 px-2 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]"
+          className="max-w-md mx-auto border-t px-2 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]"
           style={{
-            background:
-              "linear-gradient(180deg, oklch(0.13 0.012 162 / 0.96), oklch(0.07 0.006 160 / 0.98))",
+            background: "var(--nav-gradient)",
+            borderColor: "var(--nav-border)",
             backdropFilter: "blur(32px) saturate(180%)",
           }}
         >
@@ -37,7 +42,7 @@ export function BottomNav() {
                   <li key={t.id} className="flex-1 flex justify-center">
                     <motion.button
                       whileTap={{ scale: 0.92 }}
-                      onClick={() => setRequestOpen(true)}
+                      onClick={() => setChoiceOpen(true)}
                       className="-mt-6 h-[58px] w-[58px] rounded-2xl bg-primary text-primary-foreground flex flex-col items-center justify-center shadow-glow border-2 border-background"
                       aria-label="Solicitar tambor"
                     >
@@ -85,7 +90,20 @@ export function BottomNav() {
         </div>
       </nav>
 
+      <RequestChoiceModal
+        open={choiceOpen}
+        onClose={() => setChoiceOpen(false)}
+        onSelectTambor={() => {
+          setChoiceOpen(false);
+          setRequestOpen(true);
+        }}
+        onSelectCleanup={() => {
+          setChoiceOpen(false);
+          setCleanupOpen(true);
+        }}
+      />
       <RequestModal open={requestOpen} onClose={() => setRequestOpen(false)} />
+      <CleanupModal open={cleanupOpen} onClose={() => setCleanupOpen(false)} />
     </>
   );
 }
