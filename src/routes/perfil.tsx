@@ -80,10 +80,60 @@ function ProfilePage() {
         </div>
       </motion.section>
 
+      {/* Aparência */}
+      <section className="px-5 mt-6">
+        <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
+          Aparência
+        </h3>
+        <div className="bg-surface rounded-3xl border border-border shadow-soft p-4">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-primary-soft flex items-center justify-center shrink-0">
+              {isLight ? (
+                <Sun className="h-4 w-4 text-primary" />
+              ) : (
+                <Moon className="h-4 w-4 text-primary" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[14px] font-medium text-foreground">
+                {isLight ? "Modo claro" : "Modo escuro"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Toque para alternar o tema do app
+              </p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={isLight}
+              aria-label="Alternar modo claro"
+              onClick={toggle}
+              className={`relative h-7 w-12 rounded-full transition-colors shrink-0 ${
+                isLight ? "bg-primary" : "bg-muted"
+              }`}
+            >
+              <motion.span
+                layout
+                transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                className={`absolute top-1 h-5 w-5 rounded-full bg-background shadow-soft flex items-center justify-center ${
+                  isLight ? "right-1" : "left-1"
+                }`}
+              >
+                {isLight ? (
+                  <Sun className="h-3 w-3 text-warning" />
+                ) : (
+                  <Moon className="h-3 w-3 text-muted-foreground" />
+                )}
+              </motion.span>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Menu groups */}
       <div className="mt-6 space-y-6 pb-6">
         {groups.map((g) => (
           <section key={g.title} className="px-5">
+
             <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 px-1">
               {g.title}
             </h3>
