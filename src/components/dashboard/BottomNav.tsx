@@ -90,7 +90,20 @@ export function BottomNav() {
         </div>
       </nav>
 
+      <RequestChoiceModal
+        open={choiceOpen}
+        onClose={() => setChoiceOpen(false)}
+        onSelectTambor={() => {
+          setChoiceOpen(false);
+          setRequestOpen(true);
+        }}
+        onSelectCleanup={() => {
+          setChoiceOpen(false);
+          setCleanupOpen(true);
+        }}
+      />
       <RequestModal open={requestOpen} onClose={() => setRequestOpen(false)} />
+      <CleanupModal open={cleanupOpen} onClose={() => setCleanupOpen(false)} />
     </>
   );
 }
