@@ -14,16 +14,167 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      credit_packages: {
+        Row: {
+          active: boolean
+          bonus: number
+          checkout_url: string | null
+          created_at: string
+          credits: number
+          discount: number
+          highlight: string | null
+          id: string
+          price: number
+          sort_order: number
+          tag: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bonus?: number
+          checkout_url?: string | null
+          created_at?: string
+          credits: number
+          discount?: number
+          highlight?: string | null
+          id: string
+          price: number
+          sort_order?: number
+          tag?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bonus?: number
+          checkout_url?: string | null
+          created_at?: string
+          credits?: number
+          discount?: number
+          highlight?: string | null
+          id?: string
+          price?: number
+          sort_order?: number
+          tag?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_orders: {
+        Row: {
+          amount: number
+          bonus: number
+          created_at: string
+          credits: number
+          id: string
+          package_id: string | null
+          paid_at: string | null
+          provider: string
+          provider_ref: string | null
+          receipt_url: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          package_id?: string | null
+          paid_at?: string | null
+          provider?: string
+          provider_ref?: string | null
+          receipt_url?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bonus?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          package_id?: string | null
+          paid_at?: string | null
+          provider?: string
+          provider_ref?: string | null
+          receipt_url?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "credit_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          credits: number
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +301,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
