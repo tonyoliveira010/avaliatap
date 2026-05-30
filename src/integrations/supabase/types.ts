@@ -165,6 +165,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_credit_order: {
+        Args: { _order_id: string; _provider_ref: string; _receipt_url: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
