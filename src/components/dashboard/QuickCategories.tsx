@@ -1,7 +1,8 @@
-import { Hammer, Bomb, Sparkles, CalendarRange } from "lucide-react";
+import { Hammer, Bomb, Sparkles, CalendarRange, ShoppingBag, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ServiceRequestModal } from "./ServiceRequestModal";
 import { workTypes, type WorkTypeId } from "@/lib/work-types";
 
@@ -51,6 +52,27 @@ export function QuickCategories() {
             </motion.button>
           ))}
         </div>
+
+        <Link
+          to="/produtos"
+          className="mt-2.5 flex items-center gap-3 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 to-primary-soft/20 p-3.5 active:scale-[0.99] transition-transform"
+        >
+          <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-soft">
+            <ShoppingBag className="h-5 w-5" strokeWidth={2.2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-[14px] font-semibold text-foreground">Produtos</p>
+              <span className="rounded-full bg-success/15 text-success px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                Economize
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+              Sacos de entulho, EPI, lonas e itens para completar sua obra.
+            </p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+        </Link>
       </section>
 
       <ServiceRequestModal
