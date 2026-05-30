@@ -1,7 +1,8 @@
-import { Hammer, Bomb, Sparkles, CalendarRange } from "lucide-react";
+import { Hammer, Bomb, Sparkles, CalendarRange, ShoppingBag, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ServiceRequestModal } from "./ServiceRequestModal";
 import { workTypes, type WorkTypeId } from "@/lib/work-types";
 
