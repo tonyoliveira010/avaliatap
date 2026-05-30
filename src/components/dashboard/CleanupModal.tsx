@@ -442,7 +442,7 @@ export function CleanupModal({ open, onClose }: Props) {
                             active ? "bg-success text-white" : "bg-muted text-foreground"
                           }`}
                         >
-                          <m.icon className="h-4.5 w-4.5" />
+                          <m.icon className="h-4 w-4" />
                         </div>
                         <div className="flex-1 text-left">
                           <p className="text-[13px] font-semibold text-foreground">{m.label}</p>
