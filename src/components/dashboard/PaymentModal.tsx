@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { X, QrCode, Coins, Handshake, Check, ChevronRight, ShieldCheck, MapPin, Calendar, Copy, Download, Clock, Truck, AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { GARANTIA_BRAND } from "@/lib/pricing";
 import { userCredits, priceInCredits, CREDITS_DISCOUNT } from "@/lib/credits";
 
 export interface OrderSummary {
@@ -9,6 +8,7 @@ export interface OrderSummary {
   qty: number;
   dias: number;
   address: string;
+  distanceKm: number;
   reservationDate?: Date;
   reservationEndDate?: Date;
   reservationSlot?: string;
@@ -16,17 +16,20 @@ export interface OrderSummary {
   subtotal: number;
   logistica: number;
   handlingFee?: number;
-  /** Garantia Tambor (antes "caução") */
-  garantia: number;
-  garantiaChargedNow?: boolean;
+  /** Desconto de fidelidade em R$ */
+  loyaltyDiscount?: number;
   total: number;
   pixTotal?: number;
-  /** Valor da Garantia Tambor cobrado via PIX como reserva no pagamento presencial */
-  inPersonReserve?: number;
   workTypeLabel?: string;
   /** Sacos de entulho adicionados ao pedido */
   bagsLabel?: string;
   bagsCost?: number;
+  bagHandling?: number;
+  /** Limpeza profissional */
+  cleanupLabel?: string;
+  cleanupCost?: number;
+  /** Ajudantes de manuseio (ordebump) */
+  helpersCost?: number;
 }
 
 
@@ -57,7 +60,7 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     id: "in_person",
     icon: Handshake,
     title: "Pagar pessoalmente",
-    desc: `No ato da entrega · cobramos a ${GARANTIA_BRAND} via PIX agora como reserva (abatida do total)`,
+    desc: "Pague o valor integral no ato da entrega · sem caução e sem reserva antecipada",
   },
 ];
 
@@ -65,18 +68,17 @@ export function PaymentModal({ open, onClose, summary }: Props) {
   const [method, setMethod] = useState<Method>("pix");
   const [stage, setStage] = useState<"select" | "success">("select");
 
-  const reservaGarantia = summary.inPersonReserve ?? (summary.garantiaChargedNow ? summary.garantia : 0);
   const pixTotal = summary.pixTotal ?? Math.round(summary.total * 0.8);
   const creditsCost = priceInCredits(summary.total);
   const insufficientCredits = userCredits.balance < creditsCost;
   const amountNow =
-    method === "pix" ? pixTotal : method === "credits" ? creditsCost : reservaGarantia;
+    method === "pix" ? pixTotal : method === "credits" ? creditsCost : summary.total;
   const amountLabel =
     method === "pix"
       ? "Total à vista (PIX ‑20%)"
       : method === "credits"
         ? "Cobrado em créditos"
-        : `Reserva ${GARANTIA_BRAND} (PIX)`;
+        : "Total na entrega";
 
   function handleClose() {
     onClose();
@@ -114,7 +116,6 @@ export function PaymentModal({ open, onClose, summary }: Props) {
                 summary={summary}
                 amountNow={amountNow}
                 amountLabel={amountLabel}
-                reservaGarantia={reservaGarantia}
                 creditsCost={creditsCost}
                 insufficientCredits={insufficientCredits}
               />
@@ -141,7 +142,6 @@ function SelectStage({
   summary,
   amountNow,
   amountLabel,
-  reservaGarantia,
   creditsCost,
   insufficientCredits,
 }: {
@@ -152,7 +152,6 @@ function SelectStage({
   summary: OrderSummary;
   amountNow: number;
   amountLabel: string;
-  reservaGarantia: number;
   creditsCost: number;
   insufficientCredits: boolean;
 }) {
@@ -193,7 +192,7 @@ function SelectStage({
           <div className="mt-1.5 space-y-1 text-[12px] text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <MapPin className="h-3 w-3" />
-              <span className="truncate">{summary.address}</span>
+              <span className="truncate">{summary.address} · {summary.distanceKm} km</span>
             </div>
             {summary.reservationDate && (
               <div className="flex items-center gap-1.5">
@@ -229,11 +228,18 @@ function SelectStage({
             {summary.bagsCost ? (
               <Row label={summary.bagsLabel ?? "Sacos de entulho"} value={`R$ ${summary.bagsCost}`} />
             ) : null}
-            <Row
-              label={summary.garantiaChargedNow ? GARANTIA_BRAND : `${GARANTIA_BRAND} · isenta`}
-              value={summary.garantiaChargedNow ? `R$ ${summary.garantia}` : "Isenta"}
-              muted={!summary.garantiaChargedNow}
-            />
+            {summary.bagHandling ? (
+              <Row label="Manuseio de sacos" value={`R$ ${summary.bagHandling}`} />
+            ) : null}
+            {summary.cleanupCost ? (
+              <Row label={summary.cleanupLabel ?? "Limpeza profissional"} value={`R$ ${summary.cleanupCost}`} />
+            ) : null}
+            {summary.helpersCost ? (
+              <Row label="Ajudantes de manuseio" value={`R$ ${summary.helpersCost}`} />
+            ) : null}
+            {summary.loyaltyDiscount ? (
+              <Row label="Desconto fidelidade" value={`− R$ ${summary.loyaltyDiscount}`} muted />
+            ) : null}
             <div className="h-px bg-border my-1" />
             <Row label="Total previsto" value={`R$ ${summary.total}`} bold />
           </div>
@@ -297,8 +303,6 @@ function SelectStage({
           );
         })()}
 
-
-
         {method === "credits" && (
           <div className={`rounded-2xl px-4 py-3 text-[12px] leading-snug border ${
             insufficientCredits
@@ -322,19 +326,8 @@ function SelectStage({
         )}
         {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            {summary.garantiaChargedNow ? (
-              <>
-                Para garantir sua entrega cobramos a{" "}
-                <strong className="text-primary font-semibold">{GARANTIA_BRAND}</strong> de{" "}
-                <strong>R$ {reservaGarantia}</strong> via PIX agora. Esse valor é{" "}
-                <strong>abatido do total</strong> no ato da entrega — você só paga a diferença presencialmente.
-              </>
-            ) : (
-              <>
-                Seu volume contratado dispensa a {GARANTIA_BRAND}.{" "}
-                <strong>Nenhuma reserva via PIX será cobrada</strong> — você paga o valor integral no ato da entrega.
-              </>
-            )}
+            Você paga o <strong>valor integral no ato da entrega</strong>. Não cobramos caução nem
+            reserva antecipada — sua reserva fica garantida por até 24h.
           </div>
         )}
 
@@ -390,7 +383,9 @@ function SuccessStage({
         >
           <Check className="h-7 w-7 text-primary-foreground" strokeWidth={3} />
         </motion.div>
-        <h2 className="mt-4 text-[20px] font-semibold">Pagamento confirmado!</h2>
+        <h2 className="mt-4 text-[20px] font-semibold">
+          {method === "in_person" ? "Reserva confirmada!" : "Pagamento confirmado!"}
+        </h2>
         <p className="mt-1 text-[12px] text-white/70">
           Sua entrega está reservada com sucesso
         </p>
@@ -403,7 +398,7 @@ function SuccessStage({
             </span>
           </div>
           <p className="text-center text-[28px] font-semibold tabular-nums mt-2">
-            R$ {amount.toFixed(2).replace(".", ",")}
+            {method === "credits" ? `${amount} cr` : `R$ ${amount.toFixed(2).replace(".", ",")}`}
           </p>
           <p className="text-center text-[11px] text-muted-foreground mt-0.5">
             {new Date().toLocaleString("pt-BR", {
