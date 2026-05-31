@@ -1,32 +1,32 @@
 import { motion } from "motion/react";
 import { ShoppingBag, Plus, Minus, Check, Truck } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { bagBundles } from "@/lib/bag-bundles";
 
-interface Bundle {
-  id: string;
-  size: string;
-  qty: number;
-  price: number;
-  perBag: number;
-  highlight?: string;
+interface Props {
+  /** Quando embutido no fluxo de pedido, reporta a seleção para o pedido. */
+  onChange?: (bundleId: string | null, units: number, total: number) => void;
+  /** Esconde o título/seção (uso embutido em modais). */
+  embedded?: boolean;
 }
 
-const bundles: Bundle[] = [
-  { id: "p10", size: "100L reforçado", qty: 10, price: 39, perBag: 3.9 },
-  { id: "p25", size: "100L reforçado", qty: 25, price: 79, perBag: 3.16, highlight: "Economia 19%" },
-  { id: "p50", size: "200L industrial", qty: 50, price: 169, perBag: 3.38, highlight: "Mais vendido" },
-  { id: "p100", size: "200L industrial", qty: 100, price: 299, perBag: 2.99, highlight: "Melhor R$/saco" },
-];
+/** Taxa de manuseio de sacos (ensacamento + retirada manual). */
+export const BAG_HANDLING_FEE = 25;
 
-export function BagsCard() {
+export function BagsCard({ onChange, embedded }: Props) {
   const [selected, setSelected] = useState<string>("p50");
   const [units, setUnits] = useState(1);
 
-  const bundle = useMemo(() => bundles.find((b) => b.id === selected)!, [selected]);
+  const bundle = useMemo(() => bagBundles.find((b) => b.id === selected)!, [selected]);
   const total = bundle.price * units;
 
+  useEffect(() => {
+    onChange?.(selected, units, total);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected, units, total]);
+
   return (
-    <section className="px-5 mt-7">
+    <section className={embedded ? "" : "px-5 mt-7"}>
       <div className="flex items-center justify-between mb-3">
         <div>
           <h3 className="text-[15px] font-semibold text-foreground">Compre sacos de entulho</h3>
@@ -39,7 +39,7 @@ export function BagsCard() {
 
       <div className="rounded-3xl border border-border bg-surface p-4 shadow-soft">
         <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-2 no-scrollbar snap-x snap-mandatory">
-          {bundles.map((b) => {
+          {bagBundles.map((b) => {
             const active = selected === b.id;
             return (
               <motion.button
@@ -112,14 +112,29 @@ export function BagsCard() {
             </p>
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-1.5 rounded-2xl bg-primary text-primary-foreground px-3.5 py-2.5 font-semibold text-[12px] shadow-glow"
-          >
-            <Truck className="h-3.5 w-3.5" />
-            Adicionar
-          </motion.button>
+          {!embedded && (
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-primary text-primary-foreground px-3.5 py-2.5 font-semibold text-[12px] shadow-glow"
+            >
+              <Truck className="h-3.5 w-3.5" />
+              Adicionar
+            </motion.button>
+          )}
+          {embedded && (
+            <span className="inline-flex items-center gap-1.5 rounded-2xl bg-success/15 text-success px-3.5 py-2.5 font-semibold text-[12px]">
+              <Check className="h-3.5 w-3.5" />
+              No pedido
+            </span>
+          )}
         </div>
+
+        {embedded && (
+          <p className="mt-2.5 text-[11px] text-muted-foreground leading-snug">
+            Sacos seguem junto ao tambor, sem frete extra. Uma taxa de manuseio de R$ {BAG_HANDLING_FEE}{" "}
+            cobre o ensacamento e a retirada manual.
+          </p>
+        )}
       </div>
     </section>
   );
