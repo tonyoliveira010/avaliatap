@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Clock, MapPin, Image as ImageIcon, Layers, Camera, CheckCircle2 } from "lucide-react";
+import {
+  Clock,
+  MapPin,
+  Image as ImageIcon,
+  Layers,
+  Camera,
+  CheckCircle2,
+  Truck,
+  PackageOpen,
+  Recycle,
+  Flag,
+} from "lucide-react";
 import { OrderDetailsModal } from "./OrderDetailsModal";
 import { PhotoChecklistModal } from "./PhotoChecklistModal";
 import { getMaterialIcon, getOrderTitle } from "@/lib/materials";
