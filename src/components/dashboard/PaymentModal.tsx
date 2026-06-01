@@ -75,13 +75,13 @@ export function PaymentModal({ open, onClose, summary }: Props) {
   const creditsCost = priceInCredits(summary.total);
   const insufficientCredits = userCredits.balance < creditsCost;
   const amountNow =
-    method === "pix" ? pixTotal : method === "credits" ? creditsCost : summary.total;
+    method === "pix" ? pixTotal : method === "credits" ? creditsCost : RESERVATION_FEE;
   const amountLabel =
     method === "pix"
       ? "Total à vista (PIX ‑20%)"
       : method === "credits"
         ? "Cobrado em créditos"
-        : "Total na entrega";
+        : "Reserva via PIX agora";
 
   function handleClose() {
     onClose();
