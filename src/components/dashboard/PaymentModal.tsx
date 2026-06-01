@@ -329,8 +329,10 @@ function SelectStage({
         )}
         {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Você paga o <strong>valor integral no ato da entrega</strong>. Não cobramos caução nem
-            reserva antecipada — sua reserva fica garantida por até 24h.
+            Cobramos <strong>R$ {RESERVATION_FEE} via PIX agora</strong> para custos operacionais e
+            logísticos. Esse valor é <strong>abatido do total</strong>: na entrega você paga só o
+            restante de <strong>R$ {Math.max(0, summary.total - RESERVATION_FEE)}</strong>. Reserva
+            garantida por até 24h.
           </div>
         )}
 
