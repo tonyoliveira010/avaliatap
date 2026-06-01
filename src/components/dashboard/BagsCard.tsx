@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { ShoppingBag, Plus, Minus, Check, Truck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { bagBundles } from "@/lib/bag-bundles";
