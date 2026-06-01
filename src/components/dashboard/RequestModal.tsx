@@ -80,7 +80,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
   const [prazoIdx, setPrazoIdx] = useState(1);
   const [customDays, setCustomDays] = useState(5);
   const [address, setAddress] = useState("R. Aspicuelta, 350 - Vila Madalena");
-  const [distanceKm, setDistanceKm] = useState(12);
+  const [distanceKm] = useState(12);
   const [date, setDate] = useState<Date | undefined>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -495,29 +495,34 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     />
                   </div>
 
-                  {/* Distância estimada (mock — mapa em tempo real em breve) */}
-                  <div className="mt-3 rounded-2xl border border-border bg-muted/30 p-3.5">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-[12px] font-semibold text-foreground inline-flex items-center gap-1.5">
-                        <Navigation className="h-3.5 w-3.5 text-primary" />
-                        Distância estimada
-                      </p>
-                      <span className="text-[13px] font-bold text-foreground tabular-nums">{distanceKm} km</span>
+                  {/* Pin no mapa — cliente apenas informa a localização.
+                      A distância e o valor do frete são estimados pela equipe. */}
+                  <button
+                    type="button"
+                    className="mt-2 w-full rounded-2xl border border-border bg-muted/30 px-4 py-3 flex items-center gap-3 text-left hover:border-primary/40 transition-colors"
+                  >
+                    <div className="h-9 w-9 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+                      <Navigation className="h-4 w-4" />
                     </div>
-                    <input
-                      type="range"
-                      min={1}
-                      max={60}
-                      value={distanceKm}
-                      onChange={(e) => setDistanceKm(Number(e.target.value))}
-                      className="w-full accent-primary"
-                    />
-                    <p className="mt-1.5 text-[11px] text-muted-foreground leading-snug">
-                      Frete: <strong className="text-foreground">R$ {pricing.logistics}</strong> (retirada +
-                      descarte). R$ 90 até 20 km · R$ 5 por km adicional. Mapa em tempo real em breve.
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold text-foreground">Adicionar pin no mapa</p>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Marque o ponto exato da retirada para agilizar a entrega.
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </button>
+
+                  <div className="mt-2 rounded-xl bg-primary-soft/40 border border-primary/20 px-3 py-2.5 text-[11px] text-foreground/80 leading-snug flex items-start gap-2">
+                    <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                    <span>
+                      O <strong>frete é calculado pela equipe</strong> conforme a distância da sua
+                      localização (R$ 90 até 20 km + R$ 5 por km adicional, cobrindo retirada e
+                      descarte). Você verá o valor final na confirmação.
+                    </span>
                   </div>
                 </Field>
+
 
                 <Field label="Prazo desejado">
                   <div className="grid grid-cols-4 gap-2">

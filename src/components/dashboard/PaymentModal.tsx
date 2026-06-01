@@ -41,6 +41,9 @@ interface Props {
 
 type Method = "pix" | "credits" | "in_person";
 
+/** Custos operacionais/logísticos pagos via PIX para garantir a reserva. */
+const RESERVATION_FEE = 100;
+
 const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; badge?: string }[] = [
   {
     id: "pix",
@@ -60,7 +63,7 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     id: "in_person",
     icon: Handshake,
     title: "Pagar pessoalmente",
-    desc: "Pague o valor integral no ato da entrega · sem caução e sem reserva antecipada",
+    desc: "Pague R$ 100 via PIX agora (custos operacionais e logísticos) e o restante na entrega",
   },
 ];
 
@@ -72,13 +75,13 @@ export function PaymentModal({ open, onClose, summary }: Props) {
   const creditsCost = priceInCredits(summary.total);
   const insufficientCredits = userCredits.balance < creditsCost;
   const amountNow =
-    method === "pix" ? pixTotal : method === "credits" ? creditsCost : summary.total;
+    method === "pix" ? pixTotal : method === "credits" ? creditsCost : RESERVATION_FEE;
   const amountLabel =
     method === "pix"
       ? "Total à vista (PIX ‑20%)"
       : method === "credits"
         ? "Cobrado em créditos"
-        : "Total na entrega";
+        : "Reserva via PIX agora";
 
   function handleClose() {
     onClose();
@@ -326,8 +329,10 @@ function SelectStage({
         )}
         {method === "in_person" && (
           <div className="rounded-2xl bg-primary-soft/50 border border-primary/20 px-4 py-3 text-[12px] text-foreground/80 leading-snug">
-            Você paga o <strong>valor integral no ato da entrega</strong>. Não cobramos caução nem
-            reserva antecipada — sua reserva fica garantida por até 24h.
+            Cobramos <strong>R$ {RESERVATION_FEE} via PIX agora</strong> para custos operacionais e
+            logísticos. Esse valor é <strong>abatido do total</strong>: na entrega você paga só o
+            restante de <strong>R$ {Math.max(0, summary.total - RESERVATION_FEE)}</strong>. Reserva
+            garantida por até 24h.
           </div>
         )}
 

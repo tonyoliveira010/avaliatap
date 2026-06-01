@@ -10,20 +10,50 @@ interface Props {
   embedded?: boolean;
 }
 
-/** Taxa de manuseio de sacos (ensacamento + retirada manual). */
-export const BAG_HANDLING_FEE = 25;
+/**
+ * O manuseio/ensacamento dos sacos é coberto pela opção de ajudantes (+R$150),
+ * então não cobramos mais uma taxa separada de manuseio de sacos.
+ */
+export const BAG_HANDLING_FEE = 0;
 
 export function BagsCard({ onChange, embedded }: Props) {
+  // Sacos são opcionais: começam desativados para evitar compras por engano.
+  const [enabled, setEnabled] = useState(!embedded);
   const [selected, setSelected] = useState<string>("p50");
   const [units, setUnits] = useState(1);
 
   const bundle = useMemo(() => bagBundles.find((b) => b.id === selected)!, [selected]);
-  const total = bundle.price * units;
+  const total = enabled ? bundle.price * units : 0;
 
   useEffect(() => {
-    onChange?.(selected, units, total);
+    onChange?.(enabled ? selected : null, enabled ? units : 0, total);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, units, total]);
+  }, [enabled, selected, units, total]);
+
+  // Estado compacto: convite para adicionar sacos (somente embutido no pedido)
+  if (embedded && !enabled) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEnabled(true)}
+        className="w-full text-left rounded-3xl border border-dashed border-border bg-muted/20 p-4 flex items-center gap-3 hover:border-primary/40 transition-colors"
+      >
+        <div className="h-10 w-10 rounded-2xl bg-muted text-foreground flex items-center justify-center shrink-0">
+          <ShoppingBag className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[14px] font-semibold text-foreground">Quer sacos de entulho?</p>
+          <p className="text-[11.5px] text-muted-foreground leading-snug">
+            Opcional · entrega junto ao tambor, sem frete extra. Toque para escolher um pacote.
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2.5 py-1.5 text-[11px] font-semibold shrink-0">
+          <Plus className="h-3.5 w-3.5" />
+          Adicionar
+        </span>
+      </button>
+    );
+  }
 
   return (
     <section className={embedded ? "" : "px-5 mt-7"}>
@@ -32,9 +62,19 @@ export function BagsCard({ onChange, embedded }: Props) {
           <h3 className="text-[15px] font-semibold text-foreground">Compre sacos de entulho</h3>
           <p className="text-[11px] text-muted-foreground">Economize comprando em pacote · entrega junto ao tambor</p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft text-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider">
-          Economia
-        </span>
+        {embedded ? (
+          <button
+            type="button"
+            onClick={() => setEnabled(false)}
+            className="text-[11px] font-semibold text-muted-foreground hover:text-foreground rounded-full bg-muted px-2.5 py-1"
+          >
+            Remover
+          </button>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft text-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider">
+            Economia
+          </span>
+        )}
       </div>
 
       <div className="rounded-3xl border border-border bg-surface p-4 shadow-soft">
@@ -131,8 +171,8 @@ export function BagsCard({ onChange, embedded }: Props) {
 
         {embedded && (
           <p className="mt-2.5 text-[11px] text-muted-foreground leading-snug">
-            Sacos seguem junto ao tambor, sem frete extra. Uma taxa de manuseio de R$ {BAG_HANDLING_FEE}{" "}
-            cobre o ensacamento e a retirada manual.
+            Sacos seguem junto ao tambor, sem frete extra. O ensacamento e a retirada manual ficam
+            por conta da opção de ajudantes, quando você quiser.
           </p>
         )}
       </div>
