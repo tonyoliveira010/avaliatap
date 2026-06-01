@@ -80,7 +80,7 @@ export function RequestModal({ open, onClose, workType }: Props) {
   const [prazoIdx, setPrazoIdx] = useState(1);
   const [customDays, setCustomDays] = useState(5);
   const [address, setAddress] = useState("R. Aspicuelta, 350 - Vila Madalena");
-  const [distanceKm, setDistanceKm] = useState(12);
+  const [distanceKm] = useState(12);
   const [date, setDate] = useState<Date | undefined>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
