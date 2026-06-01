@@ -41,6 +41,9 @@ interface Props {
 
 type Method = "pix" | "credits" | "in_person";
 
+/** Custos operacionais/logísticos pagos via PIX para garantir a reserva. */
+const RESERVATION_FEE = 100;
+
 const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; badge?: string }[] = [
   {
     id: "pix",
@@ -60,7 +63,7 @@ const methods: { id: Method; icon: typeof QrCode; title: string; desc: string; b
     id: "in_person",
     icon: Handshake,
     title: "Pagar pessoalmente",
-    desc: "Pague o valor integral no ato da entrega · sem caução e sem reserva antecipada",
+    desc: "Pague R$ 100 via PIX agora (custos operacionais e logísticos) e o restante na entrega",
   },
 ];
 
