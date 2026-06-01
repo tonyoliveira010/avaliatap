@@ -219,8 +219,9 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
                         }`}
                       />
                     )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
