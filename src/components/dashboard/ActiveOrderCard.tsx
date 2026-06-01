@@ -185,31 +185,40 @@ export function ActiveOrderCard({ order }: { order: OrderData }) {
 
           <div className="mt-4">
             <div className="flex items-center">
-              {steps.map((step, i) => (
-                <div key={step} className="flex-1 flex items-center">
-                  <div className="relative flex flex-col items-center flex-1">
-                    <div
-                      className={`h-2 w-2 rounded-full ring-4 transition-colors ${
-                        i <= order.progress
-                          ? "bg-primary ring-primary/20"
-                          : "bg-border ring-transparent"
-                      }`}
-                    />
-                    <span
-                      className={`mt-1.5 text-[9px] font-medium ${
-                        i <= order.progress ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      {step}
-                    </span>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <div
-                      className={`h-0.5 flex-1 -translate-y-2 ${
-                        i < order.progress ? "bg-primary" : "bg-border"
-                      }`}
-                    />
-                  )}
+              {steps.map((step, i) => {
+                const done = i < order.progress;
+                const current = i === order.progress;
+                const reached = i <= order.progress;
+                const StepIcon = current ? step.icon : done ? CheckCircle2 : step.icon;
+                return (
+                  <div key={step.label} className="flex-1 flex items-center">
+                    <div className="relative flex flex-col items-center flex-1">
+                      <div
+                        className={`h-7 w-7 rounded-full flex items-center justify-center ring-4 transition-colors ${
+                          current
+                            ? "bg-primary text-primary-foreground ring-primary/20"
+                            : done
+                              ? "bg-primary/15 text-primary ring-transparent"
+                              : "bg-muted text-muted-foreground ring-transparent"
+                        }`}
+                      >
+                        <StepIcon className="h-3.5 w-3.5" strokeWidth={2.4} />
+                      </div>
+                      <span
+                        className={`mt-1.5 text-[9px] font-medium ${
+                          reached ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {step.label}
+                      </span>
+                    </div>
+                    {i < steps.length - 1 && (
+                      <div
+                        className={`h-0.5 flex-1 -translate-y-3.5 ${
+                          i < order.progress ? "bg-primary" : "bg-border"
+                        }`}
+                      />
+                    )}
                 </div>
               ))}
             </div>
