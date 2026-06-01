@@ -31,7 +31,12 @@ const statusMap: Record<OrderStatus, { label: string; dot: string; pill: string 
   completed: { label: "Finalizado", dot: "bg-muted-foreground", pill: "bg-muted text-muted-foreground" },
 };
 
-const steps = ["Entrega", "Em uso", "Retirada", "Finalizado"] as const;
+const steps = [
+  { label: "Entrega", icon: Truck },
+  { label: "Em uso", icon: PackageOpen },
+  { label: "Retirada", icon: Recycle },
+  { label: "Finalizado", icon: Flag },
+] as const;
 
 export interface DrumUnit {
   id: string;
