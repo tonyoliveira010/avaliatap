@@ -834,17 +834,8 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     <CheckCircle2 className="h-4 w-4 text-success" />
                   </motion.div>
                 )}
-
-                <Field label="Foto da obra (opcional)">
-                  <button className="w-full rounded-2xl border-2 border-dashed border-border bg-muted/40 px-4 py-5 flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-colors">
-                    <Camera className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-[12px] text-muted-foreground">
-                      Toque para adicionar
-                    </span>
-                  </button>
-                </Field>
-
                 <PromoCards />
+
 
                 <div className="rounded-3xl bg-muted/40 border border-border p-4 space-y-1">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
