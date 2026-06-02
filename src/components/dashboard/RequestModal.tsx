@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import {
   X,
+  ArrowLeft,
   Minus,
   Plus,
   MapPin,
@@ -88,6 +89,9 @@ export function RequestModal({ open, onClose, workType }: Props) {
   });
   const [payOpen, setPayOpen] = useState(false);
   const [slot, setSlot] = useState<string | null>(null);
+
+  // Wizard: 1 = pedido, 2 = entrega, (3 = pagamento via PaymentModal)
+  const [step, setStep] = useState<1 | 2>(1);
 
   // Sacos
   const [bagBundleId, setBagBundleId] = useState<string | null>(null);
