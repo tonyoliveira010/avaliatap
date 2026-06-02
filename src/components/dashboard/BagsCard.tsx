@@ -209,6 +209,10 @@ export function BagsCard({ onChange, embedded }: Props) {
           </p>
         )}
       </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
+
   );
 }
