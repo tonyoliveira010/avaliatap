@@ -25,6 +25,10 @@ export function BagsCard({ onChange, embedded }: Props) {
   const bundle = useMemo(() => bagBundles.find((b) => b.id === selected)!, [selected]);
   const total = enabled ? bundle.price * units : 0;
 
+  // Card colapsável na página inicial (começa recolhido)
+  const [collapsed, setCollapsed] = useState(true);
+
+
   useEffect(() => {
     onChange?.(enabled ? selected : null, enabled ? units : 0, total);
     // eslint-disable-next-line react-hooks/exhaustive-deps
