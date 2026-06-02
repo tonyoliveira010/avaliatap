@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import {
   X,
+  ArrowLeft,
   Minus,
   Plus,
   MapPin,
@@ -89,6 +90,9 @@ export function RequestModal({ open, onClose, workType }: Props) {
   const [payOpen, setPayOpen] = useState(false);
   const [slot, setSlot] = useState<string | null>(null);
 
+  // Wizard: 1 = pedido, 2 = entrega, (3 = pagamento via PaymentModal)
+  const [step, setStep] = useState<1 | 2>(1);
+
   // Sacos
   const [bagBundleId, setBagBundleId] = useState<string | null>(null);
   const [bagsTotal, setBagsTotal] = useState(0);
@@ -150,6 +154,11 @@ export function RequestModal({ open, onClose, workType }: Props) {
     if (!showHelperBump) setAddHelpers(false);
   }, [showHelperBump]);
 
+  // Sempre reinicia no passo 1 ao abrir
+  useEffect(() => {
+    if (open) setStep(1);
+  }, [open]);
+
   const summary: OrderSummary = useMemo(
     () => ({
       material,
@@ -203,15 +212,28 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
               <div className="px-5 pt-3 pb-2 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-2xl bg-primary-soft flex items-center justify-center">
-                    <Package2 className="h-5 w-5 text-primary" />
-                  </div>
+                  {step === 2 ? (
+                    <button
+                      onClick={() => setStep(1)}
+                      className="h-11 w-11 rounded-2xl bg-muted flex items-center justify-center active:scale-95"
+                    >
+                      <ArrowLeft className="h-5 w-5 text-foreground" />
+                    </button>
+                  ) : (
+                    <div className="h-11 w-11 rounded-2xl bg-primary-soft flex items-center justify-center">
+                      <Package2 className="h-5 w-5 text-primary" />
+                    </div>
+                  )}
                   <div>
                     <h2 className="text-[18px] font-semibold text-foreground">
                       Solicitar tambor
                     </h2>
                     <p className="text-[12px] text-muted-foreground">
-                      {wt ? `Obra: ${wt.label}` : "Configure seu pedido"}
+                      {step === 1
+                        ? wt
+                          ? `Obra: ${wt.label}`
+                          : "Etapa 1 · Seu pedido"
+                        : "Etapa 2 · Entrega e reserva"}
                     </p>
                   </div>
                 </div>
@@ -223,7 +245,9 @@ export function RequestModal({ open, onClose, workType }: Props) {
                 </button>
               </div>
 
-              {wt && (
+              <Stepper step={step} />
+
+              {wt && step === 1 && (
                 <div className="mx-5 mt-2 rounded-2xl border border-primary/30 bg-primary-soft/40 p-3 flex items-start gap-2">
                   <Sparkles className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
                   <p className="text-[11.5px] text-foreground/85 leading-snug">
@@ -232,9 +256,11 @@ export function RequestModal({ open, onClose, workType }: Props) {
                 </div>
               )}
 
+              {step === 1 && (
               <div className="px-5 pb-6 space-y-6 mt-3">
                 <Field label="Tipo de material">
                   <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
+
                     {materials.map((m) => {
                       const Icon = getMaterialIcon(m);
                       const active = material === m;
@@ -484,7 +510,60 @@ export function RequestModal({ open, onClose, workType }: Props) {
                   )}
                 </AnimatePresence>
 
+                <Field label="Foto da obra (opcional)">
+                  <button className="w-full rounded-2xl border-2 border-dashed border-border bg-muted/40 px-4 py-5 flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-colors">
+                    <Camera className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-[12px] text-muted-foreground">
+                      Toque para adicionar uma foto do ambiente
+                    </span>
+                  </button>
+                </Field>
+
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setStep(2)}
+                  className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-glow"
+                >
+                  Continuar para entrega
+                  <ChevronRight className="h-4 w-4" />
+                </motion.button>
+              </div>
+              )}
+
+              {step === 2 && (
+              <div className="px-5 pb-6 space-y-6 mt-3">
+                <Field label="Localização da obra">
+                  <div className="relative w-full h-44 rounded-2xl overflow-hidden border border-border bg-muted/40">
+                    <div
+                      className="absolute inset-0 opacity-90"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(0deg, hsl(var(--muted)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--muted)) 1px, transparent 1px)",
+                        backgroundSize: "26px 26px",
+                        backgroundColor: "hsl(var(--surface))",
+                      }}
+                    />
+                    <div className="absolute left-1/4 top-0 bottom-0 w-6 bg-primary/5" />
+                    <div className="absolute top-1/2 left-0 right-0 h-8 bg-primary/5 -translate-y-1/2" />
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full flex flex-col items-center">
+                      <MapPin className="h-9 w-9 text-primary drop-shadow-lg" fill="currentColor" />
+                    </div>
+                    <button
+                      type="button"
+                      className="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-full bg-surface/95 backdrop-blur border border-border px-3.5 py-2 text-[12px] font-semibold text-foreground shadow-soft active:scale-95"
+                    >
+                      <Navigation className="h-3.5 w-3.5 text-primary" />
+                      Mover o pin
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[11px] text-muted-foreground leading-snug">
+                    Arraste o mapa para posicionar o pin no ponto exato da retirada e confirme o
+                    endereço abaixo.
+                  </p>
+                </Field>
+
                 <Field label="Endereço de entrega">
+
                   <div className="rounded-2xl border border-border bg-surface px-4 py-3.5 flex items-center gap-3 focus-within:border-primary transition-colors">
                     <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
                     <input
@@ -755,17 +834,8 @@ export function RequestModal({ open, onClose, workType }: Props) {
                     <CheckCircle2 className="h-4 w-4 text-success" />
                   </motion.div>
                 )}
-
-                <Field label="Foto da obra (opcional)">
-                  <button className="w-full rounded-2xl border-2 border-dashed border-border bg-muted/40 px-4 py-5 flex flex-col items-center justify-center gap-2 hover:border-primary/40 transition-colors">
-                    <Camera className="h-5 w-5 text-muted-foreground" />
-                    <span className="text-[12px] text-muted-foreground">
-                      Toque para adicionar
-                    </span>
-                  </button>
-                </Field>
-
                 <PromoCards />
+
 
                 <div className="rounded-3xl bg-muted/40 border border-border p-4 space-y-1">
                   <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
@@ -841,15 +911,26 @@ export function RequestModal({ open, onClose, workType }: Props) {
                   </div>
                 </div>
 
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setPayOpen(true)}
-                  className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-glow"
-                >
-                  Continuar para pagamento
-                  <ChevronRight className="h-4 w-4" />
-                </motion.button>
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="rounded-2xl bg-muted text-foreground px-5 py-4 font-semibold text-[14px] inline-flex items-center justify-center gap-1.5 active:scale-95"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Voltar
+                  </button>
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setPayOpen(true)}
+                    className="flex-1 bg-primary text-primary-foreground rounded-2xl py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-glow"
+                  >
+                    Continuar para pagamento
+                    <ChevronRight className="h-4 w-4" />
+                  </motion.button>
+                </div>
               </div>
+              )}
+
             </motion.div>
           </>
         )}
@@ -866,6 +947,56 @@ export function RequestModal({ open, onClose, workType }: Props) {
     </>
   );
 }
+
+function Stepper({ step }: { step: 1 | 2 }) {
+  const steps = [
+    { n: 1, label: "Pedido" },
+    { n: 2, label: "Entrega" },
+    { n: 3, label: "Pagamento" },
+  ];
+  return (
+    <div className="px-5 pt-1 pb-2">
+      <div className="flex items-center">
+        {steps.map((s, i) => {
+          const active = s.n === step;
+          const done = s.n < step;
+          return (
+            <div key={s.n} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center">
+                <div
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-semibold transition-colors ${
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : done
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {done ? <CheckCircle2 className="h-4 w-4" /> : s.n}
+                </div>
+                <span
+                  className={`mt-1 text-[10px] font-medium ${
+                    active ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  {s.label}
+                </span>
+              </div>
+              {i < steps.length - 1 && (
+                <div
+                  className={`h-0.5 flex-1 mx-1.5 -mt-4 rounded-full transition-colors ${
+                    s.n < step ? "bg-primary/40" : "bg-border"
+                  }`}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 
 function DateChip({ label, date, accent }: { label: string; date: Date; accent?: boolean }) {
   return (
