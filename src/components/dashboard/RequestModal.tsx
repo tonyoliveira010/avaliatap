@@ -154,6 +154,11 @@ export function RequestModal({ open, onClose, workType }: Props) {
     if (!showHelperBump) setAddHelpers(false);
   }, [showHelperBump]);
 
+  // Sempre reinicia no passo 1 ao abrir
+  useEffect(() => {
+    if (open) setStep(1);
+  }, [open]);
+
   const summary: OrderSummary = useMemo(
     () => ({
       material,
