@@ -911,15 +911,26 @@ export function RequestModal({ open, onClose, workType }: Props) {
                   </div>
                 </div>
 
-                <motion.button
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setPayOpen(true)}
-                  className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-glow"
-                >
-                  Continuar para pagamento
-                  <ChevronRight className="h-4 w-4" />
-                </motion.button>
+                <div className="flex gap-2.5">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="rounded-2xl bg-muted text-foreground px-5 py-4 font-semibold text-[14px] inline-flex items-center justify-center gap-1.5 active:scale-95"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Voltar
+                  </button>
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setPayOpen(true)}
+                    className="flex-1 bg-primary text-primary-foreground rounded-2xl py-4 font-semibold text-[15px] inline-flex items-center justify-center gap-2 shadow-glow"
+                  >
+                    Continuar para pagamento
+                    <ChevronRight className="h-4 w-4" />
+                  </motion.button>
+                </div>
               </div>
+              )}
+
             </motion.div>
           </>
         )}
