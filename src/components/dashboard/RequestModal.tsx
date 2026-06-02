@@ -212,15 +212,28 @@ export function RequestModal({ open, onClose, workType }: Props) {
 
               <div className="px-5 pt-3 pb-2 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-2xl bg-primary-soft flex items-center justify-center">
-                    <Package2 className="h-5 w-5 text-primary" />
-                  </div>
+                  {step === 2 ? (
+                    <button
+                      onClick={() => setStep(1)}
+                      className="h-11 w-11 rounded-2xl bg-muted flex items-center justify-center active:scale-95"
+                    >
+                      <ArrowLeft className="h-5 w-5 text-foreground" />
+                    </button>
+                  ) : (
+                    <div className="h-11 w-11 rounded-2xl bg-primary-soft flex items-center justify-center">
+                      <Package2 className="h-5 w-5 text-primary" />
+                    </div>
+                  )}
                   <div>
                     <h2 className="text-[18px] font-semibold text-foreground">
                       Solicitar tambor
                     </h2>
                     <p className="text-[12px] text-muted-foreground">
-                      {wt ? `Obra: ${wt.label}` : "Configure seu pedido"}
+                      {step === 1
+                        ? wt
+                          ? `Obra: ${wt.label}`
+                          : "Etapa 1 · Seu pedido"
+                        : "Etapa 2 · Entrega e reserva"}
                     </p>
                   </div>
                 </div>
@@ -232,7 +245,9 @@ export function RequestModal({ open, onClose, workType }: Props) {
                 </button>
               </div>
 
-              {wt && (
+              <Stepper step={step} />
+
+              {wt && step === 1 && (
                 <div className="mx-5 mt-2 rounded-2xl border border-primary/30 bg-primary-soft/40 p-3 flex items-start gap-2">
                   <Sparkles className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
                   <p className="text-[11.5px] text-foreground/85 leading-snug">
@@ -241,9 +256,11 @@ export function RequestModal({ open, onClose, workType }: Props) {
                 </div>
               )}
 
+              {step === 1 && (
               <div className="px-5 pb-6 space-y-6 mt-3">
                 <Field label="Tipo de material">
                   <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1 no-scrollbar">
+
                     {materials.map((m) => {
                       const Icon = getMaterialIcon(m);
                       const active = material === m;
