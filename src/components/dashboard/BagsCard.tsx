@@ -61,12 +61,12 @@ export function BagsCard({ onChange, embedded }: Props) {
 
   return (
     <section className={embedded ? "" : "px-5 mt-7"}>
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h3 className="text-[15px] font-semibold text-foreground">Compre sacos de entulho</h3>
-          <p className="text-[11px] text-muted-foreground">Economize comprando em pacote · entrega junto ao tambor</p>
-        </div>
-        {embedded ? (
+      {embedded ? (
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-[15px] font-semibold text-foreground">Compre sacos de entulho</h3>
+            <p className="text-[11px] text-muted-foreground">Economize comprando em pacote · entrega junto ao tambor</p>
+          </div>
           <button
             type="button"
             onClick={() => setEnabled(false)}
@@ -74,14 +74,43 @@ export function BagsCard({ onChange, embedded }: Props) {
           >
             Remover
           </button>
-        ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft text-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider">
-            Economia
-          </span>
-        )}
-      </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setCollapsed((v) => !v)}
+          className="w-full flex items-center justify-between mb-3 text-left"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shrink-0">
+              <ShoppingBag className="h-4 w-4" />
+            </div>
+            <div>
+              <h3 className="text-[15px] font-semibold text-foreground">Compre sacos de entulho</h3>
+              <p className="text-[11px] text-muted-foreground">Economize comprando em pacote · entrega junto ao tambor</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft text-primary px-2 py-1 text-[10px] font-bold uppercase tracking-wider">
+              Economia
+            </span>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground transition-transform ${collapsed ? "" : "rotate-180"}`}
+            />
+          </div>
+        </button>
+      )}
 
+      <AnimatePresence initial={false}>
+        {(embedded || !collapsed) && (
+          <motion.div
+            initial={embedded ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
       <div className="rounded-3xl border border-border bg-surface p-4 shadow-soft">
+
         <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-2 no-scrollbar snap-x snap-mandatory">
           {bagBundles.map((b) => {
             const active = selected === b.id;
