@@ -948,6 +948,56 @@ export function RequestModal({ open, onClose, workType }: Props) {
   );
 }
 
+function Stepper({ step }: { step: 1 | 2 }) {
+  const steps = [
+    { n: 1, label: "Pedido" },
+    { n: 2, label: "Entrega" },
+    { n: 3, label: "Pagamento" },
+  ];
+  return (
+    <div className="px-5 pt-1 pb-2">
+      <div className="flex items-center">
+        {steps.map((s, i) => {
+          const active = s.n === step;
+          const done = s.n < step;
+          return (
+            <div key={s.n} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center">
+                <div
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-[12px] font-semibold transition-colors ${
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : done
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {done ? <CheckCircle2 className="h-4 w-4" /> : s.n}
+                </div>
+                <span
+                  className={`mt-1 text-[10px] font-medium ${
+                    active ? "text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  {s.label}
+                </span>
+              </div>
+              {i < steps.length - 1 && (
+                <div
+                  className={`h-0.5 flex-1 mx-1.5 -mt-4 rounded-full transition-colors ${
+                    s.n < step ? "bg-primary/40" : "bg-border"
+                  }`}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
 function DateChip({ label, date, accent }: { label: string; date: Date; accent?: boolean }) {
   return (
     <div
