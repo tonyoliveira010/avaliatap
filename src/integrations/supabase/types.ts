@@ -165,6 +165,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_admin_if_none: { Args: never; Returns: Json }
       confirm_credit_order: {
         Args: { _order_id: string; _provider_ref: string; _receipt_url: string }
         Returns: Json
