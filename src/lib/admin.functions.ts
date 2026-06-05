@@ -107,8 +107,8 @@ export const confirmOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: res, error } = await supabaseAdmin.rpc("confirm_credit_order", {
       _order_id: data.orderId,
-      _provider_ref: data.providerRef ?? null,
-      _receipt_url: data.receiptUrl ?? null,
+      _provider_ref: data.providerRef ?? "",
+      _receipt_url: data.receiptUrl ?? "",
     });
     if (error) throw new Error(error.message);
     return res as { ok: boolean; credited?: number; already?: boolean };
