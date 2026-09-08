@@ -15,6 +15,7 @@ import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const PerfilRoute = PerfilRouteImport.update({
@@ -46,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CSlugRoute = CSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/landing': typeof LandingRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/c/$slug': typeof CSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/landing': typeof LandingRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/c/$slug': typeof CSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,12 +85,27 @@ export interface FileRoutesById {
   '/landing': typeof LandingRoute
   '/perfil': typeof PerfilRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/c/$slug': typeof CSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/financeiro' | '/landing' | '/perfil' | '/admin'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/financeiro'
+    | '/landing'
+    | '/perfil'
+    | '/admin'
+    | '/c/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/financeiro' | '/landing' | '/perfil' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/financeiro'
+    | '/landing'
+    | '/perfil'
+    | '/admin'
+    | '/c/$slug'
   id:
     | '__root__'
     | '/'
@@ -92,6 +115,7 @@ export interface FileRouteTypes {
     | '/landing'
     | '/perfil'
     | '/_authenticated/admin'
+    | '/c/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -101,6 +125,7 @@ export interface RootRouteChildren {
   FinanceiroRoute: typeof FinanceiroRoute
   LandingRoute: typeof LandingRoute
   PerfilRoute: typeof PerfilRoute
+  CSlugRoute: typeof CSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -147,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/c/$slug': {
+      id: '/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/c/$slug'
+      preLoaderRoute: typeof CSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -175,6 +207,7 @@ const rootRouteChildren: RootRouteChildren = {
   FinanceiroRoute: FinanceiroRoute,
   LandingRoute: LandingRoute,
   PerfilRoute: PerfilRoute,
+  CSlugRoute: CSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
