@@ -115,10 +115,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const fullWidth = pathname.startsWith("/c/") || pathname === "/landing";
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background pb-32 max-w-md mx-auto">
+      <div className={`min-h-screen bg-background ${fullWidth ? "" : "mx-auto max-w-md pb-32"}`}>
         <Outlet />
       </div>
       <BottomNav />
@@ -126,3 +128,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
