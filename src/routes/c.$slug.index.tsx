@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
 
-export const Route = createFileRoute("/c/$slug")({
+export const Route = createFileRoute("/c/$slug/")({
   loader: ({ params }) => {
     const merchant = getMerchant(params.slug);
     if (!merchant) throw notFound();
