@@ -37,7 +37,7 @@ export function useTheme() {
 
   const toggle = useCallback(() => {
     setThemeState((prev) => {
-      const next = prev === "dark" ? "light" : "light";
+      const next = prev === "dark" ? "light" : "dark";
       applyTheme(next);
       if (typeof window !== "undefined") {
         window.localStorage.setItem(STORAGE_KEY, next);
