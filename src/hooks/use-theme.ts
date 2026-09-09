@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 
 export type Theme = "light" | "dark";
 
-const STORAGE_KEY = "tambor-theme";
+const STORAGE_KEY = "avaliatap-theme";
 
 function applyTheme(theme: Theme) {
   if (typeof document === "undefined") return;
