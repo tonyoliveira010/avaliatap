@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as NfcRouteImport } from './routes/nfc'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
@@ -22,6 +23,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NfcRoute = NfcRouteImport.update({
+  id: '/nfc',
+  path: '/nfc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LandingRoute = LandingRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/admin'
     | '/c/$slug'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/admin'
     | '/c/$slug'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/_authenticated/admin'
     | '/c/$slug'
@@ -137,6 +149,7 @@ export interface RootRouteChildren {
   CampanhasRoute: typeof CampanhasRoute
   FinanceiroRoute: typeof FinanceiroRoute
   LandingRoute: typeof LandingRoute
+  NfcRoute: typeof NfcRoute
   PerfilRoute: typeof PerfilRoute
   CSlugRoute: typeof CSlugRoute
 }
@@ -148,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nfc': {
+      id: '/nfc'
+      path: '/nfc'
+      fullPath: '/nfc'
+      preLoaderRoute: typeof NfcRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/landing': {
@@ -227,6 +247,7 @@ const rootRouteChildren: RootRouteChildren = {
   CampanhasRoute: CampanhasRoute,
   FinanceiroRoute: FinanceiroRoute,
   LandingRoute: LandingRoute,
+  NfcRoute: NfcRoute,
   PerfilRoute: PerfilRoute,
   CSlugRoute: CSlugRoute,
 }
