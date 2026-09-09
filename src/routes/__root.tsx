@@ -11,7 +11,7 @@ import {
 import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
-import { BottomNav } from "@/components/dashboard/BottomNav";
+import { BottomNav } from "@/components/app/BottomNav";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -77,11 +77,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "AvaliaTap" },
+      { name: "description", content: "Engaje seus clientes com um toque." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "AvaliaTap" },
+      { property: "og:description", content: "Engaje seus clientes com um toque." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -101,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
@@ -115,10 +115,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const fullWidth = pathname.startsWith("/c/") || pathname === "/landing";
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background pb-32 max-w-md mx-auto">
+      <div className={`min-h-screen bg-background ${fullWidth ? "" : "mx-auto max-w-md pb-32"}`}>
         <Outlet />
       </div>
       <BottomNav />
@@ -126,3 +128,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

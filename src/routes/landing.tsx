@@ -1,201 +1,119 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { motion } from "motion/react";
-import {
-  Package2,
-  Truck,
-  Recycle,
-  ShieldCheck,
-  ArrowRight,
-  Clock,
-  MapPin,
-  Sparkles,
-  Coins,
-} from "lucide-react";
-import { RequestModal } from "@/components/dashboard/RequestModal";
-import { DeliveryScheduler } from "@/components/dashboard/DeliveryScheduler";
-import { toast } from "sonner";
+import { Nfc, Star, Ticket, Users, ArrowRight, Check } from "lucide-react";
+import { defaultMerchantSlug } from "@/lib/merchants";
 
 export const Route = createFileRoute("/landing")({
   head: () => ({
     meta: [
-      { title: "Tambor · Descarte de entulho sob demanda" },
+      { title: "AvaliaTap · Uma placa NFC que engaja seus clientes" },
       {
         name: "description",
         content:
-          "Solicite tambores para sua obra, agende a entrega e descarte resíduos de forma simples. Frete por distância, preço por volume e retirada garantida.",
+          "O cliente aproxima o celular da placa e abre a página do seu comércio com cupons, avaliações e ofertas. R$ 29,90 por mês.",
       },
-      { property: "og:title", content: "Tambor · Descarte de entulho sob demanda" },
+      { property: "og:title", content: "AvaliaTap · Uma placa NFC que engaja seus clientes" },
       {
         property: "og:description",
-        content: "Tambores para obra com entrega agendada, preço por volume e descarte correto.",
+        content: "Cupons, raspadinhas, avaliações no Google e captação de contatos em um toque.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Landing,
 });
 
-const features = [
-  {
-    icon: Package2,
-    title: "Tambores sob demanda",
-    desc: "1 a 10 tambores por pedido. Quanto mais volume, menor a diária por tambor.",
-  },
-  {
-    icon: Truck,
-    title: "Entrega agendada",
-    desc: "Escolha data e janela de horário. Motorista pré-alocado e reserva garantida por 24h.",
-  },
-  {
-    icon: Recycle,
-    title: "Descarte correto",
-    desc: "Frete cobre retirada + destinação ambientalmente correta dos resíduos.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Sem surpresas",
-    desc: "Resumo de cobrança detalhado, desconto no PIX e fidelidade para recorrentes.",
-  },
-];
-
-const steps = [
-  { n: 1, title: "Monte seu pedido", desc: "Material, quantidade e serviços extras." },
-  { n: 2, title: "Agende a entrega", desc: "Data, janela e endereço no mapa." },
-  { n: 3, title: "Pague e acompanhe", desc: "PIX ou cartão, com rastreio em tempo real." },
+const pillars = [
+  { icon: Nfc, title: "Um toque", text: "O cliente aproxima o celular e sua página abre na hora." },
+  { icon: Ticket, title: "Cupons e raspadinhas", text: "Benefícios que fazem o cliente voltar." },
+  { icon: Star, title: "Mais avaliações", text: "Direcione o cliente satisfeito ao Google." },
+  { icon: Users, title: "Base de contatos", text: "Capture leads e crie sua área de membros." },
 ];
 
 function Landing() {
-  const [requestOpen, setRequestOpen] = useState(false);
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <header className="max-w-5xl mx-auto px-5 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-primary to-success flex items-center justify-center text-primary-foreground font-bold">
-            T
-          </div>
-          <span className="text-[18px] font-semibold text-foreground tracking-tight">Tambor</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/"
-            className="hidden sm:inline-flex rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-semibold text-foreground hover:border-primary/40"
-          >
-            Abrir app
-          </Link>
-          <Link
-            to="/auth"
-            className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-[13px] font-semibold active:scale-95"
-          >
-            Entrar
-          </Link>
-        </div>
+    <div className="min-h-screen bg-secondary text-secondary-foreground">
+      <header className="flex items-center justify-between px-6 pt-8">
+        <span className="text-[17px] font-extrabold tracking-tight">
+          Avalia<span className="text-primary">Tap</span>
+        </span>
+        <Link to="/auth" className="rounded-full bg-primary px-4 py-2 text-[12px] font-extrabold text-primary-foreground">
+          Entrar
+        </Link>
       </header>
 
-      {/* Hero */}
-      <section className="max-w-5xl mx-auto px-5 pt-8 pb-12 grid md:grid-cols-2 gap-10 items-center">
-        <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft text-primary px-3 py-1 text-[12px] font-semibold">
-            <Sparkles className="h-3.5 w-3.5" /> Descarte inteligente para obras
-          </span>
-          <h1 className="mt-4 text-[40px] leading-[1.05] font-bold text-foreground tracking-tight">
-            Tambores na sua obra,{" "}
-            <span className="bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
-              quando você precisar
-            </span>
-          </h1>
-          <p className="mt-4 text-[15px] text-muted-foreground leading-relaxed">
-            Solicite tambores, agende a entrega em janelas de horário e deixe o descarte com a
-            gente. Preço por volume, frete por distância e retirada garantida.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              onClick={() => setRequestOpen(true)}
-              className="inline-flex items-center gap-2 rounded-2xl bg-primary text-primary-foreground px-5 py-3.5 text-[14px] font-semibold active:scale-[0.98] shadow-glow"
-            >
-              <Package2 className="h-4 w-4" /> Solicitar tambor
-            </button>
-            <Link
-              to="/financeiro"
-              className="inline-flex items-center gap-2 rounded-2xl border border-border bg-surface px-5 py-3.5 text-[14px] font-semibold text-foreground hover:border-primary/40"
-            >
-              <Coins className="h-4 w-4" /> Ver pacotes de crédito
-            </Link>
-          </div>
-          <div className="mt-6 flex items-center gap-5 text-[12px] text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-primary" /> Reserva em 24h
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 text-primary" /> São Paulo e região
-            </span>
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-          <DeliveryScheduler onReserve={() => toast.success("Horário reservado! Finalize no app.")} />
-        </motion.div>
-      </section>
-
-      {/* Features */}
-      <section className="max-w-5xl mx-auto px-5 py-10">
-        <h2 className="text-[24px] font-bold text-foreground text-center tracking-tight">
-          Tudo num só lugar
-        </h2>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {features.map((f) => (
-            <div key={f.title} className="rounded-3xl border border-border bg-surface p-5 shadow-soft">
-              <div className="h-11 w-11 rounded-2xl bg-primary-soft text-primary flex items-center justify-center">
-                <f.icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-3 text-[15px] font-semibold text-foreground">{f.title}</h3>
-              <p className="mt-1 text-[12.5px] text-muted-foreground leading-snug">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Steps */}
-      <section className="max-w-5xl mx-auto px-5 py-10">
-        <h2 className="text-[24px] font-bold text-foreground text-center tracking-tight">
-          Como funciona
-        </h2>
-        <div className="mt-8 grid sm:grid-cols-3 gap-4">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-3xl border border-border bg-surface p-6 text-center shadow-soft">
-              <div className="mx-auto h-12 w-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-[18px] font-bold">
-                {s.n}
-              </div>
-              <h3 className="mt-3 text-[15px] font-semibold text-foreground">{s.title}</h3>
-              <p className="mt-1 text-[12.5px] text-muted-foreground">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="max-w-5xl mx-auto px-5 py-12">
-        <div className="rounded-4xl hero-gradient grain p-8 md:p-12 text-white text-center shadow-elegant">
-          <h2 className="text-[28px] font-bold tracking-tight">Pronto para liberar sua obra?</h2>
-          <p className="mt-2 text-[14px] text-white/70 max-w-md mx-auto">
-            Faça seu primeiro pedido em minutos. Sem mensalidade, paga só pelo que usar.
-          </p>
-          <button
-            onClick={() => setRequestOpen(true)}
-            className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white text-secondary px-6 py-3.5 text-[14px] font-bold active:scale-[0.98]"
+      <section className="px-6 pb-10 pt-10">
+        <motion.h1
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="max-w-[320px] text-[36px] font-extrabold leading-[1.03] tracking-tight"
+        >
+          Seu comércio a um toque de distância.
+        </motion.h1>
+        <p className="mt-4 max-w-[320px] text-[14.5px] opacity-65">
+          A placa NFC do AvaliaTap abre a página do seu negócio no celular do cliente — com ofertas,
+          cupons e um caminho direto para a avaliação no Google.
+        </p>
+        <div className="mt-6 flex gap-2">
+          <Link
+            to="/c/$slug"
+            params={{ slug: defaultMerchantSlug }}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-primary py-4 text-[13.5px] font-extrabold text-primary-foreground"
           >
-            Solicitar tambor <ArrowRight className="h-4 w-4" />
-          </button>
+            Ver demonstração <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link to="/" className="rounded-2xl bg-white/10 px-5 py-4 text-[13.5px] font-bold">
+            Painel
+          </Link>
         </div>
       </section>
 
-      <footer className="max-w-5xl mx-auto px-5 py-8 text-center text-[12px] text-muted-foreground">
-        Tambor · Descarte inteligente para pequenas obras
-      </footer>
+      <section className="rounded-t-[34px] bg-background px-5 pb-14 pt-7 text-foreground">
+        <div className="grid grid-cols-2 gap-3">
+          {pillars.map((p, i) => (
+            <motion.div
+              key={p.title}
+              initial={{ y: 8, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.04 * i }}
+              className="rounded-3xl border border-border bg-surface p-4"
+            >
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted">
+                <p.icon className="h-4.5 w-4.5 text-foreground" />
+              </span>
+              <p className="mt-3 text-[14.5px] font-semibold">{p.title}</p>
+              <p className="mt-1 text-[12px] text-muted-foreground">{p.text}</p>
+            </motion.div>
+          ))}
+        </div>
 
-      <RequestModal open={requestOpen} onClose={() => setRequestOpen(false)} />
+        <div className="mt-6 rounded-[28px] bg-secondary p-6 text-secondary-foreground">
+          <span className="inline-flex rounded-full bg-primary px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-primary-foreground">
+            Plano único
+          </span>
+          <p className="mt-5 text-[36px] font-extrabold leading-none tracking-tight">
+            R$ 29,90<span className="text-[15px] font-semibold opacity-60">/mês</span>
+          </p>
+          <p className="mt-2 text-[13px] opacity-65">Placas e cartões NFC vendidos à parte.</p>
+          <ul className="mt-4 space-y-2 text-[13px] opacity-85">
+            {["Página pública ilimitada", "Campanhas e cupons", "Relatórios em tempo real", "Suporte por WhatsApp"].map(
+              (b) => (
+                <li key={b} className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-primary" /> {b}
+                </li>
+              ),
+            )}
+          </ul>
+          <Link
+            to="/auth"
+            className="mt-5 flex items-center justify-center rounded-2xl bg-primary py-4 text-[13.5px] font-extrabold text-primary-foreground"
+          >
+            Começar agora
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

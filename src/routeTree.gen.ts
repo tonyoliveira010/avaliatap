@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as NfcRouteImport } from './routes/nfc'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
+import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +25,11 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NfcRoute = NfcRouteImport.update({
+  id: '/nfc',
+  path: '/nfc',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LandingRoute = LandingRouteImport.update({
   id: '/landing',
   path: '/landing',
@@ -31,6 +38,11 @@ const LandingRoute = LandingRouteImport.update({
 const FinanceiroRoute = FinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhasRoute = CampanhasRouteImport.update({
+  id: '/campanhas',
+  path: '/campanhas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -61,8 +73,10 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -70,8 +84,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -81,8 +97,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/campanhas': typeof CampanhasRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
+  '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRoute
@@ -92,8 +110,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/admin'
     | '/c/$slug'
@@ -101,8 +121,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/admin'
     | '/c/$slug'
@@ -111,8 +133,10 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/campanhas'
     | '/financeiro'
     | '/landing'
+    | '/nfc'
     | '/perfil'
     | '/_authenticated/admin'
     | '/c/$slug'
@@ -122,8 +146,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CampanhasRoute: typeof CampanhasRoute
   FinanceiroRoute: typeof FinanceiroRoute
   LandingRoute: typeof LandingRoute
+  NfcRoute: typeof NfcRoute
   PerfilRoute: typeof PerfilRoute
   CSlugRoute: typeof CSlugRoute
 }
@@ -135,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nfc': {
+      id: '/nfc'
+      path: '/nfc'
+      fullPath: '/nfc'
+      preLoaderRoute: typeof NfcRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/landing': {
@@ -149,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/financeiro'
       fullPath: '/financeiro'
       preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanhas': {
+      id: '/campanhas'
+      path: '/campanhas'
+      fullPath: '/campanhas'
+      preLoaderRoute: typeof CampanhasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -204,8 +244,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CampanhasRoute: CampanhasRoute,
   FinanceiroRoute: FinanceiroRoute,
   LandingRoute: LandingRoute,
+  NfcRoute: NfcRoute,
   PerfilRoute: PerfilRoute,
   CSlugRoute: CSlugRoute,
 }

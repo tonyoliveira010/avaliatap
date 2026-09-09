@@ -22,7 +22,7 @@ import { getIsAdmin, claimAdmin, getAdminData, confirmOrder, adjustCredits } fro
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Painel Admin · Tambor" }] }),
+  head: () => ({ meta: [{ title: "Painel Admin · AvaliaTap" }] }),
   component: AdminPage,
 });
 
