@@ -12,14 +12,14 @@ function applyTheme(theme: Theme) {
 }
 
 function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null;
   if (stored === "light" || stored === "dark") return stored;
-  return document.documentElement.classList.contains("dark") ? "dark" : "dark";
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const initial = getInitialTheme();
@@ -37,7 +37,7 @@ export function useTheme() {
 
   const toggle = useCallback(() => {
     setThemeState((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
+      const next = prev === "dark" ? "light" : "light";
       applyTheme(next);
       if (typeof window !== "undefined") {
         window.localStorage.setItem(STORAGE_KEY, next);
