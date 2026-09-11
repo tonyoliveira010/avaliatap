@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Ticket, Sparkles, MessageCircle, Instagram, MapPin, Star, X } from "lucide-react";
+import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/c/$slug/")({
 const quick = [
   { id: "offers", icon: Flame, label: "Ofertas" },
   { id: "coupons", icon: Ticket, label: "Cupons" },
-  { id: "news", icon: Sparkles, label: "Novidades" },
+  { id: "polls", icon: Vote, label: "Enquetes" },
   { id: "contact", icon: MessageCircle, label: "Contato" },
 ];
 
