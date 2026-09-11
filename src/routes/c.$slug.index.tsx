@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Flame, Ticket, Sparkles, MessageCircle, Instagram, MapPin, Star, X } from "lucide-react";
@@ -65,6 +65,8 @@ function OfferRow({ offer, onAction }: { offer: Offer; onAction: () => void }) {
 
 function PublicMerchant() {
   const { merchant } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const navigate = useNavigate();
   const [showCampaign, setShowCampaign] = useState(true);
   const [scratchOpen, setScratchOpen] = useState(false);
 
@@ -87,7 +89,7 @@ function PublicMerchant() {
         <p className="mt-3 max-w-[300px] text-[13.5px] opacity-60">{merchant.subtitle}</p>
       </section>
 
-      <section className="min-h-[70vh] rounded-t-[34px] bg-background px-5 pt-6 pb-16">
+      <section className="min-h-[70vh] rounded-t-[34px] bg-background px-5 pt-6 pb-28">
         <div className="grid grid-cols-4 gap-2.5">
           {quick.map((q, i) => (
             <motion.button
@@ -99,7 +101,8 @@ function PublicMerchant() {
               onClick={() => {
                 if (q.id === "contact") window.open(merchant.whatsapp, "_blank");
                 else if (q.id === "coupons") setScratchOpen(true);
-                else toast(`Abrindo ${q.label.toLowerCase()}…`);
+                else if (q.id === "offers") navigate({ to: "/c/$slug/beneficios", params: { slug } });
+                else navigate({ to: "/c/$slug/enquetes", params: { slug } });
               }}
               className="flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[20px] bg-muted"
             >
@@ -155,9 +158,9 @@ function PublicMerchant() {
 
         <div className="mb-2.5 mt-5 flex items-center justify-between px-0.5">
           <h3 className="text-[17px] font-semibold tracking-tight text-foreground">Mais para você</h3>
-          <button onClick={() => toast("Todos os benefícios")} className="text-[12px] text-muted-foreground">
+          <Link to="/c/$slug/beneficios" params={{ slug }} className="text-[12px] text-muted-foreground">
             Ver tudo
-          </button>
+          </Link>
         </div>
         <div className="space-y-3">
           {merchant.offers.map((o) => (

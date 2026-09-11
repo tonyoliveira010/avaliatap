@@ -21,6 +21,7 @@ import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CSlugIndexRouteImport } from './routes/c.$slug.index'
 import { Route as CSlugEnquetesRouteImport } from './routes/c.$slug.enquetes'
+import { Route as CSlugCreditosRouteImport } from './routes/c.$slug.creditos'
 import { Route as CSlugBeneficiosRouteImport } from './routes/c.$slug.beneficios'
 
 const PerfilRoute = PerfilRouteImport.update({
@@ -82,6 +83,11 @@ const CSlugEnquetesRoute = CSlugEnquetesRouteImport.update({
   path: '/enquetes',
   getParentRoute: () => CSlugRoute,
 } as any)
+const CSlugCreditosRoute = CSlugCreditosRouteImport.update({
+  id: '/creditos',
+  path: '/creditos',
+  getParentRoute: () => CSlugRoute,
+} as any)
 const CSlugBeneficiosRoute = CSlugBeneficiosRouteImport.update({
   id: '/beneficios',
   path: '/beneficios',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
   '/c/$slug/': typeof CSlugIndexRoute
 }
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
   '/c/$slug': typeof CSlugIndexRoute
 }
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
   '/c/$slug/': typeof CSlugIndexRoute
 }
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/c/$slug'
     | '/c/$slug/beneficios'
+    | '/c/$slug/creditos'
     | '/c/$slug/enquetes'
     | '/c/$slug/'
   fileRoutesByTo: FileRoutesByTo
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/admin'
     | '/c/$slug/beneficios'
+    | '/c/$slug/creditos'
     | '/c/$slug/enquetes'
     | '/c/$slug'
   id:
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/c/$slug'
     | '/c/$slug/beneficios'
+    | '/c/$slug/creditos'
     | '/c/$slug/enquetes'
     | '/c/$slug/'
   fileRoutesById: FileRoutesById
@@ -274,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugEnquetesRouteImport
       parentRoute: typeof CSlugRoute
     }
+    '/c/$slug/creditos': {
+      id: '/c/$slug/creditos'
+      path: '/creditos'
+      fullPath: '/c/$slug/creditos'
+      preLoaderRoute: typeof CSlugCreditosRouteImport
+      parentRoute: typeof CSlugRoute
+    }
     '/c/$slug/beneficios': {
       id: '/c/$slug/beneficios'
       path: '/beneficios'
@@ -297,12 +316,14 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface CSlugRouteChildren {
   CSlugBeneficiosRoute: typeof CSlugBeneficiosRoute
+  CSlugCreditosRoute: typeof CSlugCreditosRoute
   CSlugEnquetesRoute: typeof CSlugEnquetesRoute
   CSlugIndexRoute: typeof CSlugIndexRoute
 }
 
 const CSlugRouteChildren: CSlugRouteChildren = {
   CSlugBeneficiosRoute: CSlugBeneficiosRoute,
+  CSlugCreditosRoute: CSlugCreditosRoute,
   CSlugEnquetesRoute: CSlugEnquetesRoute,
   CSlugIndexRoute: CSlugIndexRoute,
 }
