@@ -20,9 +20,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CSlugIndexRouteImport } from './routes/c.$slug.index'
+import { Route as CSlugProdutosRouteImport } from './routes/c.$slug.produtos'
 import { Route as CSlugEnquetesRouteImport } from './routes/c.$slug.enquetes'
+import { Route as CSlugCuponsRouteImport } from './routes/c.$slug.cupons'
 import { Route as CSlugCreditosRouteImport } from './routes/c.$slug.creditos'
 import { Route as CSlugBeneficiosRouteImport } from './routes/c.$slug.beneficios'
+import { Route as CSlugProdutosProductIdRouteImport } from './routes/c.$slug.produtos.$productId'
 
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
@@ -78,9 +81,19 @@ const CSlugIndexRoute = CSlugIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CSlugRoute,
 } as any)
+const CSlugProdutosRoute = CSlugProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => CSlugRoute,
+} as any)
 const CSlugEnquetesRoute = CSlugEnquetesRouteImport.update({
   id: '/enquetes',
   path: '/enquetes',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugCuponsRoute = CSlugCuponsRouteImport.update({
+  id: '/cupons',
+  path: '/cupons',
   getParentRoute: () => CSlugRoute,
 } as any)
 const CSlugCreditosRoute = CSlugCreditosRouteImport.update({
@@ -92,6 +105,11 @@ const CSlugBeneficiosRoute = CSlugBeneficiosRouteImport.update({
   id: '/beneficios',
   path: '/beneficios',
   getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugProdutosProductIdRoute = CSlugProdutosProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => CSlugProdutosRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -106,8 +124,11 @@ export interface FileRoutesByFullPath {
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
+  '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
+  '/c/$slug/produtos': typeof CSlugProdutosRouteWithChildren
   '/c/$slug/': typeof CSlugIndexRoute
+  '/c/$slug/produtos/$productId': typeof CSlugProdutosProductIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -120,8 +141,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
+  '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
+  '/c/$slug/produtos': typeof CSlugProdutosRouteWithChildren
   '/c/$slug': typeof CSlugIndexRoute
+  '/c/$slug/produtos/$productId': typeof CSlugProdutosProductIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -137,8 +161,11 @@ export interface FileRoutesById {
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
+  '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
+  '/c/$slug/produtos': typeof CSlugProdutosRouteWithChildren
   '/c/$slug/': typeof CSlugIndexRoute
+  '/c/$slug/produtos/$productId': typeof CSlugProdutosProductIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -154,8 +181,11 @@ export interface FileRouteTypes {
     | '/c/$slug'
     | '/c/$slug/beneficios'
     | '/c/$slug/creditos'
+    | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
+    | '/c/$slug/produtos'
     | '/c/$slug/'
+    | '/c/$slug/produtos/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,8 +198,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/c/$slug/beneficios'
     | '/c/$slug/creditos'
+    | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
+    | '/c/$slug/produtos'
     | '/c/$slug'
+    | '/c/$slug/produtos/$productId'
   id:
     | '__root__'
     | '/'
@@ -184,8 +217,11 @@ export interface FileRouteTypes {
     | '/c/$slug'
     | '/c/$slug/beneficios'
     | '/c/$slug/creditos'
+    | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
+    | '/c/$slug/produtos'
     | '/c/$slug/'
+    | '/c/$slug/produtos/$productId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -279,11 +315,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugIndexRouteImport
       parentRoute: typeof CSlugRoute
     }
+    '/c/$slug/produtos': {
+      id: '/c/$slug/produtos'
+      path: '/produtos'
+      fullPath: '/c/$slug/produtos'
+      preLoaderRoute: typeof CSlugProdutosRouteImport
+      parentRoute: typeof CSlugRoute
+    }
     '/c/$slug/enquetes': {
       id: '/c/$slug/enquetes'
       path: '/enquetes'
       fullPath: '/c/$slug/enquetes'
       preLoaderRoute: typeof CSlugEnquetesRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/cupons': {
+      id: '/c/$slug/cupons'
+      path: '/cupons'
+      fullPath: '/c/$slug/cupons'
+      preLoaderRoute: typeof CSlugCuponsRouteImport
       parentRoute: typeof CSlugRoute
     }
     '/c/$slug/creditos': {
@@ -300,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugBeneficiosRouteImport
       parentRoute: typeof CSlugRoute
     }
+    '/c/$slug/produtos/$productId': {
+      id: '/c/$slug/produtos/$productId'
+      path: '/$productId'
+      fullPath: '/c/$slug/produtos/$productId'
+      preLoaderRoute: typeof CSlugProdutosProductIdRouteImport
+      parentRoute: typeof CSlugProdutosRoute
+    }
   }
 }
 
@@ -314,17 +371,33 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface CSlugProdutosRouteChildren {
+  CSlugProdutosProductIdRoute: typeof CSlugProdutosProductIdRoute
+}
+
+const CSlugProdutosRouteChildren: CSlugProdutosRouteChildren = {
+  CSlugProdutosProductIdRoute: CSlugProdutosProductIdRoute,
+}
+
+const CSlugProdutosRouteWithChildren = CSlugProdutosRoute._addFileChildren(
+  CSlugProdutosRouteChildren,
+)
+
 interface CSlugRouteChildren {
   CSlugBeneficiosRoute: typeof CSlugBeneficiosRoute
   CSlugCreditosRoute: typeof CSlugCreditosRoute
+  CSlugCuponsRoute: typeof CSlugCuponsRoute
   CSlugEnquetesRoute: typeof CSlugEnquetesRoute
+  CSlugProdutosRoute: typeof CSlugProdutosRouteWithChildren
   CSlugIndexRoute: typeof CSlugIndexRoute
 }
 
 const CSlugRouteChildren: CSlugRouteChildren = {
   CSlugBeneficiosRoute: CSlugBeneficiosRoute,
   CSlugCreditosRoute: CSlugCreditosRoute,
+  CSlugCuponsRoute: CSlugCuponsRoute,
   CSlugEnquetesRoute: CSlugEnquetesRoute,
+  CSlugProdutosRoute: CSlugProdutosRouteWithChildren,
   CSlugIndexRoute: CSlugIndexRoute,
 }
 

@@ -62,7 +62,7 @@ function CouponsPage() {
       <div className="grid gap-2.5">
         {customerCoupons.map((c) => (
           <article key={c.id} className="flex min-h-[80px] items-center gap-3 rounded-[20px] border border-white/10 bg-white/5 p-3">
-            <div className={`grid h-13 w-13 h-[52px] w-[52px] shrink-0 place-items-center rounded-2xl text-2xl ${c.status === "Disponível" ? "bg-[#b8ff72]" : "bg-[#4d83ff]"}`}>
+            <div className={`grid h-[52px] w-[52px] shrink-0 place-items-center rounded-2xl text-2xl ${c.status === "Disponível" ? "bg-[#b8ff72]" : "bg-[#4d83ff]"}`}>
               {c.emoji}
             </div>
             <div className="min-w-0 flex-1">
