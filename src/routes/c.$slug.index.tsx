@@ -34,7 +34,7 @@ export const Route = createFileRoute("/c/$slug/")({
 });
 
 const quick = [
-  { id: "offers", icon: Flame, label: "Ofertas" },
+  { id: "products", icon: Flame, label: "Produtos" },
   { id: "coupons", icon: Ticket, label: "Cupons" },
   { id: "polls", icon: Vote, label: "Enquetes" },
   { id: "contact", icon: MessageCircle, label: "Contato" },
@@ -100,8 +100,8 @@ function PublicMerchant() {
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 if (q.id === "contact") window.open(merchant.whatsapp, "_blank");
-                else if (q.id === "coupons") setScratchOpen(true);
-                else if (q.id === "offers") navigate({ to: "/c/$slug/beneficios", params: { slug } });
+                else if (q.id === "coupons") navigate({ to: "/c/$slug/cupons", params: { slug } });
+                else if (q.id === "products") navigate({ to: "/c/$slug/produtos", params: { slug } });
                 else navigate({ to: "/c/$slug/enquetes", params: { slug } });
               }}
               className="flex min-h-[92px] flex-col items-center justify-center gap-2 rounded-[20px] bg-muted"
