@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
 import { getMerchant } from "@/lib/merchants";
+import { whatsappDigits } from "@/lib/products";
 import { CustomerNav } from "@/components/public/CustomerNav";
+import { CartProvider } from "@/components/public/CartProvider";
 
 export const Route = createFileRoute("/c/$slug")({
   loader: ({ params }) => {
@@ -25,10 +27,13 @@ export const Route = createFileRoute("/c/$slug")({
 });
 
 function CustomerLayout() {
+  const { merchant } = Route.useLoaderData();
   return (
-    <div className="relative">
-      <Outlet />
-      <CustomerNav />
-    </div>
+    <CartProvider merchantName={merchant.name} whatsappNumber={whatsappDigits(merchant.whatsapp)}>
+      <div className="relative">
+        <Outlet />
+        <CustomerNav />
+      </div>
+    </CartProvider>
   );
 }

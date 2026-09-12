@@ -34,7 +34,7 @@ export const Route = createFileRoute("/c/$slug/")({
 });
 
 const quick = [
-  { id: "offers", icon: Flame, label: "Ofertas" },
+  { id: "products", icon: Flame, label: "Produtos" },
   { id: "coupons", icon: Ticket, label: "Cupons" },
   { id: "polls", icon: Vote, label: "Enquetes" },
   { id: "contact", icon: MessageCircle, label: "Contato" },
