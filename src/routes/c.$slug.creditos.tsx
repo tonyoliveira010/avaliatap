@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft, History, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/c/$slug/creditos")({
 
 function CreditsPage() {
   const { slug } = Route.useParams();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(creditBalance);
   const [redeemed, setRedeemed] = useState<string[]>([]);
   const progress = Math.round((nextPrize.current / nextPrize.target) * 100);
@@ -77,7 +78,13 @@ function CreditsPage() {
         {creditActions.map((a) => (
           <button
             key={a.id}
-            onClick={() => toast(`${a.title}: ${a.value}`)}
+          onClick={() => {
+            if (a.id === "indique") {
+              navigate({ to: "/c/$slug/indique", params: { slug } });
+              return;
+            }
+            toast(`${a.title}: ${a.value}`);
+          }}
             className="rounded-[18px] border border-white/10 bg-white/5 p-3.5 text-center"
           >
             <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-lg">{a.emoji}</span>

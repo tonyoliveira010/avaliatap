@@ -44,7 +44,7 @@ const stats = [
 
 const shortcuts = [
   { id: "campanha", icon: Megaphone, label: "Campanha", to: "/campanhas" as const },
-  { id: "cupom", icon: Gift, label: "Cupom", to: "/campanhas" as const },
+  { id: "cupom", icon: Gift, label: "Clientes", to: "/beneficiarios" as const },
   { id: "placa", icon: QrCode, label: "Placas", to: "/nfc" as const },
   { id: "plano", icon: Star, label: "Plano", to: "/financeiro" as const },
 ];

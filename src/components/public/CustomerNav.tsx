@@ -1,10 +1,10 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { Home, Sparkles, Vote, Coins } from "lucide-react";
+import { Home, Sparkles, ShoppingBag, Coins } from "lucide-react";
 
 const items = [
   { to: "/c/$slug", label: "Início", icon: Home, exact: true },
   { to: "/c/$slug/beneficios", label: "Benefícios", icon: Sparkles, exact: false },
-  { to: "/c/$slug/enquetes", label: "Enquetes", icon: Vote, exact: false },
+  { to: "/c/$slug/produtos", label: "Produtos", icon: ShoppingBag, exact: false },
   { to: "/c/$slug/creditos", label: "Créditos", icon: Coins, exact: false },
 ] as const;
 
