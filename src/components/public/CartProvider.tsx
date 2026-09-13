@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { brl } from "@/lib/products";
 
@@ -43,6 +43,27 @@ export function CartProvider({
 }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const storageReady = useRef(false);
+  const storageKey = `avaliatap-cart-${whatsappNumber}`;
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed: unknown = JSON.parse(saved);
+        if (Array.isArray(parsed)) setItems(parsed as CartItem[]);
+      }
+    } catch {
+      window.localStorage.removeItem(storageKey);
+    } finally {
+      storageReady.current = true;
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!storageReady.current) return;
+    window.localStorage.setItem(storageKey, JSON.stringify(items));
+  }, [items, storageKey]);
 
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((s, i) => s + i.qty, 0);
