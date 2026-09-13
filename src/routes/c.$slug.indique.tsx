@@ -28,11 +28,12 @@ function ReferralPage() {
   const merchant = getMerchant(slug);
   const [copied, setCopied] = useState(false);
   const code = "ALPHA-JOAO20";
-  const referralUrl = `${window.location.origin}/c/${slug}?ref=${code}`;
+  const referralUrl = `/c/${slug}?ref=${code}`;
   const copy = async () => { await navigator.clipboard?.writeText(code); setCopied(true); toast("Código copiado"); setTimeout(() => setCopied(false), 1500); };
   const share = async () => {
-    if (navigator.share) await navigator.share({ title: `Indicação ${merchant?.name}`, text: `Use meu código ${code} e ganhe 15% de desconto.`, url: referralUrl });
-    else { await navigator.clipboard?.writeText(referralUrl); toast("Link copiado"); }
+    const fullUrl = `${window.location.origin}${referralUrl}`;
+    if (navigator.share) await navigator.share({ title: `Indicação ${merchant?.name}`, text: `Use meu código ${code} e ganhe 15% de desconto.`, url: fullUrl });
+    else { await navigator.clipboard?.writeText(fullUrl); toast("Link copiado"); }
   };
 
   return <div className="min-h-screen bg-secondary px-5 pb-28 pt-7 text-secondary-foreground">
@@ -40,8 +41,8 @@ function ReferralPage() {
     <section className="relative mt-4 overflow-hidden rounded-[26px] bg-primary p-6 text-primary-foreground"><span className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full border-[28px] border-white/30"/><small className="relative z-10 text-[10px] font-extrabold uppercase tracking-[0.08em] opacity-70">Indique e ganhe</small><h1 className="relative z-10 mt-2 max-w-[280px] text-[28px] font-extrabold leading-[1.05] tracking-tight">Chame seus amigos para {merchant?.name}.</h1><p className="relative z-10 mt-2 max-w-[270px] text-[13px] opacity-70">Você ganha, seu amigo ganha. Sem limite de indicações.</p></section>
     <section className="mt-3 flex items-center gap-3 rounded-[20px] border border-white/10 bg-white/5 p-4"><div className="min-w-0 flex-1"><small className="text-[9px] font-extrabold uppercase tracking-[0.08em] opacity-50">Seu código exclusivo</small><p className="mt-1 font-mono text-[17px] font-extrabold tracking-wide">{code}</p></div><button onClick={copy} className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-3 text-[11px] font-extrabold text-primary-foreground">{copied ? <Check className="h-4 w-4"/> : <Copy className="h-4 w-4"/>}{copied ? "COPIADO" : "COPIAR"}</button></section>
     <div className="mt-3 grid grid-cols-3 gap-2">{[
-      {label:"WhatsApp", icon:Share2, action:() => window.open(`https://wa.me/?text=${encodeURIComponent(`Use meu código ${code} em ${merchant?.name}: ${referralUrl}`)}`, "_blank")},
-      {label:"Copiar link", icon:Copy, action:async()=>{await navigator.clipboard?.writeText(referralUrl); toast("Link copiado")}},
+      {label:"WhatsApp", icon:Share2, action:() => window.open(`https://wa.me/?text=${encodeURIComponent(`Use meu código ${code} em ${merchant?.name}: ${window.location.origin}${referralUrl}`)}`, "_blank")},
+      {label:"Copiar link", icon:Copy, action:async()=>{await navigator.clipboard?.writeText(`${window.location.origin}${referralUrl}`); toast("Link copiado")}},
       {label:"Mais opções", icon:MoreHorizontal, action:share},
     ].map(a => <button key={a.label} onClick={a.action} className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-3 text-[10px] font-bold"><span className="grid h-9 w-9 place-items-center rounded-full bg-white/10"><a.icon className="h-4 w-4"/></span>{a.label}</button>)}</div>
     <h2 className="mb-3 mt-6 text-[16px] font-bold">Como funciona</h2><div className="space-y-2">{[

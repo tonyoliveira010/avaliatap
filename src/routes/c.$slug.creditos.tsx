@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft, History, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/c/$slug/creditos")({
 
 function CreditsPage() {
   const { slug } = Route.useParams();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(creditBalance);
   const [redeemed, setRedeemed] = useState<string[]>([]);
   const progress = Math.round((nextPrize.current / nextPrize.target) * 100);
@@ -79,7 +80,7 @@ function CreditsPage() {
             key={a.id}
           onClick={() => {
             if (a.id === "indique") {
-              window.location.href = `/c/${slug}/indique`;
+              navigate({ to: "/c/$slug/indique", params: { slug } });
               return;
             }
             toast(`${a.title}: ${a.value}`);
