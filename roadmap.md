@@ -1,0 +1,5 @@
+- [ ] Criar página de beneficiários com cadastro e histórico individual
+- [ ] Persistir carrinho no navegador
+- [ ] Confirmar lista de ofertas com links para detalhes
+- [ ] Criar página Indique e Ganhe a partir da área de créditos
+- [ ] Adicionar cards horizontais de benefícios e pontos marcantes na landing page
