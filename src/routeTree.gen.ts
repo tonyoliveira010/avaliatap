@@ -13,6 +13,7 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NfcRouteImport } from './routes/nfc'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
+import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as BeneficiariosRouteImport } from './routes/beneficiarios'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -26,6 +27,7 @@ import { Route as CSlugIndiqueRouteImport } from './routes/c.$slug.indique'
 import { Route as CSlugEnquetesRouteImport } from './routes/c.$slug.enquetes'
 import { Route as CSlugCuponsRouteImport } from './routes/c.$slug.cupons'
 import { Route as CSlugCreditosRouteImport } from './routes/c.$slug.creditos'
+import { Route as CSlugClubeRouteImport } from './routes/c.$slug.clube'
 import { Route as CSlugBeneficiosRouteImport } from './routes/c.$slug.beneficios'
 import { Route as CSlugProdutosProductIdRouteImport } from './routes/c.$slug.produtos.$productId'
 
@@ -47,6 +49,11 @@ const LandingRoute = LandingRouteImport.update({
 const FinanceiroRoute = FinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogoRoute = CatalogoRouteImport.update({
+  id: '/catalogo',
+  path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampanhasRoute = CampanhasRouteImport.update({
@@ -113,6 +120,11 @@ const CSlugCreditosRoute = CSlugCreditosRouteImport.update({
   path: '/creditos',
   getParentRoute: () => CSlugRoute,
 } as any)
+const CSlugClubeRoute = CSlugClubeRouteImport.update({
+  id: '/clube',
+  path: '/clube',
+  getParentRoute: () => CSlugRoute,
+} as any)
 const CSlugBeneficiosRoute = CSlugBeneficiosRouteImport.update({
   id: '/beneficios',
   path: '/beneficios',
@@ -129,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
+  '/catalogo': typeof CatalogoRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
@@ -136,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/clube': typeof CSlugClubeRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
@@ -149,12 +163,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
+  '/catalogo': typeof CatalogoRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
   '/perfil': typeof PerfilRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/clube': typeof CSlugClubeRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
@@ -170,6 +186,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
+  '/catalogo': typeof CatalogoRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
@@ -177,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/c/$slug': typeof CSlugRouteWithChildren
   '/c/$slug/beneficios': typeof CSlugBeneficiosRoute
+  '/c/$slug/clube': typeof CSlugClubeRoute
   '/c/$slug/creditos': typeof CSlugCreditosRoute
   '/c/$slug/cupons': typeof CSlugCuponsRoute
   '/c/$slug/enquetes': typeof CSlugEnquetesRoute
@@ -192,6 +210,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
+    | '/catalogo'
     | '/financeiro'
     | '/landing'
     | '/nfc'
@@ -199,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/c/$slug'
     | '/c/$slug/beneficios'
+    | '/c/$slug/clube'
     | '/c/$slug/creditos'
     | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
@@ -212,12 +232,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
+    | '/catalogo'
     | '/financeiro'
     | '/landing'
     | '/nfc'
     | '/perfil'
     | '/admin'
     | '/c/$slug/beneficios'
+    | '/c/$slug/clube'
     | '/c/$slug/creditos'
     | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
@@ -232,6 +254,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
+    | '/catalogo'
     | '/financeiro'
     | '/landing'
     | '/nfc'
@@ -239,6 +262,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/c/$slug'
     | '/c/$slug/beneficios'
+    | '/c/$slug/clube'
     | '/c/$slug/creditos'
     | '/c/$slug/cupons'
     | '/c/$slug/enquetes'
@@ -254,6 +278,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BeneficiariosRoute: typeof BeneficiariosRoute
   CampanhasRoute: typeof CampanhasRoute
+  CatalogoRoute: typeof CatalogoRoute
   FinanceiroRoute: typeof FinanceiroRoute
   LandingRoute: typeof LandingRoute
   NfcRoute: typeof NfcRoute
@@ -289,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/financeiro'
       fullPath: '/financeiro'
       preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogo': {
+      id: '/catalogo'
+      path: '/catalogo'
+      fullPath: '/catalogo'
+      preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campanhas': {
@@ -382,6 +414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugCreditosRouteImport
       parentRoute: typeof CSlugRoute
     }
+    '/c/$slug/clube': {
+      id: '/c/$slug/clube'
+      path: '/clube'
+      fullPath: '/c/$slug/clube'
+      preLoaderRoute: typeof CSlugClubeRouteImport
+      parentRoute: typeof CSlugRoute
+    }
     '/c/$slug/beneficios': {
       id: '/c/$slug/beneficios'
       path: '/beneficios'
@@ -424,6 +463,7 @@ const CSlugProdutosRouteWithChildren = CSlugProdutosRoute._addFileChildren(
 
 interface CSlugRouteChildren {
   CSlugBeneficiosRoute: typeof CSlugBeneficiosRoute
+  CSlugClubeRoute: typeof CSlugClubeRoute
   CSlugCreditosRoute: typeof CSlugCreditosRoute
   CSlugCuponsRoute: typeof CSlugCuponsRoute
   CSlugEnquetesRoute: typeof CSlugEnquetesRoute
@@ -434,6 +474,7 @@ interface CSlugRouteChildren {
 
 const CSlugRouteChildren: CSlugRouteChildren = {
   CSlugBeneficiosRoute: CSlugBeneficiosRoute,
+  CSlugClubeRoute: CSlugClubeRoute,
   CSlugCreditosRoute: CSlugCreditosRoute,
   CSlugCuponsRoute: CSlugCuponsRoute,
   CSlugEnquetesRoute: CSlugEnquetesRoute,
@@ -450,6 +491,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BeneficiariosRoute: BeneficiariosRoute,
   CampanhasRoute: CampanhasRoute,
+  CatalogoRoute: CatalogoRoute,
   FinanceiroRoute: FinanceiroRoute,
   LandingRoute: LandingRoute,
   NfcRoute: NfcRoute,
