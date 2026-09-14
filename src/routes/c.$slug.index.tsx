@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X } from "lucide-react";
+import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
@@ -181,7 +181,15 @@ function PublicMerchant() {
         </div>
         <div className="space-y-3">
           {merchant.news.map((o) => (
-            <OfferRow key={o.id} offer={o} onAction={() => toast("Em breve por aqui")} />
+            <OfferRow
+              key={o.id}
+              offer={o}
+              onAction={() =>
+                o.id === "club"
+                  ? navigate({ to: "/c/$slug/clube", params: { slug } })
+                  : toast("Em breve por aqui")
+              }
+            />
           ))}
         </div>
 
@@ -203,6 +211,35 @@ function PublicMerchant() {
             </a>
           </div>
         </div>
+
+        <article className="mt-3 overflow-hidden rounded-3xl border border-border bg-surface">
+          <div className="flex items-start gap-3 p-5">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary-soft">
+              <MapPin className="h-5 w-5 text-foreground" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <small className="text-[9.5px] font-extrabold uppercase tracking-[0.1em] text-muted-foreground">
+                Onde estamos
+              </small>
+              <h3 className="mt-1 text-[15px] font-semibold text-foreground">{merchant.address}</h3>
+              <p className="mt-1 text-[12px] text-muted-foreground">{merchant.category}</p>
+              <p className="mt-2 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" /> Seg a sáb, 9h às 20h
+              </p>
+            </div>
+          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              `${merchant.name} ${merchant.address}`,
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 border-t border-border py-4 text-[13px] font-extrabold text-foreground"
+          >
+            <Navigation className="h-4 w-4" /> Como chegar
+          </a>
+        </article>
+
 
         <p className="mt-6 text-center text-[11px] text-muted-foreground">
           Experiência criada com <span className="font-bold text-foreground">AvaliaTap</span>

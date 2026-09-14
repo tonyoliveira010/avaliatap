@@ -3,3 +3,6 @@
 - [x] Confirmar lista de ofertas com links para detalhes
 - [x] Criar página Indique e Ganhe a partir da área de créditos
 - [x] Adicionar cards horizontais de benefícios e pontos marcantes na landing page
+- [x] Criar a página do Clube (fidelidade premium) acessível pelo card do clube
+- [x] Card de endereço abaixo do bloco "Fale com a gente"
+- [x] Página de cadastro de produtos e serviços no painel, depois de Campanhas
