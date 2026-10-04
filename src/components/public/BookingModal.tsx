@@ -28,9 +28,10 @@ export type BookingService = {
   price: number;
   description: string;
   category?: string;
+  photo: string;
 };
 
-const defaultServices: BookingService[] = [
+export const defaultServices: BookingService[] = [
   {
     id: "limpeza-profunda",
     name: "Limpeza de Pele Profunda & Detox",
@@ -38,6 +39,7 @@ const defaultServices: BookingService[] = [
     price: 160,
     description: "Higienização profunda, vapor de ozônio, extração sem marcas e máscara calmante.",
     category: "Facial",
+    photo: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=400&q=80",
   },
   {
     id: "glow-revitalizante",
@@ -46,6 +48,7 @@ const defaultServices: BookingService[] = [
     price: 190,
     description: "Peeling de diamante, ionização de ativos iluminadores e hidratação com ácido hialurônico.",
     category: "Facial",
+    photo: "https://images.unsplash.com/photo-1512290900672-1f496739f37c?auto=format&fit=crop&w=400&q=80",
   },
   {
     id: "drenagem-corporal",
@@ -54,6 +57,7 @@ const defaultServices: BookingService[] = [
     price: 150,
     description: "Manobras suaves e ritmadas para redução de retenção líquida e alívio do inchaço.",
     category: "Corporal",
+    photo: "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=400&q=80",
   },
   {
     id: "massagem-relaxante",
@@ -62,6 +66,7 @@ const defaultServices: BookingService[] = [
     price: 170,
     description: "Técnica integrativa com óleos essenciais aquecidos para relaxamento muscular total.",
     category: "Bem-estar",
+    photo: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=400&q=80",
   },
   {
     id: "design-sobrancelhas",
@@ -70,6 +75,7 @@ const defaultServices: BookingService[] = [
     price: 75,
     description: "Visagismo facial personalizado, higienização e acabamento de alta precisão.",
     category: "Express",
+    photo: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=400&q=80",
   },
 ];
 
@@ -190,7 +196,7 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[92vh] w-[calc(100vw-32px)] max-w-lg overflow-y-auto rounded-[28px] border-border bg-background p-5 text-foreground sm:p-6 shadow-2xl">
+      <DialogContent className="max-h-[92vh] w-[min(540px,calc(100vw-20px))] max-w-[540px] overflow-y-auto rounded-[28px] border-border bg-background p-4 sm:p-6 text-foreground shadow-2xl">
         <DialogHeader className="text-left">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">
@@ -215,7 +221,7 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
         {/* STEP 1: SELECT SERVICE, DATE, TIME & CONTACT FORM */}
         {step === 1 && (
-          <form onSubmit={handleAdvanceToSummary} className="mt-2 space-y-6">
+          <form onSubmit={handleAdvanceToSummary} className="mt-2 space-y-5">
             {/* Top: List of services */}
             <div>
               <div className="mb-2.5 flex items-center justify-between">
@@ -228,34 +234,41 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                 </span>
               </div>
 
-              <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-[250px] overflow-y-auto pr-1">
                 {defaultServices.map((service) => {
                   const isSelected = selectedServiceId === service.id;
                   return (
                     <div
                       key={service.id}
                       onClick={() => setSelectedServiceId(service.id)}
-                      className={`relative flex cursor-pointer items-start justify-between gap-3 rounded-2xl border p-3.5 transition-all ${
+                      className={`relative flex cursor-pointer items-center gap-3 rounded-2xl border p-2.5 sm:p-3 transition-all ${
                         isSelected
                           ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary"
                           : "border-border bg-surface hover:border-primary/40 hover:bg-muted/40"
                       }`}
                     >
+                      {/* Foto do serviço */}
+                      <img
+                        src={service.photo}
+                        alt={service.name}
+                        className="h-16 w-16 sm:h-18 sm:w-18 rounded-xl object-cover shrink-0 shadow-sm border border-border"
+                      />
+
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-[14px] font-bold text-foreground leading-tight">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-[13px] sm:text-[14px] font-bold text-foreground leading-tight">
                             {service.name}
                           </p>
                           {service.category && (
-                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[9.5px] font-semibold text-muted-foreground">
+                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground">
                               {service.category}
                             </span>
                           )}
                         </div>
-                        <p className="mt-1 text-[11.5px] text-muted-foreground line-clamp-2">
+                        <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-1 sm:line-clamp-2">
                           {service.description}
                         </p>
-                        <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
+                        <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {service.duration}
@@ -267,7 +280,7 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                       </div>
 
                       <div
-                        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border transition-colors ${
+                        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition-colors ${
                           isSelected
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border bg-background"
@@ -432,22 +445,22 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
         {step === 2 && (
           <div className="mt-3 space-y-5">
             <div className="rounded-2xl border border-border bg-surface p-4 space-y-4">
-              <div className="flex items-start justify-between border-b border-border pb-3.5">
-                <div>
+              <div className="flex items-center gap-3 border-b border-border pb-3.5">
+                <img
+                  src={selectedService.photo}
+                  alt={selectedService.name}
+                  className="h-14 w-14 rounded-xl object-cover shrink-0 shadow-sm border border-border"
+                />
+                <div className="min-w-0 flex-1">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary">
                     Procedimento
                   </span>
-                  <h4 className="text-[16px] font-bold text-foreground mt-0.5">
+                  <h4 className="text-[15px] font-bold text-foreground mt-0.5 leading-tight">
                     {selectedService.name}
                   </h4>
-                  <p className="text-[12px] text-muted-foreground mt-0.5">
-                    Duração estimada: {selectedService.duration}
+                  <p className="text-[11.5px] text-muted-foreground mt-0.5">
+                    Duração: {selectedService.duration} · R$ {selectedService.price.toFixed(2).replace(".", ",")}
                   </p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[15px] font-extrabold text-foreground">
-                    R$ {selectedService.price.toFixed(2).replace(".", ",")}
-                  </span>
                 </div>
               </div>
 

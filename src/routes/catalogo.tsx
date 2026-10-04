@@ -7,7 +7,40 @@ import { defaultMerchantSlug } from "@/lib/merchants";
 
 type CatalogItem = Product & { kind: "Produto" | "Serviço"; active: boolean };
 const slug = defaultMerchantSlug;
-const seed: CatalogItem[] = getProducts(slug).map((item) => ({ ...item, kind: "Produto", active: true }));
+const initialServices: CatalogItem[] = [
+  {
+    id: "serv-1",
+    name: "Limpeza de Pele Profunda & Detox",
+    desc: "Higienização profunda, vapor de ozônio, extração sem marcas e máscara calmante.",
+    price: 160,
+    emoji: "✨",
+    kind: "Serviço",
+    active: true,
+  },
+  {
+    id: "serv-2",
+    name: "Protocolo Facial Glow & Vitamina C",
+    desc: "Peeling de diamante, ionização de ativos iluminadores e hidratação.",
+    price: 190,
+    emoji: "🌟",
+    kind: "Serviço",
+    active: true,
+  },
+  {
+    id: "serv-3",
+    name: "Drenagem Linfática Corporal",
+    desc: "Manobras suaves e ritmadas para redução de retenção líquida.",
+    price: 150,
+    emoji: "💆‍♀️",
+    kind: "Serviço",
+    active: true,
+  },
+];
+
+const seed: CatalogItem[] = [
+  ...getProducts(slug).map((item) => ({ ...item, kind: "Produto" as const, active: true })),
+  ...initialServices,
+];
 
 export const Route = createFileRoute("/catalogo")({
   head: () => ({
@@ -25,6 +58,7 @@ export const Route = createFileRoute("/catalogo")({
 
 function CatalogPage() {
   const [items, setItems] = useState<CatalogItem[]>(seed);
+  const [filterTab, setFilterTab] = useState<"Todos" | "Produto" | "Serviço">("Todos");
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -85,14 +119,35 @@ function CatalogPage() {
       </p>
 
       <button
-        onClick={() => { setEditingId(null); setForm({ kind: "Produto", emoji: "🧴", name: "", desc: "", price: "", oldPrice: "" }); setOpen(true); }}
+        onClick={() => { setEditingId(null); setForm({ kind: filterTab === "Serviço" ? "Serviço" : "Produto", emoji: filterTab === "Serviço" ? "✨" : "🧴", name: "", desc: "", price: "", oldPrice: "" }); setOpen(true); }}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-secondary py-4 text-[13.5px] font-extrabold text-secondary-foreground active:scale-[0.99]"
       >
-        <Plus className="h-4 w-4" /> Adicionar produto ou serviço
+        <Plus className="h-4 w-4" /> Adicionar {filterTab === "Serviço" ? "serviço" : filterTab === "Produto" ? "produto" : "item"}
       </button>
 
-      <div className="mt-5 space-y-3">
-        {items.map((item) => (
+      {/* Tabs Todos / Produtos / Serviços */}
+      <div className="mt-4 flex rounded-2xl bg-muted p-1">
+        {(["Todos", "Produto", "Serviço"] as const).map((tab) => {
+          const count = tab === "Todos" ? items.length : items.filter((i) => i.kind === tab).length;
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setFilterTab(tab)}
+              className={`flex-1 rounded-xl py-2 text-[12px] font-extrabold transition-all ${
+                filterTab === tab
+                  ? "bg-surface text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab === "Todos" ? "Todos" : tab === "Produto" ? "Produtos" : "Serviços"} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 space-y-3">
+        {items.filter((item) => filterTab === "Todos" || item.kind === filterTab).map((item) => (
           <article key={item.id} className="flex items-center gap-3 rounded-3xl border border-border bg-surface p-3.5">
             <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary-soft text-2xl">
               {item.emoji}

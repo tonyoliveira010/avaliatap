@@ -609,51 +609,6 @@ function BeneficiariesPage() {
             <Plus className="h-5 w-5 stroke-[2.5]" />
           </button>
         </div>
-
-        {/* Upgrade Card: Sistema de Agendamento */}
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-                <CalendarCheck className="h-5 w-5" />
-              </span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-[13.5px] font-extrabold text-white">
-                    Upgrade: Agendamento Online
-                  </p>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[9.5px] font-extrabold uppercase ${
-                      settings.booking
-                        ? "bg-[#25D366] text-black"
-                        : "bg-white/20 text-white"
-                    }`}
-                  >
-                    {settings.booking ? "Ativo" : "Inativo"}
-                  </span>
-                </div>
-                <p className="text-[11.5px] text-white/70">
-                  {settings.booking
-                    ? "Clientes agendam online e caem diretamente no seu CRM."
-                    : "Ative para exibir o banner e formulário na página pública."}
-                </p>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              onClick={toggleBookingUpgrade}
-              variant={settings.booking ? "default" : "outline"}
-              className={`h-9 px-3 text-xs font-bold rounded-xl ${
-                settings.booking
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "border-white/30 text-white hover:bg-white/10"
-              }`}
-            >
-              {settings.booking ? "Desativar" : "Ativar Upgrade"}
-            </Button>
-          </div>
-        </div>
       </header>
 
       <main className="px-5 pt-5">

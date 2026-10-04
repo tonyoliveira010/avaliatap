@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Moon, Sun, Store, Link2, ShieldCheck, LogOut, Nfc, Settings2 } from "lucide-react";
+import { Moon, Sun, Store, Link2, ShieldCheck, LogOut, Nfc, Settings2, Zap, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
@@ -41,6 +41,28 @@ function Perfil() {
       </div>
 
       <div className="mt-4 space-y-2.5">
+        {/* Seção que leva para a página de Upgrades & Novas Funcionalidades */}
+        <Link
+          to="/upgrades"
+          className="flex w-full items-center gap-3.5 rounded-2xl border-2 border-primary/30 bg-primary/5 p-4 transition-all hover:bg-primary/10 active:scale-[0.99] shadow-sm"
+        >
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <Zap className="h-5 w-5" />
+          </span>
+          <span className="flex-1">
+            <span className="flex items-center gap-1.5">
+              <span className="text-[14.5px] font-bold text-foreground">Upgrades & Funcionalidades</span>
+              <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-extrabold uppercase text-primary-foreground">
+                Novidades
+              </span>
+            </span>
+            <span className="block text-[11.5px] text-muted-foreground mt-0.5">
+              Agendamentos, CRM, embaixadores e módulos sob medida
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+
         <Link to="/nfc" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Nfc className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Minhas placas NFC</span><span className="text-xs text-muted-foreground">Dispositivos e novos modelos</span></span></Link>
         <Link to="/configuracoes" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Settings2 className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Página pública</span><span className="text-xs text-muted-foreground">Indicações, benefícios e experiências</span></span></Link>
         <button

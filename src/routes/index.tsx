@@ -13,6 +13,8 @@ import {
   Gift,
   ShoppingBag,
   Settings2,
+  Zap,
+  User,
 } from "lucide-react";
 import { merchants, defaultMerchantSlug } from "@/lib/merchants";
 
@@ -46,11 +48,13 @@ const stats = [
 
 const shortcuts = [
   { id: "campanha", icon: Megaphone, label: "Campanha", to: "/campanhas" as const },
-  { id: "cupom", icon: Gift, label: "Clientes", to: "/beneficiarios" as const },
+  { id: "cupom", icon: Users, label: "Clientes", to: "/beneficiarios" as const },
   { id: "placa", icon: QrCode, label: "Placas", to: "/nfc" as const },
-  { id: "plano", icon: Star, label: "Plano", to: "/financeiro" as const },
   { id: "vitrine", icon: ShoppingBag, label: "Vitrine", to: "/catalogo" as const },
+  { id: "upgrades", icon: Zap, label: "Upgrades", to: "/upgrades" as const },
+  { id: "plano", icon: Star, label: "Plano", to: "/financeiro" as const },
   { id: "pagina", icon: Settings2, label: "Página", to: "/configuracoes" as const },
+  { id: "perfil", icon: User, label: "Perfil", to: "/perfil" as const },
 ];
 
 function Panel() {
@@ -111,20 +115,23 @@ function Panel() {
       </section>
 
       <section className="mt-5 px-5">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="-mx-5 flex gap-2.5 overflow-x-auto px-5 pb-2 scrollbar-none snap-x">
           {shortcuts.map((s, i) => (
             <motion.div
               key={s.id}
               initial={{ y: 8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.04 * i }}
+              transition={{ delay: 0.03 * i }}
+              className="shrink-0 snap-start"
             >
               <Link
                 to={s.to}
-                className="flex aspect-[1/1.05] flex-col items-center justify-center gap-1.5 rounded-2xl border border-border bg-surface px-1.5 active:scale-95"
+                className="flex h-[70px] w-[70px] min-h-[70px] min-w-[70px] flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-surface p-1 active:scale-95 shadow-sm transition-all hover:border-primary/40 hover:bg-muted/40"
               >
-                <s.icon className="h-5 w-5 text-foreground" strokeWidth={2} />
-                <span className="text-[10.5px] font-semibold text-foreground/80">{s.label}</span>
+                <s.icon className="h-5 w-5 text-foreground shrink-0" strokeWidth={2.2} />
+                <span className="text-[10px] font-bold text-foreground/85 truncate max-w-[62px] text-center">
+                  {s.label}
+                </span>
               </Link>
             </motion.div>
           ))}
