@@ -2,42 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Package, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { brl } from "@/lib/products";
+import { brl, catalogKey, getProducts, type Product } from "@/lib/products";
+import { defaultMerchantSlug } from "@/lib/merchants";
 
-type CatalogItem = {
-  id: string;
-  kind: "Produto" | "Serviço";
-  emoji: string;
-  name: string;
-  desc: string;
-  price: number;
-  oldPrice?: number;
-  active: boolean;
-};
-
-const seed: CatalogItem[] = [
-  {
-    id: "1",
-    kind: "Produto",
-    emoji: "🧴",
-    name: "Pomada Modeladora Alpha",
-    desc: "Fixação forte com acabamento matte.",
-    price: 49.9,
-    oldPrice: 69.9,
-    active: true,
-  },
-  {
-    id: "2",
-    kind: "Serviço",
-    emoji: "✂️",
-    name: "Corte + Barba",
-    desc: "De segunda a quinta, com hora marcada.",
-    price: 69,
-    active: true,
-  },
-];
-
-const storageKey = "avaliatap-catalogo";
+type CatalogItem = Product & { kind: "Produto" | "Serviço"; active: boolean };
+const slug = defaultMerchantSlug;
+const seed: CatalogItem[] = getProducts(slug).map((item) => ({ ...item, kind: "Produto", active: true }));
 
 export const Route = createFileRoute("/catalogo")({
   head: () => ({
@@ -56,6 +26,7 @@ export const Route = createFileRoute("/catalogo")({
 function CatalogPage() {
   const [items, setItems] = useState<CatalogItem[]>(seed);
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     kind: "Produto" as CatalogItem["kind"],
     emoji: "🧴",
@@ -66,19 +37,19 @@ function CatalogPage() {
   });
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
+    const saved = window.localStorage.getItem(catalogKey(slug));
     if (saved) {
       try {
         setItems(JSON.parse(saved) as CatalogItem[]);
       } catch {
-        window.localStorage.removeItem(storageKey);
+        window.localStorage.removeItem(catalogKey(slug));
       }
     }
   }, []);
 
   const save = (next: CatalogItem[]) => {
     setItems(next);
-    window.localStorage.setItem(storageKey, JSON.stringify(next));
+    window.localStorage.setItem(catalogKey(slug), JSON.stringify(next));
   };
 
   const submit = (e: React.FormEvent) => {
@@ -89,19 +60,18 @@ function CatalogPage() {
       toast("Informe um preço válido.");
       return;
     }
-    save([
-      {
-        id: crypto.randomUUID(),
+    const item: CatalogItem = {
+        id: editingId ?? crypto.randomUUID(),
         kind: form.kind,
         emoji: form.emoji || "🛍️",
         name: form.name,
         desc: form.desc,
         price,
         oldPrice,
-        active: true,
-      },
-      ...items,
-    ]);
+        active: items.find((i) => i.id === editingId)?.active ?? true,
+      };
+    save(editingId ? items.map((i) => i.id === editingId ? { ...i, ...item } : i) : [item, ...items]);
+    setEditingId(null);
     setForm({ kind: "Produto", emoji: "🧴", name: "", desc: "", price: "", oldPrice: "" });
     setOpen(false);
     toast("Item adicionado à vitrine");
@@ -115,7 +85,7 @@ function CatalogPage() {
       </p>
 
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => { setEditingId(null); setForm({ kind: "Produto", emoji: "🧴", name: "", desc: "", price: "", oldPrice: "" }); setOpen(true); }}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-secondary py-4 text-[13.5px] font-extrabold text-secondary-foreground active:scale-[0.99]"
       >
         <Plus className="h-4 w-4" /> Adicionar produto ou serviço
@@ -127,7 +97,7 @@ function CatalogPage() {
             <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary-soft text-2xl">
               {item.emoji}
             </span>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 cursor-pointer" onClick={() => { setEditingId(item.id); setForm({ kind: item.kind, emoji: item.emoji, name: item.name, desc: item.desc, price: String(item.price).replace(".", ","), oldPrice: item.oldPrice ? String(item.oldPrice).replace(".", ",") : "" }); setOpen(true); }}>
               <small className="text-[9px] font-extrabold uppercase tracking-[0.09em] text-muted-foreground">
                 {item.kind}
               </small>
@@ -173,10 +143,10 @@ function CatalogPage() {
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
           <form onSubmit={submit} className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-[28px] bg-background p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-[19px] font-extrabold text-foreground">Novo item</h2>
+              <h2 className="text-[19px] font-extrabold text-foreground">{editingId ? "Editar item" : "Novo item"}</h2>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={() => { setOpen(false); setEditingId(null); }}
                 aria-label="Fechar"
                 className="grid h-9 w-9 place-items-center rounded-full bg-muted text-foreground"
               >
