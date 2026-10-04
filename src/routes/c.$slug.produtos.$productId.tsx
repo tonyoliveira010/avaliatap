@@ -103,7 +103,7 @@ function ProductDetail() {
       <div className="px-4 pt-5">
         {product.rating && <div className="mb-2 flex items-center gap-2 text-[13px] text-foreground">
           <Star className="h-4 w-4 fill-primary text-primary" />
-          <span className="font-bold">{product.rating.toFixed(1)}/5</span>
+           <span className="font-bold">{product.rating?.toFixed(1)}/5</span>
           <span className="text-muted-foreground">| {product.reviews}</span>
         </div>}
 
