@@ -20,6 +20,8 @@ import {
   ArrowLeft,
   ChevronRight,
   BadgeCheck,
+  QrCode,
+  CreditCard,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -32,6 +34,9 @@ import {
   type Product,
 } from "@/lib/products";
 import { defaultMerchantSlug, getMerchant } from "@/lib/merchants";
+import { useInfinitePay, generateInfinitePayLink } from "@/lib/infinitepay";
+import { InfinitePayConfigModal } from "@/components/app/InfinitePayConfigModal";
+import { InfinitePayCheckoutModal } from "@/components/public/InfinitePayCheckoutModal";
 
 type CatalogItem = Product & {
   kind: "Produto" | "Serviço";
@@ -92,6 +97,16 @@ export default function CatalogPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<"edit" | "preview">("edit");
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // InfinitePay integration states
+  const { config: infinitePayConfig } = useInfinitePay(slug);
+  const [infinitePayConfigOpen, setInfinitePayConfigOpen] = useState(false);
+  const [checkoutModalItem, setCheckoutModalItem] = useState<{
+    name: string;
+    price: number;
+    description?: string;
+    emoji?: string;
+  } | null>(null);
 
   // Form state
   const [form, setForm] = useState<{
@@ -365,6 +380,35 @@ export default function CatalogPage() {
         </div>
       </div>
 
+      {/* InfinitePay Integration Card */}
+      <div className="mt-4 rounded-3xl border border-emerald-500/30 bg-emerald-950/15 p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-black text-xl shadow-md">
+              ∞
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-[14px] font-bold text-foreground">Checkout InfinitePay Ativo</h3>
+                <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-400 border border-emerald-500/30">
+                  Taxa 0% Pix
+                </span>
+              </div>
+              <p className="text-[11.5px] text-muted-foreground">
+                Venda produtos e serviços com InfiniteTag: <b className="text-foreground">${infinitePayConfig.handle}</b>
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setInfinitePayConfigOpen(true)}
+            className="rounded-xl bg-emerald-500 px-3 py-1.5 text-[11px] font-bold text-black hover:bg-emerald-400 transition active:scale-95 shadow-sm"
+          >
+            Configurar
+          </button>
+        </div>
+      </div>
+
       {/* Action buttons */}
       <div className="mt-4 grid grid-cols-2 gap-2">
         <button
@@ -479,14 +523,28 @@ export default function CatalogPage() {
             </div>
 
             {/* Quick Actions Bar */}
-            <div className="mt-3.5 flex items-center justify-between border-t border-border/60 pt-3">
-              <div className="flex items-center gap-1.5">
+            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <button
                   type="button"
                   onClick={() => openEditItem(item)}
                   className="inline-flex items-center gap-1 rounded-xl bg-muted px-2.5 py-1.5 text-[11px] font-bold text-foreground hover:bg-muted/80"
                 >
-                  <Edit3 className="h-3 w-3" /> Editar detalhes
+                  <Edit3 className="h-3 w-3" /> Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCheckoutModalItem({
+                      name: item.name,
+                      price: item.price,
+                      description: item.desc,
+                      emoji: item.emoji,
+                    });
+                  }}
+                  className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1.5 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500/25 transition"
+                >
+                  <span className="font-extrabold text-[12px]">∞</span> Cobrar InfinitePay
                 </button>
                 <Link
                   to="/c/$slug/produtos/$productId"
@@ -865,6 +923,57 @@ export default function CatalogPage() {
                     </div>
                   </div>
 
+                  {/* Integração InfinitePay para este item */}
+                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/15 p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="grid h-6 w-6 place-items-center rounded-lg bg-emerald-500 text-black font-black text-xs">
+                          ∞
+                        </span>
+                        <span className="text-[12.5px] font-bold text-foreground">
+                          Checkout InfinitePay Ativo
+                        </span>
+                      </div>
+                      <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9.5px] font-bold text-emerald-400 border border-emerald-500/30">
+                        Pix 0% · Cartão 12x
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-muted-foreground">
+                      Clientes podem pagar instantaneamente com InfiniteTag <b className="text-foreground">${infinitePayConfig.handle}</b>.
+                    </p>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const numPrice = Number(form.price.replace(",", ".")) || 10;
+                          const { checkoutUrl } = generateInfinitePayLink(slug, form.name || "Item", numPrice);
+                          navigator.clipboard.writeText(checkoutUrl);
+                          toast.success("Link InfinitePay deste item copiado com sucesso!");
+                        }}
+                        className="flex-1 inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 py-2 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500/25 transition"
+                      >
+                        <Copy className="h-3 w-3" /> Copiar Link InfinitePay
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const numPrice = Number(form.price.replace(",", ".")) || 10;
+                          setCheckoutModalItem({
+                            name: form.name || "Item",
+                            price: numPrice,
+                            description: form.desc,
+                            emoji: form.emoji,
+                          });
+                        }}
+                        className="inline-flex items-center justify-center gap-1 rounded-xl bg-muted px-3 py-2 text-[11px] font-bold text-foreground hover:bg-muted/80 transition"
+                      >
+                        <QrCode className="h-3 w-3" /> Testar Checkout
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Status do item */}
                   <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3.5">
                     <div>
@@ -1025,6 +1134,23 @@ export default function CatalogPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* InfinitePay Modals */}
+      <InfinitePayConfigModal
+        isOpen={infinitePayConfigOpen}
+        onClose={() => setInfinitePayConfigOpen(false)}
+        slug={slug}
+      />
+
+      {checkoutModalItem && (
+        <InfinitePayCheckoutModal
+          isOpen={!!checkoutModalItem}
+          onClose={() => setCheckoutModalItem(null)}
+          slug={slug}
+          item={checkoutModalItem}
+          merchantName={merchant?.name || "Loja"}
+        />
       )}
     </div>
   );

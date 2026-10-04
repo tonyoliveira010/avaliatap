@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Megaphone, Ticket, Sparkles, Plus, Check } from "lucide-react";
+import { Megaphone, Ticket, Sparkles, Plus, Check, ChevronLeft, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { useAgendaNavConfig } from "@/lib/agenda-state";
 
 export const Route = createFileRoute("/campanhas")({
   head: () => ({
@@ -28,9 +29,24 @@ const initial: Campaign[] = [
 
 function Campanhas() {
   const [list, setList] = useState(initial);
+  const { isAgendaOnNav } = useAgendaNavConfig();
 
   return (
-    <div className="px-5 pb-10 pt-6">
+    <div className="px-5 pb-28 pt-6">
+      <div className="mb-4 flex items-center justify-between">
+        <Link
+          to="/perfil"
+          className="inline-flex items-center gap-1 rounded-xl bg-surface border border-border px-3 py-1.5 text-[12px] font-bold text-foreground hover:bg-muted"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Voltar ao Perfil
+        </Link>
+        {isAgendaOnNav && (
+          <span className="rounded-full bg-primary/10 border border-primary/30 px-2.5 py-1 text-[10px] font-bold text-primary">
+            Agenda na barra · Campanhas no Perfil
+          </span>
+        )}
+      </div>
+
       <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">Campanhas</h1>
       <p className="mt-1 text-[13px] text-muted-foreground">
         Tudo que aparece na sua página pública quando o cliente toca a placa.

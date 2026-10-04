@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { Minus, Plus, ShoppingCart, X, CreditCard, QrCode } from "lucide-react";
 import { brl } from "@/lib/products";
+import { defaultMerchantSlug } from "@/lib/merchants";
+import { InfinitePayCheckoutModal } from "@/components/public/InfinitePayCheckoutModal";
 
 export type CartItem = {
   key: string;
@@ -43,6 +45,7 @@ export function CartProvider({
 }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [infinitePayOpen, setInfinitePayOpen] = useState(false);
   const [storageReady, setStorageReady] = useState(false);
   const storageKey = `avaliatap-cart-${whatsappNumber}`;
 
@@ -174,15 +177,23 @@ export function CartProvider({
               )}
             </div>
 
-            <div className="border-t border-border px-5 pb-6 pt-4">
-              <div className="mb-3 flex justify-between text-[14px] font-bold text-foreground">
+            <div className="border-t border-border px-5 pb-6 pt-4 space-y-2">
+              <div className="mb-2 flex justify-between text-[14px] font-bold text-foreground">
                 <span>Subtotal</span>
                 <span>{brl(value.subtotal)}</span>
               </div>
               <button
                 disabled={items.length === 0}
+                onClick={() => setInfinitePayOpen(true)}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 py-3.5 text-[14px] font-black text-black hover:bg-emerald-400 active:scale-95 transition shadow-sm disabled:opacity-40"
+              >
+                <span className="font-extrabold text-base">∞</span>
+                Pagar com InfinitePay (Pix / 12x)
+              </button>
+              <button
+                disabled={items.length === 0}
                 onClick={checkout}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-4 text-[14px] font-extrabold text-white disabled:opacity-40"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3 text-[13px] font-bold text-white hover:opacity-90 transition active:scale-95 disabled:opacity-40"
               >
                 <ShoppingCart className="h-4 w-4" />
                 Finalizar pedido no WhatsApp
@@ -190,6 +201,21 @@ export function CartProvider({
             </div>
           </div>
         </div>
+      )}
+
+      {infinitePayOpen && items.length > 0 && (
+        <InfinitePayCheckoutModal
+          isOpen={infinitePayOpen}
+          onClose={() => setInfinitePayOpen(false)}
+          slug={defaultMerchantSlug}
+          item={{
+            name: `${items.length} item(s) do Carrinho`,
+            price: value.subtotal,
+            description: items.map((i) => `${i.qty}x ${i.name}`).join(", "),
+            emoji: "🛒",
+          }}
+          merchantName={merchantName}
+        />
       )}
     </CartContext.Provider>
   );

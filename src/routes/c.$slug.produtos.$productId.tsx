@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronLeft, Minus, Plus, Sparkles, Leaf, Star } from "lucide-react";
+import { ChevronLeft, Minus, Plus, Sparkles, Leaf, Star, CreditCard, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant } from "@/lib/merchants";
 import { getProduct, useCatalogProducts, packs, plans, brl } from "@/lib/products";
 import { CartButton, useCart } from "@/components/public/CartProvider";
+import { useInfinitePay } from "@/lib/infinitepay";
+import { InfinitePayCheckoutModal } from "@/components/public/InfinitePayCheckoutModal";
 
 export const Route = createFileRoute("/c/$slug/produtos/$productId")({
   loader: ({ params }) => ({ product: getProduct(params.slug, params.productId) }),
@@ -45,6 +47,7 @@ function ProductDetail() {
   const [plan, setPlan] = useState(plans[1]);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [infinitePayOpen, setInfinitePayOpen] = useState(false);
 
   const unitPrice = (product?.price ?? 0) * pack.mult * plan.discount;
   const savePct = product?.oldPrice
@@ -234,20 +237,41 @@ function ProductDetail() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto flex w-full max-w-[430px] items-center gap-3 border-t border-border bg-background px-4 pb-4 pt-3">
-        <div>
-          <p className="text-[9.5px] font-bold uppercase tracking-[0.05em] text-muted-foreground">Total</p>
-          <p className="text-[16px] font-extrabold text-foreground">{brl(unitPrice * qty)}</p>
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto flex w-full max-w-[430px] flex-col gap-2 border-t border-border bg-background px-4 pb-4 pt-3">
+        <div className="flex items-center gap-3">
+          <div>
+            <p className="text-[9.5px] font-bold uppercase tracking-[0.05em] text-muted-foreground">Total</p>
+            <p className="text-[16px] font-extrabold text-foreground">{brl(unitPrice * qty)}</p>
+          </div>
+          <button
+            onClick={addToCart}
+            className={`flex-1 rounded-[14px] py-3 text-[13px] font-extrabold transition ${
+              added ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
+            }`}
+          >
+            {added ? "Adicionado ✓" : "Adicionar ao carrinho"}
+          </button>
+          <button
+            onClick={() => setInfinitePayOpen(true)}
+            className="flex items-center justify-center gap-1.5 rounded-[14px] bg-emerald-500 px-4 py-3 text-[13px] font-black text-black hover:bg-emerald-400 active:scale-95 transition shadow-sm"
+          >
+            <span className="font-extrabold text-[14px]">∞</span> Pagar Pix / 12x
+          </button>
         </div>
-        <button
-          onClick={addToCart}
-          className={`flex-1 rounded-[14px] py-4 text-[14px] font-extrabold transition ${
-            added ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
-          }`}
-        >
-          {added ? "Adicionado ✓" : "Adicionar ao carrinho"}
-        </button>
       </div>
+
+      <InfinitePayCheckoutModal
+        isOpen={infinitePayOpen}
+        onClose={() => setInfinitePayOpen(false)}
+        slug={slug}
+        item={{
+          name: product.name,
+          price: unitPrice * qty,
+          description: product.desc,
+          emoji: product.emoji,
+        }}
+        merchantName={merchant?.name || "Loja"}
+      />
     </div>
   );
 }
