@@ -1,22 +1,19 @@
-import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft, Minus, Plus, Sparkles, Leaf, Star } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant } from "@/lib/merchants";
-import { getProduct, packs, plans, brl } from "@/lib/products";
+import { getProduct, useCatalogProducts, packs, plans, brl } from "@/lib/products";
 import { CartButton, useCart } from "@/components/public/CartProvider";
 
 export const Route = createFileRoute("/c/$slug/produtos/$productId")({
-  loader: ({ params }) => {
-    const product = getProduct(params.slug, params.productId);
-    if (!product) throw notFound();
-    return { product };
-  },
+  loader: ({ params }) => ({ product: getProduct(params.slug, params.productId) }),
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "Produto não encontrado · AvaliaTap" }, { name: "robots", content: "noindex" }] };
     }
     const { product } = loaderData;
+    if (!product) return { meta: [{ title: "Produto · AvaliaTap" }, { name: "description", content: "Detalhes da vitrine do comércio." }, { property: "og:title", content: "Produto · AvaliaTap" }, { property: "og:description", content: "Detalhes da vitrine do comércio." }, { property: "og:type", content: "product" }, { name: "twitter:card", content: "summary" }] };
     const title = `${product.name} · AvaliaTap`;
     return {
       meta: [
@@ -38,22 +35,23 @@ export const Route = createFileRoute("/c/$slug/produtos/$productId")({
 });
 
 function ProductDetail() {
-  const { product } = Route.useLoaderData();
-  const { slug } = Route.useParams();
+  const { slug, productId } = Route.useParams();
+  const product = useCatalogProducts(slug).find((item) => item.id === productId);
   const merchant = getMerchant(slug);
   const cart = useCart();
 
-  const [pack, setPack] = useState(packs[1]!);
-  const [plan, setPlan] = useState(plans[0]!);
+  const [pack, setPack] = useState(packs[0]);
+  const [plan, setPlan] = useState(plans[1]);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const unitPrice = product.price * pack.mult * plan.discount;
-  const savePct = product.oldPrice
+  const unitPrice = (product?.price ?? 0) * pack.mult * plan.discount;
+  const savePct = product?.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
     : null;
 
   const addToCart = () => {
+    if (!product) return;
     cart.add({
       key: `${product.id}_${pack.id}_${plan.id}`,
       name: product.name,
@@ -69,10 +67,12 @@ function ProductDetail() {
     setQty(1);
   };
 
+  if (!product) return <div className="min-h-screen bg-background p-6 text-foreground"><p>Produto indisponível.</p><Link to="/c/$slug/produtos" params={{ slug }} className="mt-4 inline-block underline">Voltar aos produtos</Link></div>;
+
   return (
     <div className="flex min-h-screen flex-col bg-background pb-28">
       <p className="bg-secondary py-2 text-center text-[12px] font-bold text-secondary-foreground">
-        {product.shipping}
+        {product.shipping ?? "Confira a disponibilidade com o estabelecimento"}
       </p>
 
       <header className="flex items-center justify-between px-4 py-3">
@@ -89,9 +89,7 @@ function ProductDetail() {
         <CartButton />
       </header>
 
-      <p className="mx-4 rounded-xl bg-primary-soft px-3 py-2.5 text-[12px] font-bold text-foreground">
-        {product.promo}
-      </p>
+      {product.promo && <p className="mx-4 rounded-xl bg-primary-soft px-3 py-2.5 text-[12px] font-bold text-foreground">{product.promo}</p>}
 
       <div className="relative mx-4 mt-4 grid h-56 place-items-center overflow-hidden rounded-[22px] bg-primary-soft text-[86px]">
         {product.emoji}
@@ -103,17 +101,17 @@ function ProductDetail() {
       </div>
 
       <div className="px-4 pt-5">
-        <div className="mb-2 flex items-center gap-2 text-[13px] text-foreground">
+        {product.rating && <div className="mb-2 flex items-center gap-2 text-[13px] text-foreground">
           <Star className="h-4 w-4 fill-primary text-primary" />
           <span className="font-bold">{product.rating.toFixed(1)}/5</span>
           <span className="text-muted-foreground">| {product.reviews}</span>
-        </div>
+        </div>}
 
         <h1 className="text-[23px] font-extrabold tracking-tight text-foreground">{product.name}</h1>
         <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{product.desc}</p>
 
         <div className="mt-4 flex gap-3">
-          {product.features.map((f, i) => (
+          {(product.features ?? []).map((f, i) => (
             <div key={f} className="flex flex-1 items-center gap-2">
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary-soft">
                 {i === 0 ? <Sparkles className="h-4 w-4 text-foreground" /> : <Leaf className="h-4 w-4 text-foreground" />}
@@ -135,7 +133,7 @@ function ProductDetail() {
           )}
         </div>
 
-        <h3 className="mb-3 mt-6 text-[14px] font-bold text-foreground">1. Escolha o pacote</h3>
+        {product.kind !== "Serviço" && <><h3 className="mb-3 mt-6 text-[14px] font-bold text-foreground">1. Escolha o pacote</h3>
         <div className="grid grid-cols-3 gap-2">
           {packs.map((p) => {
             const selected = p.id === pack.id;
@@ -155,8 +153,8 @@ function ProductDetail() {
                 <div className="mx-auto mb-1.5 text-2xl">{product.emoji}</div>
                 <div className="text-[12px] font-bold text-foreground">{p.name}</div>
                 <div className="text-[11px] text-muted-foreground">{brl(product.price * p.mult)}</div>
-                {p.save && (
-                  <span className="mt-1.5 inline-block rounded-full bg-[#ff7649] px-1.5 py-0.5 text-[9px] font-extrabold text-white">
+                  {p.save && (
+                   <span className="mt-1.5 inline-block rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-extrabold text-primary-foreground">
                     {p.save}
                   </span>
                 )}
@@ -189,7 +187,7 @@ function ProductDetail() {
                   <span className="flex items-center justify-between gap-2">
                     <b className="text-[13.5px] text-foreground">{p.name}</b>
                     {p.badge && (
-                      <span className="rounded-full bg-[#ff7649] px-2 py-0.5 text-[9.5px] font-extrabold text-white">
+                       <span className="rounded-full bg-primary px-2 py-0.5 text-[9.5px] font-extrabold text-primary-foreground">
                         {p.badge}
                       </span>
                     )}
@@ -211,7 +209,7 @@ function ProductDetail() {
               </button>
             );
           })}
-        </div>
+        </div></>}
 
         <div className="mt-6 flex items-center justify-between">
           <span className="text-[14px] font-bold text-foreground">Quantidade</span>

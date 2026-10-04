@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { getMerchant } from "@/lib/merchants";
-import { getProducts, brl } from "@/lib/products";
+import { useCatalogProducts, brl } from "@/lib/products";
 import { CartButton } from "@/components/public/CartProvider";
 
 export const Route = createFileRoute("/c/$slug/produtos")({
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/c/$slug/produtos")({
 function ProductsPage() {
   const { slug } = Route.useParams();
   const merchant = getMerchant(slug);
-  const products = getProducts(slug);
+  const products = useCatalogProducts(slug);
 
   return (
     <div className="min-h-screen bg-background px-5 pb-28 pt-7">
@@ -57,7 +57,7 @@ function ProductsPage() {
                   {p.badge}
                 </small>
               )}
-              <h3 className="mt-1 text-[15px] font-semibold text-foreground">{p.name}</h3>
+               <h2 className="mt-1 text-[15px] font-semibold text-foreground">{p.name}</h2>
               <p className="line-clamp-2 text-[11.5px] text-muted-foreground">{p.desc}</p>
               <p className="mt-1.5 text-[14px] font-extrabold text-foreground">
                 {brl(p.price)}{" "}
