@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { usePublicSettings } from "@/lib/public-settings";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, Search, Bell } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant } from "@/lib/merchants";
@@ -36,13 +39,15 @@ function BenefitsPage() {
   const merchant = getMerchant(slug);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todos");
+  const [selected, setSelected] = useState<(typeof featuredBenefits)[number] | null>(null);
+  const { settings } = usePublicSettings(slug);
 
   const matches = (item: { title: string; description: string; category: string }) =>
     (category === "Todos" || item.category === category) &&
     `${item.title} ${item.description}`.toLowerCase().includes(query.toLowerCase());
 
-  const cards = featuredBenefits.filter(matches);
-  const items = benefitItems.filter(matches);
+  const cards = settings.benefits ? featuredBenefits.filter(matches) : [];
+  const items = settings.benefits ? benefitItems.filter(matches) : [];
 
   return (
     <div className="min-h-screen bg-secondary px-5 pb-28 pt-7 text-secondary-foreground">
@@ -108,8 +113,8 @@ function BenefitsPage() {
         {cards.map((b) => (
           <button
             key={b.id}
-            onClick={() => toast(`${b.title}`)}
-            className={`relative h-[220px] w-[235px] shrink-0 overflow-hidden rounded-[25px] p-[18px] text-left text-black ${cardTone[b.tone]}`}
+            onClick={() => setSelected(b)}
+            className={`relative h-[220px] w-[400px] max-w-[calc(100vw-40px)] shrink-0 overflow-hidden rounded-[25px] p-[18px] text-left text-black ${cardTone[b.tone]}`}
           >
             <span className="absolute -right-7 top-9 h-32 w-32 rounded-full bg-white/25" />
             <span className="relative inline-block rounded-full bg-black/80 px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.08em] text-white">
@@ -147,6 +152,15 @@ function BenefitsPage() {
           </article>
         ))}
       </div>
+      <Dialog open={selected !== null} onOpenChange={(open) => { if (!open) setSelected(null); }}>
+        <DialogContent className="w-[calc(100vw-32px)] max-w-md rounded-lg border-border bg-background p-6 text-foreground">
+          <span className="text-4xl">🎁</span>
+          <DialogTitle className="text-xl">{selected?.title}</DialogTitle>
+          <DialogDescription>{selected?.description} — {merchant?.name}</DialogDescription>
+          <p className="text-sm text-muted-foreground">Confira disponibilidade e condições diretamente com o estabelecimento.</p>
+          <Button onClick={() => { if (merchant) window.open(merchant.whatsapp, "_blank", "noopener,noreferrer"); }}>Consultar no WhatsApp</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

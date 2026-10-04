@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronLeft, History, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { creditBalance, creditActions, rewards, nextPrize } from "@/lib/customer";
+import { usePublicSettings } from "@/lib/public-settings";
 
 export const Route = createFileRoute("/c/$slug/creditos")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/c/$slug/creditos")({
 
 function CreditsPage() {
   const { slug } = Route.useParams();
+  const { settings } = usePublicSettings(slug);
   const navigate = useNavigate();
   const [balance, setBalance] = useState(creditBalance);
   const [redeemed, setRedeemed] = useState<string[]>([]);
@@ -75,7 +77,7 @@ function CreditsPage() {
         <h2 className="text-[15px] font-semibold tracking-tight">Ganhe mais créditos</h2>
       </div>
       <div className="grid grid-cols-3 gap-2">
-        {creditActions.map((a) => (
+        {creditActions.filter((a) => a.id !== "indique" || settings.referrals).map((a) => (
           <button
             key={a.id}
           onClick={() => {

@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { Check, ChevronLeft, Crown, Gift, Scissors, Sparkles, Star } from "lucide-react";
-import { toast } from "sonner";
 import { getMerchant } from "@/lib/merchants";
 
 export const Route = createFileRoute("/c/$slug/clube")({
@@ -53,32 +51,11 @@ const steps = [
 ];
 
 const stampGoal = 6;
-const storageKey = "avaliatap-clube";
-
 function ClubPage() {
   const { slug } = Route.useParams();
   const merchant = getMerchant(slug);
-  const [joined, setJoined] = useState(false);
-  const [stamps, setStamps] = useState(3);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem(`${storageKey}-${slug}`);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as { joined: boolean; stamps: number };
-        setJoined(parsed.joined);
-        setStamps(parsed.stamps);
-      } catch {
-        window.localStorage.removeItem(`${storageKey}-${slug}`);
-      }
-    }
-  }, [slug]);
-
-  const persist = (next: { joined: boolean; stamps: number }) => {
-    setJoined(next.joined);
-    setStamps(next.stamps);
-    window.localStorage.setItem(`${storageKey}-${slug}`, JSON.stringify(next));
-  };
+  // Visualização demonstrativa: nenhum controle de concessão é exposto ao cliente.
+  const stamps = 3;
 
   const currentTier = stamps >= 10 ? tiers[2] : stamps >= 5 ? tiers[1] : tiers[0];
   const remaining = Math.max(stampGoal - stamps, 0);
@@ -142,32 +119,7 @@ function ClubPage() {
             : `Faltam ${remaining} ${remaining === 1 ? "selo" : "selos"} para o próximo serviço por nossa conta.`}
         </p>
 
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={() => {
-              if (joined) {
-                toast("Você já faz parte do clube.");
-                return;
-              }
-              persist({ joined: true, stamps });
-              toast("Bem-vindo ao clube! 🎉");
-            }}
-            className={`flex-1 rounded-[15px] py-3.5 text-[12px] font-extrabold ${
-              joined ? "bg-white/10 opacity-60" : "bg-primary text-primary-foreground"
-            }`}
-          >
-            {joined ? "VOCÊ JÁ É MEMBRO" : "ENTRAR NO CLUBE"}
-          </button>
-          <button
-            onClick={() => {
-              persist({ joined: true, stamps: Math.min(stamps + 1, stampGoal) });
-              toast("Selo registrado nesta visita.");
-            }}
-            className="rounded-[15px] bg-white/10 px-4 text-[12px] font-extrabold"
-          >
-            + Selo
-          </button>
-        </div>
+        <p className="mt-4 text-[12px] opacity-60">Selos registrados somente pela equipe do estabelecimento.</p>
       </section>
 
       <h2 className="mb-3 mt-6 text-[16px] font-bold">Como funciona</h2>

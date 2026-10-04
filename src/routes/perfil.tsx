@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Moon, Sun, Store, Link2, ShieldCheck, LogOut } from "lucide-react";
+import { Moon, Sun, Store, Link2, ShieldCheck, LogOut, Nfc, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
@@ -41,6 +41,8 @@ function Perfil() {
       </div>
 
       <div className="mt-4 space-y-2.5">
+        <Link to="/nfc" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Nfc className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Minhas placas NFC</span><span className="text-xs text-muted-foreground">Dispositivos e novos modelos</span></span></Link>
+        <Link to="/configuracoes" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Settings2 className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Página pública</span><span className="text-xs text-muted-foreground">Indicações, benefícios e experiências</span></span></Link>
         <button
           onClick={toggle}
           className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left active:scale-[0.99]"

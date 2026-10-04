@@ -1,4 +1,4 @@
-import { Home, Megaphone, Nfc, User, Users, Package } from "lucide-react";
+import { Home, Megaphone, User, Users, Package } from "lucide-react";
 import { motion } from "motion/react";
 import { Link, useLocation } from "@tanstack/react-router";
 
@@ -7,7 +7,6 @@ const tabs = [
   { id: "campanhas", to: "/campanhas", icon: Megaphone, label: "Campanhas" },
   { id: "catalogo", to: "/catalogo", icon: Package, label: "Vitrine" },
   { id: "beneficiarios", to: "/beneficiarios", icon: Users, label: "Clientes" },
-  { id: "nfc", to: "/nfc", icon: Nfc, label: "NFC" },
   { id: "perfil", to: "/perfil", icon: User, label: "Perfil" },
 ] as const;
 

@@ -6,3 +6,10 @@
 - [x] Criar a página do Clube (fidelidade premium) acessível pelo card do clube
 - [x] Card de endereço abaixo do bloco "Fale com a gente"
 - [x] Página de cadastro de produtos e serviços no painel, depois de Campanhas
+- [ ] Sincronizar vitrine e detalhes públicos com produtos editados no painel; corrigir navegação e compra
+- [ ] Retirar autoconcessão de selos do cartão público e oferecer controle administrativo demonstrativo
+- [ ] Ampliar destaques dos benefícios para 400px e abrir detalhes de combo em modal
+- [ ] Adicionar FAQ e rodapé à apresentação
+- [ ] Mover NFC para Perfil e exibir modelos de placas em cards horizontais 150x350
+- [ ] Disponibilizar controles para indicações, benefícios e funções públicas com atalhos no início
+- [ ] Criar página Sobre nós e incluir depois de Créditos na navegação pública

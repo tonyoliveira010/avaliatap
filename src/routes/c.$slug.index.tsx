@@ -5,6 +5,9 @@ import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, 
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
+import { usePublicSettings } from "@/lib/public-settings";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/c/$slug/")({
   loader: ({ params }) => {
@@ -69,6 +72,8 @@ function PublicMerchant() {
   const navigate = useNavigate();
   const [showCampaign, setShowCampaign] = useState(true);
   const [scratchOpen, setScratchOpen] = useState(false);
+  const [comboOpen, setComboOpen] = useState(false);
+  const { settings } = usePublicSettings(slug);
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -91,7 +96,7 @@ function PublicMerchant() {
 
       <section className="min-h-[70vh] rounded-t-[34px] bg-background px-5 pt-6 pb-28">
         <div className="grid grid-cols-4 gap-2.5">
-          {quick.map((q, i) => (
+          {quick.filter((q) => (q.id === "products" ? settings.products : q.id === "coupons" ? settings.coupons : q.id === "polls" ? settings.polls : true)).map((q, i) => (
             <motion.button
               key={q.id}
               initial={{ y: 8, opacity: 0 }}
@@ -114,7 +119,7 @@ function PublicMerchant() {
           ))}
         </div>
 
-        {showCampaign && !scratchOpen && (
+        {settings.coupons && showCampaign && !scratchOpen && (
           <motion.article
             initial={{ y: 12, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -146,7 +151,7 @@ function PublicMerchant() {
           </motion.article>
         )}
 
-        {scratchOpen && (
+        {settings.coupons && scratchOpen && (
           <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-4">
             <ScratchCoupon
               discount={merchant.campaign.discount}
@@ -156,7 +161,7 @@ function PublicMerchant() {
           </motion.div>
         )}
 
-        <div className="mb-2.5 mt-5 flex items-center justify-between px-0.5">
+        {settings.benefits && <><div className="mb-2.5 mt-5 flex items-center justify-between px-0.5">
           <h3 className="text-[17px] font-semibold tracking-tight text-foreground">Mais para você</h3>
           <Link to="/c/$slug/beneficios" params={{ slug }} className="text-[12px] text-muted-foreground">
             Ver tudo
@@ -168,19 +173,23 @@ function PublicMerchant() {
               key={o.id}
               offer={o}
               onAction={() =>
-                o.id === "review"
+                o.id === "combo"
+                  ? setComboOpen(true)
+                  : o.id === "review"
                   ? window.open(merchant.googleReview, "_blank")
                   : toast("Cupom selecionado!")
               }
             />
           ))}
-        </div>
+        </div></>}
+
+        <Dialog open={comboOpen} onOpenChange={setComboOpen}><DialogContent className="w-[calc(100vw-32px)] max-w-md rounded-lg bg-background p-6 text-foreground"><DialogTitle>Combo corte + barba</DialogTitle><DialogDescription>Por R$ 69, de segunda a quinta, com hora marcada em {merchant.name}.</DialogDescription><p className="text-sm text-muted-foreground">Confirme horários e disponibilidade diretamente com a equipe.</p><Button onClick={() => window.open(merchant.whatsapp, "_blank", "noopener,noreferrer")}>Consultar no WhatsApp</Button></DialogContent></Dialog>
 
         <div className="mb-2.5 mt-6 flex items-center justify-between px-0.5">
           <h3 className="text-[17px] font-semibold tracking-tight text-foreground">Novidades</h3>
         </div>
         <div className="space-y-3">
-          {merchant.news.map((o) => (
+          {merchant.news.filter((o) => o.id !== "club" || settings.club).map((o) => (
             <OfferRow
               key={o.id}
               offer={o}

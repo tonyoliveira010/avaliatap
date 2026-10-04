@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export type Pack = {
   id: string;
   name: string;
@@ -22,11 +24,13 @@ export type Product = {
   oldPrice?: number;
   emoji: string;
   badge?: string;
-  rating: number;
-  reviews: string;
-  features: string[];
-  shipping: string;
-  promo: string;
+  rating?: number;
+  reviews?: string;
+  features?: string[];
+  shipping?: string;
+  promo?: string;
+  kind?: "Produto" | "Serviço";
+  active?: boolean;
 };
 
 export const packs: Pack[] = [
@@ -122,6 +126,33 @@ export const productsByMerchant: Record<string, Product[]> = {
 
 export function getProducts(slug: string): Product[] {
   return productsByMerchant[slug] ?? [];
+}
+
+export const catalogKey = (slug: string) => `avaliatap-catalogo-${slug}`;
+
+export function getVisibleProducts(slug: string): Product[] {
+  const defaults = getProducts(slug);
+  if (typeof window === "undefined") return defaults;
+  try {
+    const saved = window.localStorage.getItem(catalogKey(slug));
+    if (!saved) return defaults;
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return defaults;
+    return (parsed as Product[]).filter((item) => item.active !== false);
+  } catch {
+    return defaults;
+  }
+}
+
+export function useCatalogProducts(slug: string): Product[] {
+  const [products, setProducts] = useState(() => getProducts(slug));
+  useEffect(() => {
+    const refresh = () => setProducts(getVisibleProducts(slug));
+    refresh();
+    window.addEventListener("storage", refresh);
+    return () => window.removeEventListener("storage", refresh);
+  }, [slug]);
+  return products;
 }
 
 export function getProduct(slug: string, productId: string): Product | undefined {

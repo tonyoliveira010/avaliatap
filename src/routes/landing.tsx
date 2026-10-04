@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Nfc, Star, Ticket, Users, ArrowRight, Check, MessageCircle, Copy, ShoppingBag } from "lucide-react";
+import { Nfc, Star, Ticket, Users, ArrowRight, Check, MessageCircle, Copy, ShoppingBag, Plus } from "lucide-react";
 import { defaultMerchantSlug } from "@/lib/merchants";
 
 export const Route = createFileRoute("/landing")({
@@ -61,6 +61,13 @@ const benefitStories = [
     preview: "catalog",
   },
 ] as const;
+
+const faq = [
+  ["Como funciona a placa NFC?", "O cliente aproxima o celular da placa e abre a página pública do seu comércio, sem instalar aplicativo."],
+  ["Preciso ter uma loja virtual?", "Não. Você publica produtos e serviços na vitrine e recebe os pedidos pelo WhatsApp."],
+  ["Posso mudar ofertas e benefícios?", "Sim. Você pode atualizar a vitrine e escolher quais experiências aparecem na sua página."],
+  ["As placas estão incluídas no plano?", "Não. Placas e cartões NFC são vendidos separadamente da mensalidade."],
+];
 
 function Landing() {
   return (
@@ -165,6 +172,8 @@ function Landing() {
           </Link>
         </div>
       </section>
+      <section className="bg-background px-5 pb-16 text-foreground" aria-labelledby="faq-title"><div className="mx-auto max-w-3xl border-t border-border pt-10"><h2 id="faq-title" className="text-2xl font-extrabold">Perguntas frequentes</h2><div className="mt-5 divide-y divide-border">{faq.map(([question, answer]) => <details key={question} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold">{question}<Plus className="h-4 w-4 shrink-0 transition-transform group-open:rotate-45" /></summary><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}</div></div></section>
+      <footer className="border-t border-secondary-foreground/15 bg-secondary px-6 pb-10 pt-8 text-secondary-foreground"><div className="mx-auto flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xl font-extrabold">Avalia<span className="text-primary">Tap</span></p><p className="mt-2 max-w-xs text-xs opacity-60">Aproxime pessoas do seu comércio.</p></div><nav aria-label="Links do rodapé" className="flex flex-wrap gap-5 text-xs font-semibold"><Link to="/auth">Entrar</Link><Link to="/c/$slug" params={{ slug: defaultMerchantSlug }}>Ver demonstração</Link><Link to="/">Painel</Link></nav></div></footer>
     </div>
   );
 }
