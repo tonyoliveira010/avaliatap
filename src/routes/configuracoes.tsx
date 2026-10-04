@@ -9,6 +9,7 @@ export const Route = createFileRoute("/configuracoes")({
   component: SettingsPage,
 });
 const options: { key: keyof PublicSettings; label: string; detail: string; to?: "/catalogo" | "/campanhas" | "/beneficiarios" }[] = [
+  { key: "booking", label: "Agendamento de serviços", detail: "Exiba o banner de agendamento online e horários na página pública." },
   { key: "referrals", label: "Indique e ganhe", detail: "Mostre a página de indicação aos clientes." },
   { key: "benefits", label: "Benefícios", detail: "Exiba ofertas e experiências.", to: "/campanhas" },
   { key: "coupons", label: "Cupons", detail: "Permita que clientes vejam os cupons.", to: "/campanhas" },

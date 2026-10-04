@@ -1,10 +1,11 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation } from "lucide-react";
+import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation, CalendarCheck } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
+import { BookingModal } from "@/components/public/BookingModal";
 import { usePublicSettings } from "@/lib/public-settings";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ function PublicMerchant() {
   const [showCampaign, setShowCampaign] = useState(true);
   const [scratchOpen, setScratchOpen] = useState(false);
   const [comboOpen, setComboOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const { settings } = usePublicSettings(slug);
 
   return (
@@ -119,37 +121,99 @@ function PublicMerchant() {
           ))}
         </div>
 
-        {settings.coupons && showCampaign && !scratchOpen && (
-          <motion.article
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="relative mt-4 min-h-[290px] overflow-hidden rounded-[28px] bg-primary p-6 text-primary-foreground"
-          >
-            <span className="pointer-events-none absolute -right-16 -top-11 h-44 w-44 rounded-full border-[38px] border-white/25" />
-            <button
-              onClick={() => setShowCampaign(false)}
-              aria-label="Fechar campanha"
-              className="absolute right-4 top-4 z-10 grid h-8 w-8 place-items-center rounded-full bg-surface text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <span className="relative z-10 inline-flex rounded-full bg-secondary px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-secondary-foreground">
-              {merchant.campaign.label}
-            </span>
-            <h2 className="relative z-10 mt-11 max-w-[270px] text-[31px] font-extrabold leading-[1.02] tracking-tight">
-              {merchant.campaign.title}
-            </h2>
-            <p className="relative z-10 mt-2 max-w-[285px] text-[14px] opacity-75">
-              {merchant.campaign.text}
-            </p>
-            <button
-              onClick={() => setScratchOpen(true)}
-              className="absolute inset-x-5 bottom-5 rounded-[18px] bg-secondary py-4 text-[14px] font-extrabold text-secondary-foreground active:scale-[0.99]"
-            >
-              {merchant.campaign.cta}
-            </button>
-          </motion.article>
+        {/* Banners em Scroll Horizontal */}
+        {((settings.coupons && showCampaign && !scratchOpen) || settings.booking) && (
+          <div className="mt-4">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 -mx-5 px-5 pt-1">
+              {/* Banner 1: Benefício Exclusivo (Cupom de Raspar) */}
+              {settings.coupons && showCampaign && !scratchOpen && (
+                <motion.article
+                  initial={{ y: 12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="relative min-w-[84vw] max-w-[340px] shrink-0 snap-center min-h-[300px] overflow-hidden rounded-[28px] bg-primary p-6 text-primary-foreground shadow-lg flex flex-col justify-between"
+                >
+                  <span className="pointer-events-none absolute -right-16 -top-11 h-44 w-44 rounded-full border-[38px] border-white/25" />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="relative z-10 inline-flex rounded-full bg-secondary px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-secondary-foreground">
+                        {merchant.campaign.label}
+                      </span>
+                      <button
+                        onClick={() => setShowCampaign(false)}
+                        aria-label="Fechar campanha"
+                        className="relative z-10 grid h-7 w-7 place-items-center rounded-full bg-white/20 text-white hover:bg-white/30"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <h2 className="relative z-10 mt-6 max-w-[270px] text-[28px] font-extrabold leading-[1.05] tracking-tight">
+                      {merchant.campaign.title}
+                    </h2>
+                    <p className="relative z-10 mt-2 max-w-[285px] text-[13.5px] opacity-80 leading-relaxed">
+                      {merchant.campaign.text}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setScratchOpen(true)}
+                    className="relative z-10 mt-6 w-full rounded-[18px] bg-secondary py-4 text-[14px] font-extrabold text-secondary-foreground active:scale-[0.99] shadow-sm hover:opacity-95"
+                  >
+                    {merchant.campaign.cta}
+                  </button>
+                </motion.article>
+              )}
+
+              {/* Banner 2: Agendamento de Serviços */}
+              {settings.booking && (
+                <motion.article
+                  initial={{ y: 12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="relative min-w-[84vw] max-w-[340px] shrink-0 snap-center min-h-[300px] overflow-hidden rounded-[28px] bg-secondary p-6 text-secondary-foreground shadow-lg flex flex-col justify-between"
+                >
+                  <span className="pointer-events-none absolute -right-12 -top-10 h-44 w-44 rounded-full border-[34px] border-primary/20" />
+                  <span className="pointer-events-none absolute -left-12 -bottom-10 h-36 w-36 rounded-full border-[28px] border-white/5" />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="relative z-10 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-primary-foreground">
+                        <CalendarCheck className="h-3 w-3" />
+                        Agendamento Online
+                      </span>
+                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white/80">
+                        Hora marcada
+                      </span>
+                    </div>
+                    <h2 className="relative z-10 mt-6 max-w-[270px] text-[28px] font-extrabold leading-[1.05] tracking-tight">
+                      Agende seu horário com praticidade.
+                    </h2>
+                    <p className="relative z-10 mt-2 max-w-[285px] text-[13.5px] opacity-80 leading-relaxed">
+                      Escolha o serviço, a data ideal e selecione seu horário com confirmação rápida.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setBookingOpen(true)}
+                    className="relative z-10 mt-6 w-full rounded-[18px] bg-primary py-4 text-[14px] font-extrabold text-primary-foreground active:scale-[0.99] shadow-md hover:bg-primary/90"
+                  >
+                    Agendar serviço
+                  </button>
+                </motion.article>
+              )}
+            </div>
+
+            {/* Indicador de scroll se ambos estiverem visíveis */}
+            {settings.coupons && showCampaign && !scratchOpen && settings.booking && (
+              <div className="mt-1 flex items-center justify-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                <span className="h-1.5 w-4 rounded-full bg-primary" />
+                <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
+                <span className="ml-1 text-[10.5px]">Deslize para o lado para agendar</span>
+              </div>
+            )}
+          </div>
         )}
+
+        <BookingModal
+          open={bookingOpen}
+          onOpenChange={setBookingOpen}
+          merchant={merchant}
+        />
 
         {settings.coupons && scratchOpen && (
           <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-4">
