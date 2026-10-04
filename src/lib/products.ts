@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export type Pack = {
   id: string;
   name: string;
@@ -22,11 +24,11 @@ export type Product = {
   oldPrice?: number;
   emoji: string;
   badge?: string;
-  rating: number;
-  reviews: string;
-  features: string[];
-  shipping: string;
-  promo: string;
+  rating?: number;
+  reviews?: string;
+  features?: string[];
+  shipping?: string;
+  promo?: string;
   kind?: "Produto" | "Serviço";
   active?: boolean;
 };
@@ -143,8 +145,8 @@ export function getVisibleProducts(slug: string): Product[] {
 }
 
 export function useCatalogProducts(slug: string): Product[] {
-  const [products, setProducts] = React.useState(() => getProducts(slug));
-  React.useEffect(() => {
+  const [products, setProducts] = useState(() => getProducts(slug));
+  useEffect(() => {
     const refresh = () => setProducts(getVisibleProducts(slug));
     refresh();
     window.addEventListener("storage", refresh);
