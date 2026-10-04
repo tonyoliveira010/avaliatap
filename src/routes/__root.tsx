@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { BottomNav } from "@/components/app/BottomNav";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useDesignSystem } from "@/lib/design-system";
 
 function NotFoundComponent() {
   return (
@@ -117,6 +118,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const fullWidth = pathname.startsWith("/c/") || pathname === "/landing";
+  useDesignSystem();
 
   return (
     <QueryClientProvider client={queryClient}>

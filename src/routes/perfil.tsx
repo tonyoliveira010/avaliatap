@@ -19,6 +19,7 @@ import {
   Sparkles,
   Ticket,
   Check,
+  Palette,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
@@ -28,6 +29,7 @@ import { defaultMerchantSlug, merchants } from "@/lib/merchants";
 import { useAgendaNavConfig } from "@/lib/agenda-state";
 import { useInfinitePay } from "@/lib/infinitepay";
 import { InfinitePayConfigModal } from "@/components/app/InfinitePayConfigModal";
+import { useDesignSystem } from "@/lib/design-system";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
@@ -51,6 +53,7 @@ function Perfil() {
   const { hasAgendaPlan, useAgendaInNav, isAgendaOnNav, toggleAgendaPlan, toggleAgendaInNav } = useAgendaNavConfig();
   const { config: infinitePayConfig } = useInfinitePay(defaultMerchantSlug);
   const [infinitePayModalOpen, setInfinitePayModalOpen] = useState(false);
+  const { mode: designMode, isMobbin, setMode: setDesignMode } = useDesignSystem();
 
   // Quick campaigns state for direct management in profile
   const [campaigns, setCampaigns] = useState([
@@ -255,6 +258,127 @@ function Perfil() {
 
         <Link to="/nfc" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Nfc className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Minhas placas NFC</span><span className="text-xs text-muted-foreground">Dispositivos e novos modelos</span></span></Link>
         <Link to="/configuracoes" className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-muted"><Settings2 className="h-4 w-4" /></span><span><span className="block text-sm font-semibold">Página pública</span><span className="text-xs text-muted-foreground">Indicações, benefícios e experiências</span></span></Link>
+
+        {/* ================= SESSÃO DE DESIGN DO SISTEMA ================= */}
+        <div className="rounded-3xl border border-border bg-surface p-4 shadow-sm space-y-3.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-secondary text-secondary-foreground shadow-sm">
+                <Palette className="h-5 w-5" />
+              </span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-[14.5px] font-bold text-foreground">Design & Estilo Visual</h3>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9.5px] font-extrabold text-primary uppercase">
+                    Novo
+                  </span>
+                </div>
+                <p className="text-[11.5px] text-muted-foreground">
+                  Escolha a geometria e a paleta do sistema
+                </p>
+              </div>
+            </div>
+            <span className="rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-[10px] font-extrabold text-muted-foreground uppercase">
+              {isMobbin ? "Mobbin" : "Padrão"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5 pt-1">
+            {/* Option 1: Padrão Alpha */}
+            <button
+              type="button"
+              onClick={() => {
+                setDesignMode("default");
+                toast.success("Estilo visual Padrão Alpha ativado!");
+              }}
+              className={`flex flex-col justify-between rounded-2xl p-3.5 text-left transition-all border ${
+                !isMobbin
+                  ? "border-primary bg-primary/[0.06] shadow-sm ring-1 ring-primary/40"
+                  : "border-border bg-muted/30 hover:border-border/80"
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-bold text-foreground">Padrão Alpha</span>
+                  {!isMobbin && (
+                    <span className="grid h-4 w-4 place-items-center rounded-full bg-primary text-primary-foreground text-[10px]">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-tight">
+                  Design dinâmico com acentos lima e cantos harmônicos (16-24px).
+                </p>
+              </div>
+
+              <div className="mt-3 flex items-center gap-1.5 pt-2 border-t border-border/50">
+                <span className="h-3.5 w-3.5 rounded-full bg-primary" />
+                <span className="h-3.5 w-3.5 rounded-full bg-secondary" />
+                <span className="text-[10px] font-semibold text-muted-foreground ml-1">Clássico</span>
+              </div>
+            </button>
+
+            {/* Option 2: Mobbin Neo-Grotesque */}
+            <button
+              type="button"
+              onClick={() => {
+                setDesignMode("mobbin");
+                toast.success("Design Mobbin Minimalist ativado!");
+              }}
+              className={`flex flex-col justify-between rounded-2xl p-3.5 text-left transition-all border ${
+                isMobbin
+                  ? "border-[#0066ff] bg-[#0066ff]/[0.06] shadow-sm ring-1 ring-[#0066ff]/40"
+                  : "border-border bg-muted/30 hover:border-[#0066ff]/40"
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-bold text-foreground">Mobbin Minimalist</span>
+                  {isMobbin && (
+                    <span className="grid h-4 w-4 place-items-center rounded-full bg-[#0066ff] text-white text-[10px]">
+                      <Check className="h-3 w-3 stroke-[3]" />
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground leading-tight">
+                  Monocromático, stadium pills, hairlines e acento elétrico (#0066ff).
+                </p>
+              </div>
+
+              <div className="mt-3 flex items-center gap-1.5 pt-2 border-t border-border/50">
+                <span className="h-3.5 w-3.5 rounded-full bg-[#141414] border border-white/20" />
+                <span className="h-3.5 w-3.5 rounded-full bg-[#ffffff] border border-black/20" />
+                <span className="h-3.5 w-3.5 rounded-full bg-[#0066ff]" />
+                <span className="text-[10px] font-extrabold text-[#0066ff] ml-1">Mobbin</span>
+              </div>
+            </button>
+          </div>
+
+          {/* Quick toggle pill */}
+          <div className="flex items-center justify-between rounded-2xl bg-muted/40 p-2.5 border border-border/60">
+            <span className="text-[12px] text-foreground font-medium">
+              Ativar modelo <b>Mobbin</b> (Pills, monocromático e #0066ff)
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                const next = isMobbin ? "default" : "mobbin";
+                setDesignMode(next);
+                toast.success(next === "mobbin" ? "Modelo Mobbin ativado!" : "Modelo Padrão restaurado.");
+              }}
+              className={`h-6 w-11 rounded-full p-0.5 transition-colors ${
+                isMobbin ? "bg-[#0066ff]" : "bg-muted"
+              }`}
+            >
+              <span
+                className={`block h-5 w-5 rounded-full bg-white shadow-soft transition-transform ${
+                  isMobbin ? "translate-x-5" : ""
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
         <button
           onClick={toggle}
           className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-left active:scale-[0.99]"

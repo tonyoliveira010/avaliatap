@@ -358,110 +358,111 @@ export default function AgendaOnlyPage() {
   const confirmedCount = clients.filter((c) => c.status === "Confirmado").length;
 
   return (
-    <div className="min-h-screen bg-[#000000] text-[#fafafa] selection:bg-[#2f7dff] selection:text-white pb-32 font-sans">
-      {/* ==================== AGENDA TOPBAR ==================== */}
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#000000]/90 backdrop-blur-md px-4 pt-5 pb-3">
-        <div className="flex items-center justify-between">
-          <div>
+    <div className="min-h-screen bg-background text-foreground selection:bg-[#0066ff] selection:text-white pb-32 font-sans transition-colors duration-200">
+      {/* ==================== AGENDA TOPBAR & CONTROLS ==================== */}
+      <header className="sticky top-0 z-30 border-b border-border/80 bg-background/95 backdrop-blur-md px-4 pt-5 pb-3.5 space-y-3">
+        {/* Row 1: Brand & Top Actions */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-[22px] font-black tracking-tight text-white">Agenda</h1>
-              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <h1 className="text-[24px] font-extrabold tracking-tight text-foreground">Agenda</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 InfinitePay Ativo
               </span>
             </div>
-            <p className="text-[12px] text-white/50">{merchant.name}</p>
+            <p className="text-[12px] text-muted-foreground truncate mt-0.5">
+              {merchant.name} · Atendimentos e Horários
+            </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setInfinitePayConfigOpen(true)}
-              title="Configurações InfinitePay"
-              className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/30 px-3 py-1.5 text-[11px] font-bold text-emerald-400 hover:bg-emerald-900/40 transition active:scale-95"
+              title="Configurar InfinitePay"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 text-[11.5px] font-bold text-foreground hover:border-emerald-500/50 hover:bg-muted/40 transition active:scale-95 shadow-sm"
             >
-              <span className="font-extrabold text-[12px]">∞</span> InfinitePay
+              <span className="font-extrabold text-[12px] text-emerald-500">∞</span> InfinitePay
             </button>
             <button
               onClick={() => setNewBookingModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-bold text-black hover:bg-neutral-200 transition active:scale-95 shadow-md"
+              className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-[12px] font-extrabold text-primary-foreground hover:opacity-90 transition active:scale-95 shadow-sm"
             >
-              <Plus className="h-4 w-4" /> Novo
+              <Plus className="h-3.5 w-3.5" /> Novo
             </button>
           </div>
         </div>
 
-        {/* Date Navigator Bar */}
-        <div className="mt-3.5 flex items-center justify-between gap-2 border-t border-white/10 pt-3">
-          <div className="flex items-center gap-1.5">
+        {/* Row 2: Fluid Date Navigator */}
+        <div className="flex items-center justify-between rounded-full border border-border bg-surface px-2.5 py-1.5 shadow-sm">
+          <div className="flex items-center gap-1">
             <button
               onClick={handlePrev}
-              aria-label="Anterior"
-              className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-[#161616] text-white hover:bg-[#262626] transition"
+              aria-label="Data anterior"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border bg-muted/50 text-foreground hover:bg-muted active:scale-95 transition"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={handleToday}
-              className="rounded-full border border-white/15 bg-[#161616] px-2.5 py-1 text-[11.5px] font-semibold text-white hover:bg-[#262626] transition"
+              className="rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] font-bold text-foreground hover:bg-muted transition"
             >
               Hoje
             </button>
             <button
               onClick={handleNext}
-              aria-label="Próximo"
-              className="grid h-8 w-8 place-items-center rounded-full border border-white/15 bg-[#161616] text-white hover:bg-[#262626] transition"
+              aria-label="Próxima data"
+              className="grid h-7 w-7 place-items-center rounded-full border border-border bg-muted/50 text-foreground hover:bg-muted active:scale-95 transition"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>
 
-          <p className="text-[13.5px] font-bold text-white text-center truncate px-1">
-            {formattedDateLabel}
-          </p>
+          <div className="flex items-center gap-1.5 min-w-0 px-2">
+            <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <span className="text-[13px] font-bold text-foreground truncate text-center">
+              {formattedDateLabel}
+            </span>
+          </div>
 
-          {/* View Switcher: Dia / Semana / Mês */}
-          <div className="flex rounded-full border border-white/15 bg-[#161616] p-0.5">
-            <button
-              onClick={() => setActiveView("dia")}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
-                activeView === "dia"
-                  ? "bg-white text-black shadow-sm"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              Dia
-            </button>
-            <button
-              onClick={() => setActiveView("semana")}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
-                activeView === "semana"
-                  ? "bg-white text-black shadow-sm"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              Semana
-            </button>
-            <button
-              onClick={() => setActiveView("mes")}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
-                activeView === "mes"
-                  ? "bg-white text-black shadow-sm"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              Mês
-            </button>
+          <div className="w-[60px] text-right">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[9.5px] font-extrabold text-muted-foreground uppercase tracking-wider">
+              {activeView}
+            </span>
           </div>
         </div>
 
-        {/* Quick KPI Strip */}
-        <div className="mt-2.5 flex items-center justify-between text-[11px] text-white/55 px-1">
-          <span>
-            <b>{clients.length}</b> agendamento(s) · <span className="text-emerald-400 font-bold">{confirmedCount} confirmados</span>
-          </span>
-          <span>
-            Previsão: <b className="text-white">R$ {totalRevenue}</b>
-          </span>
+        {/* Row 3: Segmented View Switcher (Dia | Semana | Mês) */}
+        <div className="rounded-full border border-border bg-muted p-1 grid grid-cols-3 gap-1 shadow-inner">
+          {(["dia", "semana", "mes"] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => setActiveView(v)}
+              className={`rounded-full py-1.5 text-[12px] font-extrabold transition-all capitalize ${
+                activeView === v
+                  ? "bg-surface text-foreground shadow-sm ring-1 ring-border/50"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {v === "mes" ? "Mês" : v === "semana" ? "Semana" : "Dia"}
+            </button>
+          ))}
+        </div>
+
+        {/* Row 4: Unified Summary Bar (3 agendamento(s) · 3 confirmados · Previsão: R$ 400) */}
+        <div className="flex items-center justify-between rounded-2xl border border-border/80 bg-surface/80 px-3.5 py-2.5 backdrop-blur-sm shadow-sm">
+          <div className="flex items-center gap-2 text-[12px] min-w-0">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="font-bold text-foreground truncate">
+              {clients.length} agendamento(s) · <span className="text-emerald-500 font-extrabold">{confirmedCount} confirmados</span>
+            </span>
+          </div>
+
+          <div className="text-right shrink-0 pl-2">
+            <span className="text-[11.5px] text-muted-foreground">
+              Previsão: <strong className="text-[13.5px] font-black text-foreground">R$ {totalRevenue}</strong>
+            </span>
+          </div>
         </div>
       </header>
 
@@ -471,8 +472,8 @@ export default function AgendaOnlyPage() {
         {activeView === "dia" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-1">
-              <h2 className="text-[14px] font-bold text-white/70">Linha do Tempo (Horários)</h2>
-              <span className="text-[11px] text-white/40">Toque no cliente para detalhes e cobrança</span>
+              <h2 className="text-[14px] font-bold text-muted-foreground">Linha do Tempo (Horários)</h2>
+              <span className="text-[11px] text-muted-foreground/70">Toque no cliente para detalhes e cobrança</span>
             </div>
 
             <div className="space-y-2.5">
@@ -483,19 +484,19 @@ export default function AgendaOnlyPage() {
                   return (
                     <div
                       key={slot.time}
-                      className="group flex flex-col rounded-2xl border border-white/10 bg-[#161616] p-3.5 transition hover:border-white/20 hover:bg-[#1a1a1a]"
+                      className="group flex flex-col rounded-2xl border border-border bg-surface p-3.5 transition hover:border-primary/40 hover:bg-muted/30 shadow-sm"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <div
                           onClick={() => setSelectedClient(client)}
                           className="flex flex-1 items-center gap-3 cursor-pointer min-w-0"
                         >
-                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#262626] text-[13px] font-bold text-white">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary text-[13px] font-bold text-secondary-foreground shadow-sm">
                             {getInitials(client.name)}
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[14px] font-bold text-white truncate">
+                              <span className="text-[14px] font-bold text-foreground truncate">
                                 {client.name}
                               </span>
                               {client.vip && (
@@ -506,43 +507,43 @@ export default function AgendaOnlyPage() {
                               <span
                                 className={`rounded-full px-2 py-0.5 text-[9.5px] font-bold ${
                                   client.status === "Confirmado"
-                                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                    ? "bg-emerald-500/15 text-emerald-500 border border-emerald-500/30"
                                     : client.status === "Concluído"
-                                    ? "bg-blue-500/20 text-blue-400"
-                                    : "bg-red-500/20 text-red-400"
+                                    ? "bg-blue-500/15 text-blue-500"
+                                    : "bg-red-500/15 text-red-500"
                                 }`}
                               >
                                 {client.status}
                               </span>
                             </div>
-                            <p className="text-[12px] text-white/60 truncate">
+                            <p className="text-[12px] text-muted-foreground truncate">
                               {client.service} · {client.duration}
                             </p>
                           </div>
                         </div>
 
                         <div className="text-right shrink-0">
-                          <span className="rounded-full bg-[#262626] px-2.5 py-1 text-[12px] font-bold text-white">
+                          <span className="rounded-full bg-muted px-2.5 py-1 text-[12px] font-bold text-foreground">
                             {slot.time}
                           </span>
-                          <p className="mt-1 text-[12px] font-bold text-emerald-400">{client.price}</p>
+                          <p className="mt-1 text-[12px] font-bold text-emerald-500">{client.price}</p>
                         </div>
                       </div>
 
                       {/* Quick Action Footer */}
-                      <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2.5">
+                      <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-2.5">
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => handleSendWhatsAppWithPayment(client)}
                             title="Cobrar via WhatsApp com link InfinitePay"
-                            className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500/25 transition"
+                            className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 text-[11px] font-bold text-emerald-500 hover:bg-emerald-500/20 transition active:scale-95"
                           >
                             <MessageCircle className="h-3 w-3" /> Cobrar InfinitePay
                           </button>
                           <button
                             onClick={() => handleOpenInfinitePayForClient(client)}
                             title="Abrir Checkout Pix / Cartão InfinitePay"
-                            className="inline-flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-white/15 transition"
+                            className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-[11px] font-bold text-foreground hover:bg-muted/80 transition active:scale-95"
                           >
                             <QrCode className="h-3 w-3" /> Pix / 12x
                           </button>
@@ -550,7 +551,7 @@ export default function AgendaOnlyPage() {
 
                         <button
                           onClick={() => setSelectedClient(client)}
-                          className="text-[11px] font-semibold text-white/50 hover:text-white"
+                          className="text-[11px] font-semibold text-muted-foreground hover:text-foreground"
                         >
                           Ver ficha &gt;
                         </button>
@@ -563,15 +564,15 @@ export default function AgendaOnlyPage() {
                   return (
                     <div
                       key={slot.time}
-                      className="flex items-center justify-between rounded-2xl border border-dashed border-red-500/20 bg-red-950/10 px-4 py-3"
+                      className="flex items-center justify-between rounded-2xl border border-dashed border-red-500/30 bg-red-500/5 px-4 py-3"
                     >
-                      <div className="flex items-center gap-2 text-red-400/80">
+                      <div className="flex items-center gap-2 text-red-500">
                         <AlertCircle className="h-4 w-4" />
                         <span className="text-[12.5px] font-semibold">Horário Bloqueado ({slot.time})</span>
                       </div>
                       <button
                         onClick={() => handleToggleBlock(slot.time, "blocked")}
-                        className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-white/20 transition"
+                        className="rounded-full bg-muted px-3 py-1 text-[11px] font-bold text-foreground hover:bg-muted/80 transition"
                       >
                         Desbloquear
                       </button>
@@ -583,11 +584,11 @@ export default function AgendaOnlyPage() {
                 return (
                   <div
                     key={slot.time}
-                    className="flex items-center justify-between rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-4 py-3 transition hover:border-white/25 hover:bg-white/[0.04]"
+                    className="flex items-center justify-between rounded-2xl border border-dashed border-border bg-muted/20 px-4 py-3 transition hover:border-primary/40 hover:bg-muted/40"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-[12px] font-bold text-white/40">{slot.time}</span>
-                      <span className="text-[12.5px] text-white/50">Horário livre</span>
+                      <span className="font-mono text-[12px] font-bold text-muted-foreground">{slot.time}</span>
+                      <span className="text-[12.5px] text-muted-foreground">Horário livre</span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -596,13 +597,13 @@ export default function AgendaOnlyPage() {
                           setNewTime(slot.time);
                           setNewBookingModalOpen(true);
                         }}
-                        className="rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-white/20 transition flex items-center gap-1"
+                        className="rounded-full bg-surface border border-border px-3 py-1 text-[11px] font-bold text-foreground hover:bg-muted transition flex items-center gap-1 shadow-sm"
                       >
                         <Plus className="h-3 w-3" /> Encaixar
                       </button>
                       <button
                         onClick={() => handleToggleBlock(slot.time, "free")}
-                        className="rounded-lg border border-white/10 px-2 py-1 text-[11px] text-white/40 hover:text-white transition"
+                        className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:text-foreground transition"
                       >
                         Bloquear
                       </button>
@@ -618,8 +619,8 @@ export default function AgendaOnlyPage() {
         {activeView === "semana" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-[14px] font-bold text-white/70">Grade Semanal de Atendimentos</h2>
-              <span className="text-[11px] text-white/40">Segunda a Domingo</span>
+              <h2 className="text-[14px] font-bold text-muted-foreground">Grade Semanal de Atendimentos</h2>
+              <span className="text-[11px] text-muted-foreground/70">Segunda a Domingo</span>
             </div>
 
             {/* 7 Days Cards */}
@@ -635,58 +636,40 @@ export default function AgendaOnlyPage() {
               ].map((w, idx) => (
                 <div
                   key={w.day}
-                  className={`rounded-2xl border p-4 transition ${
+                  className={`rounded-2xl border p-4 transition shadow-sm ${
                     w.isToday
-                      ? "border-emerald-500/50 bg-emerald-950/20 shadow-md"
-                      : "border-white/10 bg-[#161616]"
+                      ? "border-emerald-500/50 bg-emerald-500/10"
+                      : "border-border bg-surface"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span
                         className={`grid h-8 w-8 place-items-center rounded-xl text-[12px] font-black ${
-                          w.isToday ? "bg-emerald-500 text-black" : "bg-[#262626] text-white"
+                          w.isToday ? "bg-emerald-500 text-black" : "bg-muted text-foreground"
                         }`}
                       >
                         {w.short}
                       </span>
                       <div>
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-[13.5px] font-bold text-white">{w.day}</p>
-                          {w.isToday && (
-                            <span className="rounded-full bg-emerald-500 px-1.5 py-0.2 text-[9px] font-extrabold text-black">
-                              HOJE
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-white/50">{w.date}</p>
+                        <p className="text-[13px] font-bold text-foreground">{w.day}</p>
+                        <p className="text-[11px] text-muted-foreground">{w.date}</p>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <p className="text-[13px] font-bold text-emerald-400">{w.total}</p>
-                      <p className="text-[11px] text-white/50">
-                        {w.closed ? "Fechado" : `${w.count} agendamento(s)`}
-                      </p>
+                      {w.closed ? (
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                          Fechado
+                        </span>
+                      ) : (
+                        <>
+                          <p className="text-[12px] font-bold text-foreground">{w.count} atendimentos</p>
+                          <p className="text-[11px] font-bold text-emerald-500">{w.total}</p>
+                        </>
+                      )}
                     </div>
                   </div>
-
-                  {/* Day mini preview items */}
-                  {!w.closed && (
-                    <div className="mt-3 border-t border-white/5 pt-2.5 flex items-center justify-between text-[11px]">
-                      <span className="text-white/60">
-                        Horários mais movimentados: 09:00, 11:30, 16:00
-                      </span>
-                      <button
-                        onClick={() => {
-                          setActiveView("dia");
-                        }}
-                        className="font-bold text-white hover:underline"
-                      >
-                        Ver detalhes &gt;
-                      </button>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
@@ -697,16 +680,16 @@ export default function AgendaOnlyPage() {
         {activeView === "mes" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-[14px] font-bold text-white/70">Calendário Mensal</h2>
-              <span className="text-[11px] text-white/40">Selecione um dia</span>
+              <h2 className="text-[14px] font-bold text-muted-foreground">Calendário Mensal</h2>
+              <span className="text-[11px] text-muted-foreground/70">Selecione um dia</span>
             </div>
 
             {/* Calendar Grid */}
-            <div className="rounded-3xl border border-white/10 bg-[#161616] p-4 shadow-xl">
+            <div className="rounded-3xl border border-border bg-surface p-4 shadow-sm">
               {/* Day headers */}
               <div className="grid grid-cols-7 gap-1 text-center mb-2">
                 {["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].map((d) => (
-                  <span key={d} className="text-[11px] font-bold text-white/40">
+                  <span key={d} className="text-[11px] font-bold text-muted-foreground">
                     {d}
                   </span>
                 ))}
@@ -731,17 +714,17 @@ export default function AgendaOnlyPage() {
                       onClick={() => setSelectedDayOfMonth(dayNum)}
                       className={`relative flex flex-col items-center justify-center h-11 rounded-xl transition ${
                         isSelected
-                          ? "bg-white text-black font-black shadow-md scale-105 z-10"
+                          ? "bg-primary text-primary-foreground font-black shadow-md scale-105 z-10"
                           : isToday
-                          ? "border border-emerald-500/60 bg-emerald-950/20 text-emerald-400 font-bold"
-                          : "bg-white/5 text-white/80 hover:bg-white/15"
+                          ? "border border-emerald-500/60 bg-emerald-500/10 text-emerald-500 font-bold"
+                          : "bg-muted/40 text-foreground hover:bg-muted"
                       }`}
                     >
                       <span className="text-[13px]">{dayNum}</span>
                       {hasAppointments && (
                         <span
                           className={`mt-0.5 h-1.5 w-1.5 rounded-full ${
-                            isSelected ? "bg-black" : "bg-emerald-400"
+                            isSelected ? "bg-primary-foreground" : "bg-emerald-500"
                           }`}
                         />
                       )}
@@ -752,19 +735,19 @@ export default function AgendaOnlyPage() {
             </div>
 
             {/* Selected Day Agenda Preview */}
-            <div className="rounded-2xl border border-white/10 bg-[#161616] p-4">
-              <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-2.5">
+            <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-3 border-b border-border pb-2.5">
                 <div>
-                  <h3 className="text-[14px] font-bold text-white">
+                  <h3 className="text-[14px] font-bold text-foreground">
                     Dia {selectedDayOfMonth} selecionado
                   </h3>
-                  <p className="text-[11px] text-white/50">3 clientes agendados para esta data</p>
+                  <p className="text-[11px] text-muted-foreground">3 clientes agendados para esta data</p>
                 </div>
                 <button
                   onClick={() => {
                     setActiveView("dia");
                   }}
-                  className="rounded-xl bg-white px-3 py-1.5 text-[11px] font-bold text-black hover:bg-neutral-200 transition"
+                  className="rounded-full bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground hover:opacity-90 transition shadow-sm"
                 >
                   Abrir no Dia
                 </button>

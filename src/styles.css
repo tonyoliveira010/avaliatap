@@ -123,6 +123,101 @@
   --nav-border: oklch(1 0 0 / 0.08);
 }
 
+/* Mobbin Design System: Gallery-white monochrome palette, #141414 ink on #ffffff canvas, #0066ff accent, stadium pills */
+.mobbin-theme {
+  --radius: 1.5rem;
+
+  --background: #ffffff;
+  --foreground: #141414;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #141414;
+  --popover: #ffffff;
+  --popover-foreground: #141414;
+
+  --primary: #141414;
+  --primary-foreground: #ffffff;
+  --primary-soft: #f3f3f3;
+
+  --secondary: #f3f3f3;
+  --secondary-foreground: #141414;
+
+  --muted: #f3f3f3;
+  --muted-foreground: #707070;
+
+  --accent: #0066ff;
+  --accent-foreground: #ffffff;
+
+  --border: #e0e0e0;
+  --input: #f0f0f0;
+  --ring: #141414;
+
+  --nav-gradient: #ffffff;
+  --nav-border: #e0e0e0;
+}
+
+.mobbin-theme.dark {
+  --background: #141414;
+  --foreground: #fafafa;
+  --surface: #1a1a1a;
+  --card: #1a1a1a;
+  --card-foreground: #fafafa;
+  --popover: #1a1a1a;
+  --popover-foreground: #fafafa;
+
+  --primary: #fafafa;
+  --primary-foreground: #141414;
+  --primary-soft: #262626;
+
+  --secondary: #242424;
+  --secondary-foreground: #fafafa;
+
+  --muted: #242424;
+  --muted-foreground: #8e8e8e;
+
+  --accent: #0066ff;
+  --accent-foreground: #ffffff;
+
+  --border: rgba(255, 255, 255, 0.12);
+  --input: #242424;
+  --ring: #fafafa;
+
+  --nav-gradient: #141414;
+  --nav-border: rgba(255, 255, 255, 0.12);
+}
+
+/* Mobbin Geometric & Component Rules */
+.mobbin-theme nav.fixed {
+  bottom: 14px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+.mobbin-theme nav.fixed > div {
+  pointer-events: auto;
+  border-radius: 9999px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.12);
+  padding: 4px 14px 4px 14px !important;
+}
+
+.mobbin-theme button:not(.no-pill),
+.mobbin-theme .pill-shape {
+  border-radius: 9999px;
+}
+
+.mobbin-theme h1,
+.mobbin-theme h2 {
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.mobbin-theme .accent-badge {
+  background-color: #0066ff;
+  color: #ffffff;
+}
+
 
 
 

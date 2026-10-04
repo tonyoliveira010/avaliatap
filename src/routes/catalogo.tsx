@@ -380,33 +380,33 @@ export default function CatalogPage() {
         </div>
       </div>
 
-      {/* Minimalist InfinitePay Status Strip */}
-      <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-surface/50 px-3.5 py-2.5 backdrop-blur-sm transition-all hover:border-emerald-500/40">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 font-black text-[13px]">
+      {/* Clean & Minimalist InfinitePay Showcase Component */}
+      <div className="mt-3.5 flex items-center justify-between rounded-2xl border border-border/70 bg-surface/60 px-3.5 py-2.5 backdrop-blur-sm transition-all hover:border-emerald-500/30">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 font-extrabold text-[15px]">
             ∞
           </span>
-          <div className="flex items-center gap-2 min-w-0 truncate text-[12px]">
-            <span className="font-semibold text-foreground truncate">
-              Checkout InfinitePay
-            </span>
-            <span className="text-muted-foreground/30">·</span>
-            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-500 font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Taxa 0% Pix
-            </span>
-            <span className="hidden sm:inline-block text-muted-foreground/30">·</span>
-            <span className="hidden sm:inline-block text-[11.5px] text-muted-foreground font-mono truncate">
-              ${infinitePayConfig.handle}
-            </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[12.5px] font-bold text-foreground">
+                Checkout InfinitePay Ativo
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.2 text-[10px] font-bold text-emerald-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Taxa 0% Pix
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+              Venda produtos e serviços com InfiniteTag: <b className="font-mono text-foreground">${infinitePayConfig.handle}</b>
+            </p>
           </div>
         </div>
 
         <button
           type="button"
           onClick={() => setInfinitePayConfigOpen(true)}
-          className="shrink-0 text-[11.5px] font-semibold text-muted-foreground hover:text-foreground transition pl-2"
+          className="shrink-0 rounded-full border border-border bg-surface px-3 py-1.5 text-[11px] font-bold text-foreground hover:bg-muted hover:border-border/80 transition active:scale-95 shadow-sm ml-2"
         >
-          Configurar &rarr;
+          Configurar
         </button>
       </div>
 
