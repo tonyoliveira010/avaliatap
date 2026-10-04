@@ -5,6 +5,7 @@ import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, 
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
+import { usePublicSettings } from "@/lib/public-settings";
 
 export const Route = createFileRoute("/c/$slug/")({
   loader: ({ params }) => {
@@ -69,6 +70,7 @@ function PublicMerchant() {
   const navigate = useNavigate();
   const [showCampaign, setShowCampaign] = useState(true);
   const [scratchOpen, setScratchOpen] = useState(false);
+  const { settings } = usePublicSettings(slug);
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -91,7 +93,7 @@ function PublicMerchant() {
 
       <section className="min-h-[70vh] rounded-t-[34px] bg-background px-5 pt-6 pb-28">
         <div className="grid grid-cols-4 gap-2.5">
-          {quick.map((q, i) => (
+          {quick.filter((q) => (q.id === "products" ? settings.products : q.id === "coupons" ? settings.coupons : q.id === "polls" ? settings.polls : true)).map((q, i) => (
             <motion.button
               key={q.id}
               initial={{ y: 8, opacity: 0 }}
@@ -114,7 +116,7 @@ function PublicMerchant() {
           ))}
         </div>
 
-        {showCampaign && !scratchOpen && (
+        {settings.coupons && showCampaign && !scratchOpen && (
           <motion.article
             initial={{ y: 12, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -146,7 +148,7 @@ function PublicMerchant() {
           </motion.article>
         )}
 
-        {scratchOpen && (
+        {settings.coupons && scratchOpen && (
           <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-4">
             <ScratchCoupon
               discount={merchant.campaign.discount}
@@ -156,7 +158,7 @@ function PublicMerchant() {
           </motion.div>
         )}
 
-        <div className="mb-2.5 mt-5 flex items-center justify-between px-0.5">
+        {settings.benefits && <><div className="mb-2.5 mt-5 flex items-center justify-between px-0.5">
           <h3 className="text-[17px] font-semibold tracking-tight text-foreground">Mais para você</h3>
           <Link to="/c/$slug/beneficios" params={{ slug }} className="text-[12px] text-muted-foreground">
             Ver tudo
@@ -174,13 +176,13 @@ function PublicMerchant() {
               }
             />
           ))}
-        </div>
+        </div></>}
 
         <div className="mb-2.5 mt-6 flex items-center justify-between px-0.5">
           <h3 className="text-[17px] font-semibold tracking-tight text-foreground">Novidades</h3>
         </div>
         <div className="space-y-3">
-          {merchant.news.map((o) => (
+          {merchant.news.filter((o) => o.id !== "club" || settings.club).map((o) => (
             <OfferRow
               key={o.id}
               offer={o}
