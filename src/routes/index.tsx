@@ -11,6 +11,8 @@ import {
   ArrowUpRight,
   Megaphone,
   Gift,
+  ShoppingBag,
+  Settings2,
 } from "lucide-react";
 import { merchants, defaultMerchantSlug } from "@/lib/merchants";
 
@@ -47,6 +49,8 @@ const shortcuts = [
   { id: "cupom", icon: Gift, label: "Clientes", to: "/beneficiarios" as const },
   { id: "placa", icon: QrCode, label: "Placas", to: "/nfc" as const },
   { id: "plano", icon: Star, label: "Plano", to: "/financeiro" as const },
+  { id: "vitrine", icon: ShoppingBag, label: "Vitrine", to: "/catalogo" as const },
+  { id: "pagina", icon: Settings2, label: "Página", to: "/configuracoes" as const },
 ];
 
 function Panel() {
@@ -107,7 +111,7 @@ function Panel() {
       </section>
 
       <section className="mt-5 px-5">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {shortcuts.map((s, i) => (
             <motion.div
               key={s.id}
