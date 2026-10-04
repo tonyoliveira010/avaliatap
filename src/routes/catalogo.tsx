@@ -380,33 +380,34 @@ export default function CatalogPage() {
         </div>
       </div>
 
-      {/* InfinitePay Integration Card */}
-      <div className="mt-4 rounded-3xl border border-emerald-500/30 bg-emerald-950/15 p-4 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-black text-xl shadow-md">
-              ∞
+      {/* Minimalist InfinitePay Status Strip */}
+      <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/80 bg-surface/50 px-3.5 py-2.5 backdrop-blur-sm transition-all hover:border-emerald-500/40">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 font-black text-[13px]">
+            ∞
+          </span>
+          <div className="flex items-center gap-2 min-w-0 truncate text-[12px]">
+            <span className="font-semibold text-foreground truncate">
+              Checkout InfinitePay
             </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-[14px] font-bold text-foreground">Checkout InfinitePay Ativo</h3>
-                <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-400 border border-emerald-500/30">
-                  Taxa 0% Pix
-                </span>
-              </div>
-              <p className="text-[11.5px] text-muted-foreground">
-                Venda produtos e serviços com InfiniteTag: <b className="text-foreground">${infinitePayConfig.handle}</b>
-              </p>
-            </div>
+            <span className="text-muted-foreground/30">·</span>
+            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-500 font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Taxa 0% Pix
+            </span>
+            <span className="hidden sm:inline-block text-muted-foreground/30">·</span>
+            <span className="hidden sm:inline-block text-[11.5px] text-muted-foreground font-mono truncate">
+              ${infinitePayConfig.handle}
+            </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setInfinitePayConfigOpen(true)}
-            className="rounded-xl bg-emerald-500 px-3 py-1.5 text-[11px] font-bold text-black hover:bg-emerald-400 transition active:scale-95 shadow-sm"
-          >
-            Configurar
-          </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setInfinitePayConfigOpen(true)}
+          className="shrink-0 text-[11.5px] font-semibold text-muted-foreground hover:text-foreground transition pl-2"
+        >
+          Configurar &rarr;
+        </button>
       </div>
 
       {/* Action buttons */}

@@ -150,6 +150,20 @@ export const merchants: Record<string, Merchant> = {
 
 export const defaultMerchantSlug = "barbearia-alpha";
 
-export function getMerchant(slug: string): Merchant | undefined {
-  return merchants[slug];
+export function getMerchant(slug: string): Merchant {
+  if (merchants[slug]) return merchants[slug];
+  if (typeof window !== "undefined") {
+    try {
+      const alias = localStorage.getItem(`avaliatap-alias-slug-${slug}`);
+      if (alias && merchants[alias]) return { ...merchants[alias], slug };
+    } catch {
+      // ignore
+    }
+  }
+  // Check if it ends with -lite
+  if (slug.endsWith("-lite")) {
+    const baseSlug = slug.replace(/-lite$/, "");
+    if (merchants[baseSlug]) return { ...merchants[baseSlug], slug };
+  }
+  return merchants[defaultMerchantSlug] || Object.values(merchants)[0];
 }

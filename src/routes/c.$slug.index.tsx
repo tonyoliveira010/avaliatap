@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import {
   Flame,
@@ -26,6 +26,7 @@ import { BookingModal } from "@/components/public/BookingModal";
 import { usePublicSettings } from "@/lib/public-settings";
 import { useTenantCustomer } from "@/lib/customer";
 import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
+import { getLiteConfig } from "@/lib/lite-page";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -98,6 +99,18 @@ function PublicMerchant() {
   const [leadModalInfo, setLeadModalInfo] = useState<{ title?: string; description?: string } | null>(null);
   const { settings } = usePublicSettings(slug);
   const { customer, isRegistered } = useTenantCustomer(slug);
+
+  // If this slug is designated or bound as a lite page, navigate to lite version
+  useEffect(() => {
+    try {
+      const liteCfg = getLiteConfig(merchant.slug);
+      if (slug.endsWith("-lite") || liteCfg.linkedSlug === slug) {
+        navigate({ to: "/c/$slug/lite", params: { slug } });
+      }
+    } catch {
+      // ignore
+    }
+  }, [slug, merchant.slug, navigate]);
 
   const requireLeadCheck = (actionTitle: string, callback: () => void) => {
     if (settings.requireRegistrationForBenefits && !isRegistered) {

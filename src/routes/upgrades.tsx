@@ -14,11 +14,22 @@ import {
   Zap,
   ArrowRight,
   TrendingUp,
+  CreditCard,
+  QrCode,
+  Layout,
+  Copy,
+  Check,
+  Smartphone,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import { defaultMerchantSlug, getMerchant } from "@/lib/merchants";
 import { usePublicSettings } from "@/lib/public-settings";
 import { Button } from "@/components/ui/button";
+import { useInfinitePay } from "@/lib/infinitepay";
+import { InfinitePayConfigModal } from "@/components/app/InfinitePayConfigModal";
+import { useLiteConfig, type LitePageLayout } from "@/lib/lite-page";
 
 export const Route = createFileRoute("/upgrades")({
   head: () => ({
@@ -40,10 +51,42 @@ function UpgradesPage() {
   const merchant = getMerchant(defaultMerchantSlug)!;
   const { settings, update: updateSettings } = usePublicSettings(defaultMerchantSlug);
 
+  // InfinitePay Pro state
+  const { config: infinitePayConfig, updateConfig: updateInfinitePay } = useInfinitePay(merchant.slug);
+  const [infinitePayModalOpen, setInfinitePayModalOpen] = useState(false);
+
+  // Lite Page Multi-slug state
+  const { config: liteConfig, updateConfig: updateLiteConfig } = useLiteConfig(merchant.slug);
+  const [customSlugInput, setCustomSlugInput] = useState(liteConfig.linkedSlug || `${merchant.slug}-lite`);
+  const [liteConfigExpanded, setLiteConfigExpanded] = useState(false);
+  const [copiedLiteLink, setCopiedLiteLink] = useState(false);
+
   const toggleModule = (key: keyof typeof settings, label: string) => {
     const next = !settings[key];
     updateSettings({ ...settings, [key]: next });
     toast.success(`${label} ${next ? "ativado com sucesso!" : "desativado."}`);
+  };
+
+  const handleSaveLinkedSlug = () => {
+    const cleanSlug = customSlugInput
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]/g, "");
+    if (!cleanSlug) {
+      toast.error("Informe uma slug válida (letras, números e hífens).");
+      return;
+    }
+    updateLiteConfig({ linkedSlug: cleanSlug });
+    toast.success(`Slug vinculada atualizada para: /c/${cleanSlug}`);
+  };
+
+  const handleCopyLiteLink = () => {
+    const targetSlug = liteConfig.linkedSlug || `${merchant.slug}-lite`;
+    const fullUrl = `${window.location.origin}/c/${merchant.slug}/lite`;
+    navigator.clipboard.writeText(fullUrl);
+    setCopiedLiteLink(true);
+    toast.success("Link da Página Lite copiado!");
+    setTimeout(() => setCopiedLiteLink(false), 2000);
   };
 
   return (
@@ -99,6 +142,198 @@ function UpgradesPage() {
             Configure individualmente
           </span>
         </div>
+
+        {/* ================= UPGRADE 1: MÓDULO INFINITEPAY PRO ================= */}
+        <article className="rounded-3xl border border-emerald-500/30 bg-surface p-5 shadow-sm transition-all hover:border-emerald-500/50">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-black text-2xl shadow-md">
+                ∞
+              </span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-[15px] font-bold text-foreground">Módulo InfinitePay Pro</h3>
+                  <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-500 border border-emerald-500/30">
+                    Taxa 0% Pix
+                  </span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-bold text-muted-foreground">
+                    Cartão 12x
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  InfiniteTag: <b className="text-foreground">${infinitePayConfig.handle}</b> · Status:{" "}
+                  <span className={infinitePayConfig.enabled ? "text-emerald-500 font-bold" : "text-muted-foreground"}>
+                    {infinitePayConfig.enabled ? "Ativo" : "Pausado"}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              onClick={() => {
+                const nextState = !infinitePayConfig.enabled;
+                updateInfinitePay({ enabled: nextState });
+                toast.success(nextState ? "Módulo InfinitePay Pro ativado!" : "Módulo InfinitePay pausado.");
+              }}
+              variant={infinitePayConfig.enabled ? "default" : "outline"}
+              className={`h-9 px-3 text-xs font-bold rounded-xl shrink-0 ${
+                infinitePayConfig.enabled ? "bg-emerald-500 text-black hover:bg-emerald-400" : ""
+              }`}
+            >
+              {infinitePayConfig.enabled ? "Ativo" : "Ativar"}
+            </Button>
+          </div>
+
+          <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
+            Integre pagamentos oficiais aos produtos da vitrine e agendamentos. Cobranças com Pix instantâneo sem taxas, parcelamento no cartão de crédito em até 12x com antifraude nativo e links de checkout automáticos.
+          </p>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/80 pt-3 text-[11px]">
+            <div className="flex items-center gap-2">
+              <span className="rounded-lg bg-emerald-500/10 px-2 py-1 font-bold text-emerald-500">
+                0% de taxa no Pix
+              </span>
+              <span className="text-muted-foreground">Crédito até 12 parcelas</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setInfinitePayModalOpen(true)}
+              className="font-bold text-emerald-500 hover:text-emerald-400 inline-flex items-center gap-1 active:scale-95 transition"
+            >
+              Configurar InfiniteTag & API <ExternalLink className="h-3 w-3" />
+            </button>
+          </div>
+        </article>
+
+        {/* ================= UPGRADE 2: PÁGINA PÚBLICA VERSÃO LITE (MULTI-SLUG) ================= */}
+        <article className="rounded-3xl border border-primary/40 bg-surface p-5 shadow-sm transition-all hover:border-primary">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+                <Layout className="h-6 w-6" />
+              </span>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-[15px] font-bold text-foreground">Página Pública Versão Lite</h3>
+                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-extrabold text-primary uppercase">
+                    Multi-Slug
+                  </span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-bold text-muted-foreground">
+                    Novos Formatos
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Slug vinculada: <b className="text-foreground font-mono">/c/{liteConfig.linkedSlug || `${merchant.slug}-lite`}</b>
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/c/$slug/lite"
+              params={{ slug: merchant.slug }}
+              className="h-9 px-3.5 text-xs font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1 shrink-0 shadow-sm"
+            >
+              Ver Lite <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
+            Uma versão rápida e minimalista da sua página pública para vincular a uma segunda placa NFC, balcão ou filial. Inclui formatos visualmente marcantes (Clássico, Destaque e Cinema 9:16), card Google Verificado e gerador de Pix dinâmico.
+          </p>
+
+          {/* Formato Visual Selector */}
+          <div className="mt-4 rounded-2xl border border-border/80 bg-background/50 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Formato Visual da Página Lite
+              </span>
+              <span className="text-[11px] font-bold text-primary">
+                {liteConfig.layout === "cinema"
+                  ? "Cinema 9:16"
+                  : liteConfig.layout === "hero"
+                  ? "Destaque"
+                  : "Clássico"}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { id: "classic", label: "Clássico", desc: "Foto lateral" },
+                { id: "hero", label: "Destaque", desc: "Avatar central" },
+                { id: "cinema", label: "Cinema 9:16", desc: "Capa vertical" },
+              ].map((fmt) => (
+                <button
+                  key={fmt.id}
+                  type="button"
+                  onClick={() => {
+                    updateLiteConfig({ layout: fmt.id as LitePageLayout });
+                    toast.success(`Formato visual alterado para "${fmt.label}"!`);
+                  }}
+                  className={`rounded-xl p-2 text-center transition-all ${
+                    liteConfig.layout === fmt.id
+                      ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                      : "bg-surface border border-border text-foreground hover:border-primary/50"
+                  }`}
+                >
+                  <p className="text-[12px] font-bold">{fmt.label}</p>
+                  <p className={`text-[9.5px] ${liteConfig.layout === fmt.id ? "opacity-80" : "text-muted-foreground"}`}>
+                    {fmt.desc}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Vincular Outra Slug */}
+          <div className="mt-3 rounded-2xl border border-border/80 bg-background/50 p-3">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+              Vincular Outra Slug (Endereço Alternativo)
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 flex items-center">
+                <span className="absolute left-3 text-[12px] text-muted-foreground font-mono">/c/</span>
+                <input
+                  type="text"
+                  value={customSlugInput}
+                  onChange={(e) => setCustomSlugInput(e.target.value)}
+                  placeholder="sua-segunda-slug"
+                  className="w-full rounded-xl border border-border bg-surface py-2 pl-9 pr-3 text-[13px] font-mono text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleSaveLinkedSlug}
+                className="rounded-xl bg-secondary px-3 py-2 text-[12px] font-bold text-secondary-foreground hover:opacity-90 transition shrink-0"
+              >
+                Salvar Slug
+              </button>
+            </div>
+            <p className="mt-1.5 text-[10.5px] text-muted-foreground">
+              Qualquer toque na placa física gravada com esta slug abrirá diretamente a versão lite da sua página.
+            </p>
+          </div>
+
+          {/* Action links */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/80 pt-3 text-[11px]">
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={handleCopyLiteLink}
+                className="inline-flex items-center gap-1 rounded-lg bg-muted px-2.5 py-1 font-bold text-foreground hover:bg-muted/80 transition"
+              >
+                {copiedLiteLink ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />} Copiar Link Lite
+              </button>
+            </div>
+
+            <Link
+              to="/c/$slug/lite"
+              params={{ slug: merchant.slug }}
+              className="font-bold text-primary hover:underline inline-flex items-center gap-1"
+            >
+              Abrir Página Lite <ExternalLink className="h-3 w-3" />
+            </Link>
+          </div>
+        </article>
 
         {/* 1. MÓDULO AGENDAMENTO ONLINE */}
         <article className="rounded-3xl border border-border bg-surface p-5 shadow-sm transition-all hover:border-primary/40">
@@ -284,6 +519,12 @@ function UpgradesPage() {
           </p>
         </article>
       </section>
+
+      <InfinitePayConfigModal
+        isOpen={infinitePayModalOpen}
+        onClose={() => setInfinitePayModalOpen(false)}
+        slug={merchant.slug}
+      />
     </div>
   );
 }
