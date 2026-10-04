@@ -19,6 +19,7 @@ import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as BeneficiariosRouteImport } from './routes/beneficiarios'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdmRouteImport } from './routes/adm'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
@@ -83,6 +84,11 @@ const BeneficiariosRoute = BeneficiariosRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdmRoute = AdmRouteImport.update({
+  id: '/adm',
+  path: '/adm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -162,6 +168,7 @@ const CSlugProdutosProductIdRoute = CSlugProdutosProductIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/adm': typeof AdmRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/adm': typeof AdmRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/adm': typeof AdmRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/adm'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/adm'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/adm'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -321,6 +333,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AdmRoute: typeof AdmRoute
   AuthRoute: typeof AuthRoute
   BeneficiariosRoute: typeof BeneficiariosRoute
   CampanhasRoute: typeof CampanhasRoute
@@ -404,6 +417,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adm': {
+      id: '/adm'
+      path: '/adm'
+      fullPath: '/adm'
+      preLoaderRoute: typeof AdmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -568,6 +588,7 @@ const CSlugRouteWithChildren = CSlugRoute._addFileChildren(CSlugRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AdmRoute: AdmRoute,
   AuthRoute: AuthRoute,
   BeneficiariosRoute: BeneficiariosRoute,
   CampanhasRoute: CampanhasRoute,

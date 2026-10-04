@@ -113,7 +113,7 @@ function Perfil() {
         </button>
 
         <Link
-          to="/admin"
+          to="/adm"
           className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4 active:scale-[0.99]"
         >
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted">
@@ -121,7 +121,7 @@ function Perfil() {
           </span>
           <span className="flex-1">
             <span className="block text-[14px] font-semibold text-foreground">Área do administrador</span>
-            <span className="block text-[12px] text-muted-foreground">Acesso restrito</span>
+            <span className="block text-[12px] text-muted-foreground">Painel OS · /adm</span>
           </span>
         </Link>
 
