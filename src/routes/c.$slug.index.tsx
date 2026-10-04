@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation, CalendarCheck } from "lucide-react";
+import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation, CalendarCheck, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
@@ -196,6 +196,40 @@ function PublicMerchant() {
                   </button>
                 </motion.article>
               )}
+
+              {/* Banner 3: Clube de Fidelidade Digital */}
+              {settings.club && (
+                <motion.article
+                  initial={{ y: 12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="relative min-w-[84vw] max-w-[340px] shrink-0 snap-center min-h-[300px] overflow-hidden rounded-[28px] bg-gradient-to-br from-[#1c1917] via-[#141210] to-[#0a0908] p-6 text-white shadow-lg flex flex-col justify-between border border-[#302a24]"
+                >
+                  <span className="pointer-events-none absolute -right-12 -top-10 h-44 w-44 rounded-full border-[34px] border-[#f4c95d]/20" />
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="relative z-10 inline-flex items-center gap-1.5 rounded-full bg-[#f4c95d] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.08em] text-black">
+                        <Gift className="h-3 w-3" />
+                        Clube de Fidelidade
+                      </span>
+                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-bold text-white">
+                        8 / 10 Carimbos
+                      </span>
+                    </div>
+                    <h2 className="relative z-10 mt-6 max-w-[270px] text-[27px] font-extrabold leading-[1.05] tracking-tight">
+                      Colecione carimbos e ganhe mimos.
+                    </h2>
+                    <p className="relative z-10 mt-2 max-w-[285px] text-[13px] opacity-80 leading-relaxed text-[#ddd]">
+                      Faltam apenas 2 visitas para resgatar sua recompensa especial exclusiva!
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate({ to: "/c/$slug/clube", params: { slug } })}
+                    className="relative z-10 mt-6 w-full rounded-[18px] bg-[#f4c95d] py-4 text-[14px] font-black text-black active:scale-[0.99] shadow-md hover:bg-[#e0b54e]"
+                  >
+                    Ver meu cartão de carimbos
+                  </button>
+                </motion.article>
+              )}
             </div>
 
             {/* Indicador de scroll se ambos estiverem visíveis */}
@@ -264,6 +298,80 @@ function PublicMerchant() {
               }
             />
           ))}
+        </div>
+
+        {/* Cartão de Fidelidade Interativo */}
+        {settings.club && (
+          <div className="mt-5 rounded-3xl border border-border bg-surface p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-9 w-9 place-items-center rounded-2xl bg-[#f4c95d]/20 text-[#f4c95d]">
+                  <Gift className="h-5 w-5" />
+                </span>
+                <div>
+                  <h4 className="text-[14px] font-bold text-foreground">Cartão Fidelidade {merchant.name}</h4>
+                  <span className="text-[11px] text-muted-foreground">8 de 10 carimbos preenchidos</span>
+                </div>
+              </div>
+              <span className="rounded-full bg-[#f4c95d]/15 px-2.5 py-1 text-[10px] font-black text-[#f4c95d] uppercase">
+                Quase lá!
+              </span>
+            </div>
+
+            {/* Grid dos 10 carimbos */}
+            <div className="mt-4 grid grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                const filled = num <= 8;
+                return (
+                  <div
+                    key={num}
+                    className={`flex flex-col items-center justify-center h-13 rounded-2xl border transition-all ${
+                      filled
+                        ? "border-[#f4c95d] bg-[#f4c95d]/15 text-[#f4c95d] font-black shadow-sm"
+                        : "border-dashed border-border bg-muted/40 text-muted-foreground"
+                    }`}
+                  >
+                    <span className="text-xs">{filled ? "★" : num}</span>
+                    <span className="text-[8.5px] font-bold mt-0.5">{filled ? "Visita" : "Livre"}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
+              <span className="text-muted-foreground text-[11px]">Prêmio: 1 Procedimento Express Grátis</span>
+              <button
+                onClick={() => navigate({ to: "/c/$slug/clube", params: { slug } })}
+                className="font-bold text-primary hover:underline text-[12px]"
+              >
+                Abrir Cartão →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Programa Indique e Ganhe */}
+        <div className="mt-3.5 rounded-3xl border border-border bg-surface p-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary text-primary-foreground">
+                <Sparkles className="h-4 w-4" />
+              </span>
+              <div>
+                <h4 className="text-[13.5px] font-bold text-foreground">Indique uma Amiga</h4>
+                <p className="text-[11px] text-muted-foreground">Ambas ganham R$ 20 OFF no agendamento</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const text = encodeURIComponent(`Olá! Conheça ${merchant.name} e ganhe R$ 20 de desconto no seu agendamento usando meu link exclusivo: https://avaliatap.com/c/${slug}`);
+                window.open(`https://wa.me/?text=${text}`, "_blank");
+              }}
+              className="rounded-xl bg-primary px-3 py-2 text-[11px] font-extrabold text-primary-foreground shadow-sm hover:bg-primary/90 shrink-0"
+            >
+              Indicar
+            </button>
+          </div>
         </div>
 
         <div className="mt-6 rounded-3xl bg-secondary p-5 text-secondary-foreground">

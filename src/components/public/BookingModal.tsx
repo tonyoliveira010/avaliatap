@@ -196,23 +196,23 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-h-[92vh] w-[min(540px,calc(100vw-20px))] max-w-[540px] overflow-y-auto rounded-[28px] border-border bg-background p-4 sm:p-6 text-foreground shadow-2xl">
+      <DialogContent className="max-h-[88vh] w-[calc(100vw-16px)] sm:w-full max-w-[520px] overflow-y-auto rounded-[26px] sm:rounded-[30px] border-border bg-background p-3.5 sm:p-6 text-foreground shadow-2xl">
         <DialogHeader className="text-left">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">
-              <CalendarCheck className="h-3.5 w-3.5" />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10.5px] font-bold text-primary">
+              <CalendarCheck className="h-3 w-3" />
               Agendamento Online
             </span>
-            <span className="text-xs text-muted-foreground">· {merchant.name}</span>
+            <span className="text-[11px] text-muted-foreground truncate">· {merchant.name}</span>
           </div>
 
-          <DialogTitle className="mt-2 text-xl font-extrabold tracking-tight text-foreground">
+          <DialogTitle className="mt-1.5 text-lg sm:text-xl font-extrabold tracking-tight text-foreground">
             {step === 1 && "Escolha seu serviço & horário"}
             {step === 2 && "Resumo do agendamento"}
             {step === 3 && "Horário Confirmado!"}
           </DialogTitle>
 
-          <DialogDescription className="text-xs text-muted-foreground">
+          <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground">
             {step === 1 && "Selecione o procedimento, a data desejada e informe seus dados de contato."}
             {step === 2 && "Revise as informações antes de finalizar seu agendamento."}
             {step === 3 && "Seu atendimento foi agendado com sucesso no sistema."}
@@ -221,27 +221,27 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
         {/* STEP 1: SELECT SERVICE, DATE, TIME & CONTACT FORM */}
         {step === 1 && (
-          <form onSubmit={handleAdvanceToSummary} className="mt-2 space-y-5">
+          <form onSubmit={handleAdvanceToSummary} className="mt-2 space-y-4 sm:space-y-5">
             {/* Top: List of services */}
             <div>
-              <div className="mb-2.5 flex items-center justify-between">
-                <label className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-[12.5px] sm:text-[13px] font-bold text-foreground flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
                   1. Selecione o serviço
                 </label>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-[10.5px] sm:text-[11px] text-muted-foreground">
                   {defaultServices.length} disponíveis
                 </span>
               </div>
 
-              <div className="space-y-2.5 max-h-[250px] overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-[220px] sm:max-h-[250px] overflow-y-auto pr-0.5">
                 {defaultServices.map((service) => {
                   const isSelected = selectedServiceId === service.id;
                   return (
                     <div
                       key={service.id}
                       onClick={() => setSelectedServiceId(service.id)}
-                      className={`relative flex cursor-pointer items-center gap-3 rounded-2xl border p-2.5 sm:p-3 transition-all ${
+                      className={`relative flex cursor-pointer items-center gap-2.5 sm:gap-3 rounded-2xl border p-2 sm:p-3 transition-all ${
                         isSelected
                           ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary"
                           : "border-border bg-surface hover:border-primary/40 hover:bg-muted/40"
@@ -251,24 +251,24 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                       <img
                         src={service.photo}
                         alt={service.name}
-                        className="h-16 w-16 sm:h-18 sm:w-18 rounded-xl object-cover shrink-0 shadow-sm border border-border"
+                        className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl object-cover shrink-0 shadow-sm border border-border"
                       />
 
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="text-[13px] sm:text-[14px] font-bold text-foreground leading-tight">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <p className="text-[12.5px] sm:text-[13.5px] font-bold text-foreground leading-tight">
                             {service.name}
                           </p>
                           {service.category && (
-                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground">
+                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[8.5px] font-semibold text-muted-foreground">
                               {service.category}
                             </span>
                           )}
                         </div>
-                        <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-1 sm:line-clamp-2">
+                        <p className="mt-0.5 text-[10.5px] sm:text-[11px] text-muted-foreground line-clamp-1">
                           {service.description}
                         </p>
-                        <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground font-medium">
+                        <div className="mt-1 flex items-center gap-2.5 text-[10.5px] sm:text-[11px] text-muted-foreground font-medium">
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {service.duration}
@@ -280,13 +280,13 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                       </div>
 
                       <div
-                        className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition-colors ${
+                        className={`grid h-5 w-5 sm:h-6 sm:w-6 shrink-0 place-items-center rounded-full border transition-colors ${
                           isSelected
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border bg-background"
                         }`}
                       >
-                        {isSelected && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                        {isSelected && <Check className="h-3 w-3 stroke-[3]" />}
                       </div>
                     </div>
                   );
@@ -296,12 +296,12 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
             {/* Calendar: Select Date */}
             <div>
-              <label className="mb-2.5 text-[13px] font-bold text-foreground flex items-center gap-1.5">
+              <label className="mb-2 text-[12.5px] sm:text-[13px] font-bold text-foreground flex items-center gap-1.5">
                 <CalendarIcon className="h-3.5 w-3.5 text-primary" />
                 2. Escolha o dia
               </label>
 
-              <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 scrollbar-none">
                 {availableDates.map((date, idx) => {
                   const isSelected = selectedDateIndex === idx;
                   const isToday = idx === 0;
@@ -314,21 +314,21 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                       key={date.toISOString()}
                       type="button"
                       onClick={() => setSelectedDateIndex(idx)}
-                      className={`flex min-w-[62px] flex-col items-center justify-center rounded-2xl border py-2.5 px-2 transition-all ${
+                      className={`flex min-w-[54px] sm:min-w-[62px] flex-col items-center justify-center rounded-xl sm:rounded-2xl border py-2 px-1.5 transition-all ${
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground shadow-md scale-[1.02]"
                           : "border-border bg-surface text-foreground hover:bg-muted"
                       }`}
                     >
-                      <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                      <span className={`text-[9.5px] font-semibold uppercase tracking-wider ${
                         isSelected ? "text-primary-foreground/90" : "text-muted-foreground"
                       }`}>
                         {weekday}
                       </span>
-                      <span className="text-[17px] font-black leading-tight my-0.5">
+                      <span className="text-[15px] sm:text-[17px] font-black leading-tight my-0.5">
                         {dayNum}
                       </span>
-                      <span className={`text-[10px] font-medium uppercase ${
+                      <span className={`text-[9.5px] font-medium uppercase ${
                         isSelected ? "text-primary-foreground/80" : "text-muted-foreground"
                       }`}>
                         {monthName}
@@ -341,17 +341,17 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
 
             {/* Pills of Available Hours */}
             <div>
-              <div className="mb-2.5 flex items-center justify-between">
-                <label className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-[12.5px] sm:text-[13px] font-bold text-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-primary" />
                   3. Horários disponíveis
                 </label>
-                <span className="text-[11px] text-muted-foreground">
-                  {selectedTime ? `Selecionado: ${selectedTime}` : "Selecione um"}
+                <span className="text-[10.5px] text-muted-foreground">
+                  {selectedTime ? `Escolhido: ${selectedTime}` : "Selecione"}
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
                 {availableTimeSlots.map((time) => {
                   const isSelected = selectedTime === time;
                   return (
@@ -359,9 +359,9 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                       key={time}
                       type="button"
                       onClick={() => setSelectedTime(time)}
-                      className={`flex items-center justify-center rounded-xl border py-2.5 text-[13px] font-bold transition-all ${
+                      className={`flex items-center justify-center rounded-xl border py-2 text-[12.5px] sm:text-[13px] font-bold transition-all ${
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-sm scale-102"
+                          ? "border-primary bg-primary text-primary-foreground shadow-sm scale-[1.02]"
                           : "border-border bg-surface text-foreground hover:border-primary/50 hover:bg-muted"
                       }`}
                     >
@@ -373,14 +373,14 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
             </div>
 
             {/* Contact Form */}
-            <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-3">
-              <label className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+            <div className="rounded-2xl border border-border bg-muted/30 p-3 sm:p-4 space-y-2.5">
+              <label className="text-[12.5px] sm:text-[13px] font-bold text-foreground flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-primary" />
                 4. Seus dados de contato
               </label>
 
               <div>
-                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
+                <label className="block text-[10.5px] sm:text-[11px] font-semibold text-muted-foreground mb-1">
                   Nome completo *
                 </label>
                 <div className="relative">
@@ -390,15 +390,15 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
                     placeholder="Ex.: Mariana Silva"
-                    className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 pl-9 text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 sm:py-2.5 pl-8 sm:pl-9 text-[16px] sm:text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
-                  <User className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <User className="pointer-events-none absolute left-2.5 top-2.5 sm:top-3 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
-                  WhatsApp / Telefone com DDD *
+                <label className="block text-[10.5px] sm:text-[11px] font-semibold text-muted-foreground mb-1">
+                  WhatsApp com DDD *
                 </label>
                 <div className="relative">
                   <input
@@ -407,14 +407,14 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
                     placeholder="(11) 98765-4321"
-                    className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 pl-9 text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 sm:py-2.5 pl-8 sm:pl-9 text-[16px] sm:text-[13px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
-                  <Phone className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Phone className="pointer-events-none absolute left-2.5 top-2.5 sm:top-3 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
+                <label className="block text-[10.5px] sm:text-[11px] font-semibold text-muted-foreground mb-1">
                   Observações ou preferências (opcional)
                 </label>
                 <div className="relative">
@@ -422,10 +422,10 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Ex.: Primeira vez, pele sensível, preferência de profissional..."
-                    className="w-full rounded-xl border border-border bg-background px-3.5 py-2 pl-9 text-[12.5px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    placeholder="Ex.: Primeira vez, pele sensível..."
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 pl-8 sm:pl-9 text-[16px] sm:text-[12.5px] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
-                  <FileText className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <FileText className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                 </div>
               </div>
             </div>
@@ -433,7 +433,7 @@ export function BookingModal({ open, onOpenChange, merchant }: BookingModalProps
             {/* Advance button */}
             <Button
               type="submit"
-              className="w-full h-13 rounded-2xl bg-primary text-[14px] font-extrabold text-primary-foreground shadow-md hover:bg-primary/90"
+              className="w-full h-12 sm:h-13 rounded-2xl bg-primary text-[13.5px] sm:text-[14px] font-extrabold text-primary-foreground shadow-md hover:bg-primary/90"
             >
               Avançar para Resumo
               <ChevronRight className="ml-1 h-4 w-4" />
