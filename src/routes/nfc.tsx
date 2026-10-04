@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Nfc, CreditCard, Smartphone, Check } from "lucide-react";
+import { Nfc, CreditCard, Smartphone, Check, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { defaultMerchantSlug, merchants } from "@/lib/merchants";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/nfc")({
   head: () => ({
@@ -22,12 +23,18 @@ const devices = [
   { id: "cartao", icon: CreditCard, name: "Cartão NFC", state: "Ativa", taps: 342 },
   { id: "adesivo", icon: Smartphone, name: "Adesivo de vitrine", state: "Inativa", taps: 0 },
 ];
+const models = [
+  { id: "balcao", icon: Nfc, name: "Placa de balcão", detail: "Para recepção e caixa" },
+  { id: "cartao", icon: CreditCard, name: "Cartão digital", detail: "Para levar com você" },
+  { id: "vitrine", icon: Smartphone, name: "Adesivo NFC", detail: "Para vitrine e mesas" },
+];
 
 function NfcPage() {
   const merchant = merchants[defaultMerchantSlug]!;
 
   return (
     <div className="px-5 pb-10 pt-6">
+      <Link to="/perfil" className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground"><ArrowLeft className="h-4 w-4" /> Perfil</Link>
       <h1 className="text-[26px] font-extrabold tracking-tight text-foreground">Placas NFC</h1>
       <p className="mt-1 text-[13px] text-muted-foreground">
         Cada dispositivo abre a sua página pública ao ser aproximado do celular.
@@ -74,12 +81,10 @@ function NfcPage() {
         ))}
       </div>
 
-      <button
-        onClick={() => toast("Pedido de nova placa em breve")}
-        className="mt-5 w-full rounded-2xl border border-border bg-surface py-4 text-[13.5px] font-bold text-foreground active:scale-[0.99]"
-      >
-        Pedir nova placa
-      </button>
+      <h2 className="mt-7 text-lg font-bold">Novos modelos disponíveis</h2>
+      <div className="-mx-5 mt-3 flex snap-x gap-3 overflow-x-auto px-5 pb-3">
+        {models.map((model) => <article key={model.id} className="flex h-[350px] w-[150px] shrink-0 snap-start flex-col border border-border bg-surface p-3"><div className="grid flex-1 place-items-center bg-primary-soft"><model.icon className="h-14 w-14 text-foreground" /></div><h3 className="mt-3 text-sm font-bold leading-tight">{model.name}</h3><p className="mt-1 min-h-9 text-xs text-muted-foreground">{model.detail}</p><Button onClick={() => toast("Solicitação disponível em breve") } className="mt-3 w-full px-1 text-xs">Solicitar</Button></article>)}
+      </div>
     </div>
   );
 }
