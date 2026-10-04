@@ -1,19 +1,23 @@
-import { Home, Megaphone, User, Users, Package } from "lucide-react";
+import { Home, Megaphone, User, Users, Package, CalendarCheck } from "lucide-react";
 import { motion } from "motion/react";
 import { Link, useLocation } from "@tanstack/react-router";
-
-const tabs = [
-  { id: "home", to: "/", icon: Home, label: "Início" },
-  { id: "campanhas", to: "/campanhas", icon: Megaphone, label: "Campanhas" },
-  { id: "catalogo", to: "/catalogo", icon: Package, label: "Vitrine" },
-  { id: "beneficiarios", to: "/beneficiarios", icon: Users, label: "Clientes" },
-  { id: "perfil", to: "/perfil", icon: User, label: "Perfil" },
-] as const;
-
+import { useAgendaNavConfig } from "@/lib/agenda-state";
 
 export function BottomNav() {
   const { pathname } = useLocation();
+  const { isAgendaOnNav } = useAgendaNavConfig();
+
   if (pathname.startsWith("/c/") || pathname === "/auth" || pathname === "/landing") return null;
+
+  const tabs = [
+    { id: "home", to: "/", icon: Home, label: "Início" },
+    isAgendaOnNav
+      ? { id: "agenda", to: "/agenda", icon: CalendarCheck, label: "Agenda" }
+      : { id: "campanhas", to: "/campanhas", icon: Megaphone, label: "Campanhas" },
+    { id: "catalogo", to: "/catalogo", icon: Package, label: "Vitrine" },
+    { id: "beneficiarios", to: "/beneficiarios", icon: Users, label: "Clientes" },
+    { id: "perfil", to: "/perfil", icon: User, label: "Perfil" },
+  ];
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40">

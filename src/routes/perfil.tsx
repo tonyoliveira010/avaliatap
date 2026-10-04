@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Moon, Sun, Store, Link2, ShieldCheck, LogOut, Nfc, Settings2, Zap, ChevronRight } from "lucide-react";
+import { Moon, Sun, Store, Link2, ShieldCheck, LogOut, Nfc, Settings2, Zap, ChevronRight, Megaphone, CalendarCheck, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { defaultMerchantSlug, merchants } from "@/lib/merchants";
+import { useAgendaNavConfig } from "@/lib/agenda-state";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
@@ -25,6 +26,7 @@ function Perfil() {
   const { user } = useAuth();
   const merchant = merchants[defaultMerchantSlug]!;
   const dark = theme === "dark";
+  const { hasAgendaPlan, useAgendaInNav, isAgendaOnNav, toggleAgendaPlan, toggleAgendaInNav } = useAgendaNavConfig();
 
   return (
     <div className="px-5 pb-10 pt-6">
@@ -41,6 +43,82 @@ function Perfil() {
       </div>
 
       <div className="mt-4 space-y-2.5">
+        {/* Seção de Campanhas (direcionada para o perfil quando a agenda está na navbar) */}
+        {isAgendaOnNav ? (
+          <Link
+            to="/campanhas"
+            className="flex w-full items-center gap-3.5 rounded-2xl border-2 border-primary/40 bg-primary/10 p-4 transition-all hover:bg-primary/15 active:scale-[0.99] shadow-sm"
+          >
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Megaphone className="h-5 w-5" />
+            </span>
+            <span className="flex-1">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[14.5px] font-bold text-foreground">Campanhas & Promoções</span>
+                <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-extrabold uppercase text-primary-foreground">
+                  No Perfil
+                </span>
+              </span>
+              <span className="block text-[11.5px] text-muted-foreground mt-0.5">
+                Gerencie seus cupons de raspadinha, ofertas e campanhas ativas
+              </span>
+            </span>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
+        ) : (
+          <Link
+            to="/campanhas"
+            className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface p-4"
+          >
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-muted">
+              <Megaphone className="h-4 w-4" />
+            </span>
+            <span>
+              <span className="block text-sm font-semibold">Campanhas</span>
+              <span className="text-xs text-muted-foreground">Cupons e promoções</span>
+            </span>
+          </Link>
+        )}
+
+        {/* Configuração de Plano de Agenda & Navbar */}
+        <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-muted text-foreground">
+                <CalendarCheck className="h-4 w-4" />
+              </span>
+              <div>
+                <p className="text-[13.5px] font-bold text-foreground">Plano de Agendamento</p>
+                <p className="text-[11px] text-muted-foreground">Agenda de clientes, ficha de anamnese e horários</p>
+              </div>
+            </div>
+            <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-[10px] font-bold text-primary">
+              {hasAgendaPlan ? "Ativo" : "Inativo"}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-border">
+            <span className="text-[12px] text-muted-foreground">
+              Exibir <b>Agenda</b> na barra inferior (em vez de Campanhas)
+            </span>
+            <button
+              onClick={() => {
+                toggleAgendaInNav(!useAgendaInNav);
+                toast.success(!useAgendaInNav ? "Agenda ativada na barra inferior!" : "Campanhas restauradas na barra inferior.");
+              }}
+              className={`h-6 w-11 rounded-full p-0.5 transition-colors ${
+                isAgendaOnNav ? "bg-primary" : "bg-muted"
+              }`}
+            >
+              <span
+                className={`block h-5 w-5 rounded-full bg-surface shadow-soft transition-transform ${
+                  isAgendaOnNav ? "translate-x-5" : ""
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
         {/* Seção que leva para a página de Upgrades & Novas Funcionalidades */}
         <Link
           to="/upgrades"

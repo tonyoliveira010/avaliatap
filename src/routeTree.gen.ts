@@ -9,91 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AdmRouteImport } from './routes/adm'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BeneficiariosRouteImport } from './routes/beneficiarios'
-import { Route as CampanhasRouteImport } from './routes/campanhas'
-import { Route as CatalogoRouteImport } from './routes/catalogo'
-import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
-import { Route as FinanceiroRouteImport } from './routes/financeiro'
-import { Route as LandingRouteImport } from './routes/landing'
-import { Route as NfcRouteImport } from './routes/nfc'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as UpgradesRouteImport } from './routes/upgrades'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NfcRouteImport } from './routes/nfc'
+import { Route as LandingRouteImport } from './routes/landing'
+import { Route as FinanceiroRouteImport } from './routes/financeiro'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as CampanhasRouteImport } from './routes/campanhas'
+import { Route as BeneficiariosRouteImport } from './routes/beneficiarios'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AgendaRouteImport } from './routes/agenda'
+import { Route as AdmRouteImport } from './routes/adm'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as CSlugRouteImport } from './routes/c.$slug'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CSlugIndexRouteImport } from './routes/c.$slug.index'
-import { Route as CSlugBeneficiosRouteImport } from './routes/c.$slug.beneficios'
-import { Route as CSlugClubeRouteImport } from './routes/c.$slug.clube'
-import { Route as CSlugCreditosRouteImport } from './routes/c.$slug.creditos'
-import { Route as CSlugCuponsRouteImport } from './routes/c.$slug.cupons'
-import { Route as CSlugEnquetesRouteImport } from './routes/c.$slug.enquetes'
-import { Route as CSlugIndiqueRouteImport } from './routes/c.$slug.indique'
-import { Route as CSlugProdutosRouteImport } from './routes/c.$slug.produtos'
 import { Route as CSlugSobreRouteImport } from './routes/c.$slug.sobre'
+import { Route as CSlugProdutosRouteImport } from './routes/c.$slug.produtos'
+import { Route as CSlugIndiqueRouteImport } from './routes/c.$slug.indique'
+import { Route as CSlugEnquetesRouteImport } from './routes/c.$slug.enquetes'
+import { Route as CSlugCuponsRouteImport } from './routes/c.$slug.cupons'
+import { Route as CSlugCreditosRouteImport } from './routes/c.$slug.creditos'
+import { Route as CSlugClubeRouteImport } from './routes/c.$slug.clube'
+import { Route as CSlugBeneficiosRouteImport } from './routes/c.$slug.beneficios'
 import { Route as CSlugProdutosIndexRouteImport } from './routes/c.$slug.produtos.index'
 import { Route as CSlugProdutosProductIdRouteImport } from './routes/c.$slug.produtos.$productId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdmRoute = AdmRouteImport.update({
-  id: '/adm',
-  path: '/adm',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BeneficiariosRoute = BeneficiariosRouteImport.update({
-  id: '/beneficiarios',
-  path: '/beneficiarios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CampanhasRoute = CampanhasRouteImport.update({
-  id: '/campanhas',
-  path: '/campanhas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CatalogoRoute = CatalogoRouteImport.update({
-  id: '/catalogo',
-  path: '/catalogo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FinanceiroRoute = FinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LandingRoute = LandingRouteImport.update({
-  id: '/landing',
-  path: '/landing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NfcRoute = NfcRouteImport.update({
-  id: '/nfc',
-  path: '/nfc',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
+const UpgradesRoute = UpgradesRouteImport.update({
+  id: '/upgrades',
+  path: '/upgrades',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -101,9 +48,73 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UpgradesRoute = UpgradesRouteImport.update({
-  id: '/upgrades',
-  path: '/upgrades',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NfcRoute = NfcRouteImport.update({
+  id: '/nfc',
+  path: '/nfc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingRoute = LandingRouteImport.update({
+  id: '/landing',
+  path: '/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceiroRoute = FinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogoRoute = CatalogoRouteImport.update({
+  id: '/catalogo',
+  path: '/catalogo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhasRoute = CampanhasRouteImport.update({
+  id: '/campanhas',
+  path: '/campanhas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BeneficiariosRoute = BeneficiariosRouteImport.update({
+  id: '/beneficiarios',
+  path: '/beneficiarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdmRoute = AdmRouteImport.update({
+  id: '/adm',
+  path: '/adm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CSlugRoute = CSlugRouteImport.update({
+  id: '/c/$slug',
+  path: '/c/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -111,44 +122,14 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CSlugRoute = CSlugRouteImport.update({
-  id: '/c/$slug',
-  path: '/c/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CSlugIndexRoute = CSlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CSlugRoute,
 } as any)
-const CSlugBeneficiosRoute = CSlugBeneficiosRouteImport.update({
-  id: '/beneficios',
-  path: '/beneficios',
-  getParentRoute: () => CSlugRoute,
-} as any)
-const CSlugClubeRoute = CSlugClubeRouteImport.update({
-  id: '/clube',
-  path: '/clube',
-  getParentRoute: () => CSlugRoute,
-} as any)
-const CSlugCreditosRoute = CSlugCreditosRouteImport.update({
-  id: '/creditos',
-  path: '/creditos',
-  getParentRoute: () => CSlugRoute,
-} as any)
-const CSlugCuponsRoute = CSlugCuponsRouteImport.update({
-  id: '/cupons',
-  path: '/cupons',
-  getParentRoute: () => CSlugRoute,
-} as any)
-const CSlugEnquetesRoute = CSlugEnquetesRouteImport.update({
-  id: '/enquetes',
-  path: '/enquetes',
-  getParentRoute: () => CSlugRoute,
-} as any)
-const CSlugIndiqueRoute = CSlugIndiqueRouteImport.update({
-  id: '/indique',
-  path: '/indique',
+const CSlugSobreRoute = CSlugSobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
   getParentRoute: () => CSlugRoute,
 } as any)
 const CSlugProdutosRoute = CSlugProdutosRouteImport.update({
@@ -156,9 +137,34 @@ const CSlugProdutosRoute = CSlugProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => CSlugRoute,
 } as any)
-const CSlugSobreRoute = CSlugSobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
+const CSlugIndiqueRoute = CSlugIndiqueRouteImport.update({
+  id: '/indique',
+  path: '/indique',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugEnquetesRoute = CSlugEnquetesRouteImport.update({
+  id: '/enquetes',
+  path: '/enquetes',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugCuponsRoute = CSlugCuponsRouteImport.update({
+  id: '/cupons',
+  path: '/cupons',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugCreditosRoute = CSlugCreditosRouteImport.update({
+  id: '/creditos',
+  path: '/creditos',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugClubeRoute = CSlugClubeRouteImport.update({
+  id: '/clube',
+  path: '/clube',
+  getParentRoute: () => CSlugRoute,
+} as any)
+const CSlugBeneficiosRoute = CSlugBeneficiosRouteImport.update({
+  id: '/beneficios',
+  path: '/beneficios',
   getParentRoute: () => CSlugRoute,
 } as any)
 const CSlugProdutosIndexRoute = CSlugProdutosIndexRouteImport.update({
@@ -175,6 +181,7 @@ const CSlugProdutosProductIdRoute = CSlugProdutosProductIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adm': typeof AdmRoute
+  '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adm': typeof AdmRoute
+  '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/adm': typeof AdmRoute
+  '/agenda': typeof AgendaRoute
   '/auth': typeof AuthRoute
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/adm'
+    | '/agenda'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/adm'
+    | '/agenda'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -316,6 +327,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/adm'
+    | '/agenda'
     | '/auth'
     | '/beneficiarios'
     | '/campanhas'
@@ -346,6 +358,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdmRoute: typeof AdmRoute
+  AgendaRoute: typeof AgendaRoute
   AuthRoute: typeof AuthRoute
   BeneficiariosRoute: typeof BeneficiariosRoute
   CampanhasRoute: typeof CampanhasRoute
@@ -362,88 +375,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/adm': {
-      id: '/adm'
-      path: '/adm'
-      fullPath: '/adm'
-      preLoaderRoute: typeof AdmRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/beneficiarios': {
-      id: '/beneficiarios'
-      path: '/beneficiarios'
-      fullPath: '/beneficiarios'
-      preLoaderRoute: typeof BeneficiariosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/campanhas': {
-      id: '/campanhas'
-      path: '/campanhas'
-      fullPath: '/campanhas'
-      preLoaderRoute: typeof CampanhasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/catalogo': {
-      id: '/catalogo'
-      path: '/catalogo'
-      fullPath: '/catalogo'
-      preLoaderRoute: typeof CatalogoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/configuracoes': {
-      id: '/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/configuracoes'
-      preLoaderRoute: typeof ConfiguracoesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/financeiro': {
-      id: '/financeiro'
-      path: '/financeiro'
-      fullPath: '/financeiro'
-      preLoaderRoute: typeof FinanceiroRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/landing': {
-      id: '/landing'
-      path: '/landing'
-      fullPath: '/landing'
-      preLoaderRoute: typeof LandingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nfc': {
-      id: '/nfc'
-      path: '/nfc'
-      fullPath: '/nfc'
-      preLoaderRoute: typeof NfcRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
+    '/upgrades': {
+      id: '/upgrades'
+      path: '/upgrades'
+      fullPath: '/upgrades'
+      preLoaderRoute: typeof UpgradesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -453,11 +389,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/upgrades': {
-      id: '/upgrades'
-      path: '/upgrades'
-      fullPath: '/upgrades'
-      preLoaderRoute: typeof UpgradesRouteImport
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nfc': {
+      id: '/nfc'
+      path: '/nfc'
+      fullPath: '/nfc'
+      preLoaderRoute: typeof NfcRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing': {
+      id: '/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof LandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financeiro': {
+      id: '/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalogo': {
+      id: '/catalogo'
+      path: '/catalogo'
+      fullPath: '/catalogo'
+      preLoaderRoute: typeof CatalogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanhas': {
+      id: '/campanhas'
+      path: '/campanhas'
+      fullPath: '/campanhas'
+      preLoaderRoute: typeof CampanhasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/beneficiarios': {
+      id: '/beneficiarios'
+      path: '/beneficiarios'
+      fullPath: '/beneficiarios'
+      preLoaderRoute: typeof BeneficiariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adm': {
+      id: '/adm'
+      path: '/adm'
+      fullPath: '/adm'
+      preLoaderRoute: typeof AdmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$slug': {
+      id: '/c/$slug'
+      path: '/c/$slug'
+      fullPath: '/c/$slug'
+      preLoaderRoute: typeof CSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -467,13 +494,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/c/$slug': {
-      id: '/c/$slug'
-      path: '/c/$slug'
-      fullPath: '/c/$slug'
-      preLoaderRoute: typeof CSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/c/$slug/': {
       id: '/c/$slug/'
       path: '/'
@@ -481,46 +501,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugIndexRouteImport
       parentRoute: typeof CSlugRoute
     }
-    '/c/$slug/beneficios': {
-      id: '/c/$slug/beneficios'
-      path: '/beneficios'
-      fullPath: '/c/$slug/beneficios'
-      preLoaderRoute: typeof CSlugBeneficiosRouteImport
-      parentRoute: typeof CSlugRoute
-    }
-    '/c/$slug/clube': {
-      id: '/c/$slug/clube'
-      path: '/clube'
-      fullPath: '/c/$slug/clube'
-      preLoaderRoute: typeof CSlugClubeRouteImport
-      parentRoute: typeof CSlugRoute
-    }
-    '/c/$slug/creditos': {
-      id: '/c/$slug/creditos'
-      path: '/creditos'
-      fullPath: '/c/$slug/creditos'
-      preLoaderRoute: typeof CSlugCreditosRouteImport
-      parentRoute: typeof CSlugRoute
-    }
-    '/c/$slug/cupons': {
-      id: '/c/$slug/cupons'
-      path: '/cupons'
-      fullPath: '/c/$slug/cupons'
-      preLoaderRoute: typeof CSlugCuponsRouteImport
-      parentRoute: typeof CSlugRoute
-    }
-    '/c/$slug/enquetes': {
-      id: '/c/$slug/enquetes'
-      path: '/enquetes'
-      fullPath: '/c/$slug/enquetes'
-      preLoaderRoute: typeof CSlugEnquetesRouteImport
-      parentRoute: typeof CSlugRoute
-    }
-    '/c/$slug/indique': {
-      id: '/c/$slug/indique'
-      path: '/indique'
-      fullPath: '/c/$slug/indique'
-      preLoaderRoute: typeof CSlugIndiqueRouteImport
+    '/c/$slug/sobre': {
+      id: '/c/$slug/sobre'
+      path: '/sobre'
+      fullPath: '/c/$slug/sobre'
+      preLoaderRoute: typeof CSlugSobreRouteImport
       parentRoute: typeof CSlugRoute
     }
     '/c/$slug/produtos': {
@@ -530,11 +515,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CSlugProdutosRouteImport
       parentRoute: typeof CSlugRoute
     }
-    '/c/$slug/sobre': {
-      id: '/c/$slug/sobre'
-      path: '/sobre'
-      fullPath: '/c/$slug/sobre'
-      preLoaderRoute: typeof CSlugSobreRouteImport
+    '/c/$slug/indique': {
+      id: '/c/$slug/indique'
+      path: '/indique'
+      fullPath: '/c/$slug/indique'
+      preLoaderRoute: typeof CSlugIndiqueRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/enquetes': {
+      id: '/c/$slug/enquetes'
+      path: '/enquetes'
+      fullPath: '/c/$slug/enquetes'
+      preLoaderRoute: typeof CSlugEnquetesRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/cupons': {
+      id: '/c/$slug/cupons'
+      path: '/cupons'
+      fullPath: '/c/$slug/cupons'
+      preLoaderRoute: typeof CSlugCuponsRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/creditos': {
+      id: '/c/$slug/creditos'
+      path: '/creditos'
+      fullPath: '/c/$slug/creditos'
+      preLoaderRoute: typeof CSlugCreditosRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/clube': {
+      id: '/c/$slug/clube'
+      path: '/clube'
+      fullPath: '/c/$slug/clube'
+      preLoaderRoute: typeof CSlugClubeRouteImport
+      parentRoute: typeof CSlugRoute
+    }
+    '/c/$slug/beneficios': {
+      id: '/c/$slug/beneficios'
+      path: '/beneficios'
+      fullPath: '/c/$slug/beneficios'
+      preLoaderRoute: typeof CSlugBeneficiosRouteImport
       parentRoute: typeof CSlugRoute
     }
     '/c/$slug/produtos/': {
@@ -609,6 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdmRoute: AdmRoute,
+  AgendaRoute: AgendaRoute,
   AuthRoute: AuthRoute,
   BeneficiariosRoute: BeneficiariosRoute,
   CampanhasRoute: CampanhasRoute,
