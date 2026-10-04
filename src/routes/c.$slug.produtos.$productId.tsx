@@ -36,7 +36,8 @@ export const Route = createFileRoute("/c/$slug/produtos/$productId")({
 
 function ProductDetail() {
   const { slug, productId } = Route.useParams();
-  const product = useCatalogProducts(slug).find((item) => item.id === productId);
+  const catalogProducts = useCatalogProducts(slug);
+  const product = catalogProducts.find((item) => item.id === productId) || getProduct(slug, productId);
   const merchant = getMerchant(slug);
   const cart = useCart();
 

@@ -61,6 +61,18 @@ const options: {
     to: "/beneficiarios",
   },
   {
+    key: "loyaltyProgram",
+    label: "Programa de fidelidade & créditos",
+    detail: "Permita que clientes acumulem créditos da sua loja e desbloqueiem prêmios.",
+    to: "/beneficiarios",
+  },
+  {
+    key: "requireRegistrationForBenefits",
+    label: "Captação obrigatória de Lead (Multitenant)",
+    detail: "Clientes só visualizam o programa de fidelidade e créditos após realizarem cadastro nesta loja.",
+    to: "/beneficiarios",
+  },
+  {
     key: "polls",
     label: "Enquetes",
     detail: "Exiba as enquetes e pesquisas de opinião na página pública.",

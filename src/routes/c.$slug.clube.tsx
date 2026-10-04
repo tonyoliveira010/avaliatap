@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ChevronLeft, Crown, Gift, Scissors, Sparkles, Star } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronLeft, Crown, Gift, Scissors, Sparkles, Star, Lock } from "lucide-react";
 import { getMerchant } from "@/lib/merchants";
+import { useTenantCustomer } from "@/lib/customer";
+import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 
 export const Route = createFileRoute("/c/$slug/clube")({
   head: () => ({
@@ -54,9 +57,10 @@ const stampGoal = 6;
 function ClubPage() {
   const { slug } = Route.useParams();
   const merchant = getMerchant(slug);
-  // Visualização demonstrativa: nenhum controle de concessão é exposto ao cliente.
-  const stamps = 3;
+  const { customer, isRegistered } = useTenantCustomer(slug);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
 
+  const stamps = isRegistered ? 3 : 0;
   const currentTier = stamps >= 10 ? tiers[2] : stamps >= 5 ? tiers[1] : tiers[0];
   const remaining = Math.max(stampGoal - stamps, 0);
 
@@ -92,35 +96,61 @@ function ClubPage() {
       <section className="mt-3 rounded-[24px] border border-white/10 bg-white/5 p-5">
         <div className="flex items-center justify-between">
           <div>
-            <small className="text-[9px] font-extrabold uppercase tracking-[0.1em] opacity-50">Seu cartão digital</small>
-            <p className="mt-1 text-[15px] font-bold">Nível {currentTier.name}</p>
+            <small className="text-[9px] font-extrabold uppercase tracking-[0.1em] opacity-50">
+              {isRegistered && customer ? `Cartão de ${customer.name.split(" ")[0]}` : "Seu cartão digital"}
+            </small>
+            <p className="mt-1 text-[15px] font-bold">
+              {isRegistered ? `Nível ${currentTier.name}` : "Aguardando cadastro"}
+            </p>
           </div>
           <span className="grid h-11 w-11 place-items-center rounded-2xl bg-primary text-primary-foreground">
-            <currentTier.icon className="h-5 w-5" />
+            {isRegistered ? <currentTier.icon className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-6 gap-2">
-          {Array.from({ length: stampGoal }).map((_, i) => (
-            <span
-              key={i}
-              className={`grid aspect-square place-items-center rounded-2xl border ${
-                i < stamps ? "border-primary bg-primary text-primary-foreground" : "border-white/10 bg-white/5 opacity-45"
-              }`}
+        {isRegistered ? (
+          <>
+            <div className="mt-4 grid grid-cols-6 gap-2">
+              {Array.from({ length: stampGoal }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`grid aspect-square place-items-center rounded-2xl border ${
+                    i < stamps ? "border-primary bg-primary text-primary-foreground" : "border-white/10 bg-white/5 opacity-45"
+                  }`}
+                >
+                  {i < stamps ? <Check className="h-4 w-4" /> : <Scissors className="h-4 w-4" />}
+                </span>
+              ))}
+            </div>
+
+            <p className="mt-3 text-[12px] opacity-60">
+              {remaining === 0
+                ? "Cartão completo! Fale com a equipe e resgate seu serviço cortesia."
+                : `Faltam ${remaining} ${remaining === 1 ? "selo" : "selos"} para o próximo serviço por nossa conta.`}
+            </p>
+            <p className="mt-4 text-[12px] opacity-60">Selos registrados somente pela equipe do estabelecimento.</p>
+          </>
+        ) : (
+          <div className="mt-4 rounded-2xl bg-black/40 p-4 border border-white/10 text-center">
+            <p className="text-[13px] text-white/90 font-medium">
+              Faça seu cadastro para começar a colecionar selos e ganhar mimos exclusivos em {merchant?.name}.
+            </p>
+            <button
+              onClick={() => setLeadModalOpen(true)}
+              className="mt-3 w-full rounded-xl bg-primary py-3 text-[12.5px] font-extrabold text-primary-foreground shadow-md hover:bg-primary/90"
             >
-              {i < stamps ? <Check className="h-4 w-4" /> : <Scissors className="h-4 w-4" />}
-            </span>
-          ))}
-        </div>
-
-        <p className="mt-3 text-[12px] opacity-60">
-          {remaining === 0
-            ? "Cartão completo! Fale com a equipe e resgate seu serviço cortesia."
-            : `Faltam ${remaining} ${remaining === 1 ? "selo" : "selos"} para o próximo serviço por nossa conta.`}
-        </p>
-
-        <p className="mt-4 text-[12px] opacity-60">Selos registrados somente pela equipe do estabelecimento.</p>
+              Ativar meu cartão (+100 créditos)
+            </button>
+          </div>
+        )}
       </section>
+
+      <LeadCaptureModal
+        isOpen={leadModalOpen}
+        onClose={() => setLeadModalOpen(false)}
+        slug={slug}
+        merchantName={merchant?.name ?? "o estabelecimento"}
+      />
 
       <h2 className="mb-3 mt-6 text-[16px] font-bold">Como funciona</h2>
       <div className="space-y-2">

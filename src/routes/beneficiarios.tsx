@@ -397,13 +397,78 @@ function BeneficiariesPage() {
       // ignore
     }
 
+    // Check leads captured from public page (avaliatap-leads-${merchantSlug})
+    try {
+      const publicLeadsRaw = window.localStorage.getItem(`avaliatap-leads-${defaultMerchantSlug}`);
+      if (publicLeadsRaw) {
+        const publicLeads = JSON.parse(publicLeadsRaw) as Array<{
+          id: string;
+          name: string;
+          phone: string;
+          email?: string;
+          birthDate?: string;
+          credits: number;
+          createdAt: string;
+        }>;
+
+        let hasNewLead = false;
+        const updatedLeads = [...currentClients];
+
+        for (const pl of publicLeads) {
+          const digits = pl.phone.replace(/\D/g, "");
+          const existing = updatedLeads.find(
+            (c) => c.phone.replace(/\D/g, "") === digits || c.name.toLowerCase() === pl.name.toLowerCase()
+          );
+
+          if (!existing) {
+            const newClientLead: Client = {
+              id: pl.id || crypto.randomUUID(),
+              name: pl.name,
+              phone: pl.phone,
+              email: pl.email,
+              coupon: "BEMVINDO100",
+              status: "Disponível",
+              createdAt: new Date(pl.createdAt).toLocaleDateString("pt-BR"),
+              tags: ["Lead Captado (NFC)", "Clube & Créditos"],
+              notes: `Lead cadastrado na página pública com 100 créditos de boas-vindas.${pl.birthDate ? ` Niver: ${pl.birthDate}` : ""}`,
+              bookings: [],
+              coupons: [
+                {
+                  code: "BEMVINDO100",
+                  title: "100 Créditos de Boas-Vindas",
+                  discount: "100 pts",
+                  status: "Disponível",
+                  claimedAt: new Date(pl.createdAt).toLocaleDateString("pt-BR"),
+                },
+              ],
+              formResponses: [],
+              campaigns: [],
+            };
+            updatedLeads.unshift(newClientLead);
+            hasNewLead = true;
+          }
+        }
+
+        if (hasNewLead) {
+          currentClients = updatedLeads;
+          window.localStorage.setItem(storageKey, JSON.stringify(currentClients));
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     setPeople(currentClients);
   };
 
   useEffect(() => {
     syncWithBookings();
     window.addEventListener("storage", syncWithBookings);
-    return () => window.removeEventListener("storage", syncWithBookings);
+    window.addEventListener("avaliatap-leads-update", syncWithBookings);
+    return () => {
+      window.removeEventListener("storage", syncWithBookings);
+      window.removeEventListener("avaliatap-leads-update", syncWithBookings);
+    };
   }, []);
 
   const save = (next: Client[]) => {

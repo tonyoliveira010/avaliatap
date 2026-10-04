@@ -9,6 +9,8 @@ export type PublicSettings = {
   products: boolean;
   coupons: boolean;
   booking: boolean;
+  loyaltyProgram: boolean; // Programa de fidelidade e créditos (depende do plano)
+  requireRegistrationForBenefits: boolean; // Exigir cadastro prévio de lead para créditos e clube
 };
 
 export const defaultSettings: PublicSettings = {
@@ -19,6 +21,8 @@ export const defaultSettings: PublicSettings = {
   products: true,
   coupons: true,
   booking: true,
+  loyaltyProgram: true,
+  requireRegistrationForBenefits: true,
 };
 
 export const settingsKey = (slug = defaultMerchantSlug) => `avaliatap-public-settings-${slug}`;

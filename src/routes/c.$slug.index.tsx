@@ -1,12 +1,31 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Flame, Ticket, Sparkles, Vote, MessageCircle, Instagram, MapPin, Star, X, Clock, Navigation, CalendarCheck, Gift } from "lucide-react";
+import {
+  Flame,
+  Ticket,
+  Sparkles,
+  Vote,
+  MessageCircle,
+  Instagram,
+  MapPin,
+  Star,
+  X,
+  Clock,
+  Navigation,
+  CalendarCheck,
+  Gift,
+  Lock,
+  Coins,
+  CheckCircle2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { getMerchant, type Offer } from "@/lib/merchants";
 import { ScratchCoupon } from "@/components/public/ScratchCoupon";
 import { BookingModal } from "@/components/public/BookingModal";
 import { usePublicSettings } from "@/lib/public-settings";
+import { useTenantCustomer } from "@/lib/customer";
+import { LeadCaptureModal } from "@/components/public/LeadCaptureModal";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -75,7 +94,22 @@ function PublicMerchant() {
   const [scratchOpen, setScratchOpen] = useState(false);
   const [comboOpen, setComboOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [leadModalInfo, setLeadModalInfo] = useState<{ title?: string; description?: string } | null>(null);
   const { settings } = usePublicSettings(slug);
+  const { customer, isRegistered } = useTenantCustomer(slug);
+
+  const requireLeadCheck = (actionTitle: string, callback: () => void) => {
+    if (settings.requireRegistrationForBenefits && !isRegistered) {
+      setLeadModalInfo({
+        title: `Cadastre-se para participar no ${merchant.name}`,
+        description: `Para participar de ofertas e acumular créditos no ${merchant.name}, crie seu cadastro rápido. (Cadastro exclusivo deste estabelecimento).`,
+      });
+      setLeadModalOpen(true);
+      return;
+    }
+    callback();
+  };
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -197,8 +231,8 @@ function PublicMerchant() {
                 </motion.article>
               )}
 
-              {/* Banner 3: Clube de Fidelidade Digital */}
-              {settings.club && (
+              {/* Banner 3: Clube de Fidelidade & Créditos Multitenant */}
+              {settings.loyaltyProgram && (
                 <motion.article
                   initial={{ y: 12, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -208,26 +242,74 @@ function PublicMerchant() {
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="relative z-10 inline-flex items-center gap-1.5 rounded-full bg-[#f4c95d] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.08em] text-black">
-                        <Gift className="h-3 w-3" />
-                        Clube de Fidelidade
+                        {isRegistered ? <Coins className="h-3 w-3" /> : <Gift className="h-3 w-3" />}
+                        {isRegistered ? "Minha Carteira" : "Clube & Créditos"}
                       </span>
-                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-bold text-white">
-                        8 / 10 Carimbos
+                      <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-bold text-white flex items-center gap-1">
+                        {isRegistered ? (
+                          <>
+                            <CheckCircle2 className="h-3 w-3 text-[#f4c95d]" /> Nível {customer?.tier}
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="h-3 w-3 text-[#f4c95d]" /> Cadastro rápido
+                          </>
+                        )}
                       </span>
                     </div>
-                    <h2 className="relative z-10 mt-6 max-w-[270px] text-[27px] font-extrabold leading-[1.05] tracking-tight">
-                      Colecione carimbos e ganhe mimos.
-                    </h2>
-                    <p className="relative z-10 mt-2 max-w-[285px] text-[13px] opacity-80 leading-relaxed text-[#ddd]">
-                      Faltam apenas 2 visitas para resgatar sua recompensa especial exclusiva!
-                    </p>
+
+                    {isRegistered && customer ? (
+                      <>
+                        <h2 className="relative z-10 mt-5 max-w-[270px] text-[24px] font-extrabold leading-[1.1] tracking-tight">
+                          Olá, {customer.name.split(" ")[0]}!
+                        </h2>
+                        <div className="relative z-10 mt-2 flex items-baseline gap-1.5">
+                          <span className="text-[34px] font-black tracking-tight text-[#f4c95d]">
+                            {customer.credits}
+                          </span>
+                          <span className="text-[12px] font-bold text-[#ddd]">
+                            créditos no {merchant.name}
+                          </span>
+                        </div>
+                        <p className="relative z-10 mt-2 max-w-[285px] text-[12.5px] opacity-80 leading-relaxed text-[#ccc]">
+                          Acumule mais créditos a cada visita e troque por prêmios e produtos no balcão.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="relative z-10 mt-6 max-w-[270px] text-[26px] font-extrabold leading-[1.05] tracking-tight">
+                          Ganhe 100 créditos no seu cadastro.
+                        </h2>
+                        <p className="relative z-10 mt-2 max-w-[285px] text-[13px] opacity-80 leading-relaxed text-[#ddd]">
+                          Faça seu cadastro rápido no {merchant.name} para liberar seu saldo de créditos, cupons exclusivos e o programa de fidelidade.
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <button
-                    onClick={() => navigate({ to: "/c/$slug/clube", params: { slug } })}
-                    className="relative z-10 mt-6 w-full rounded-[18px] bg-[#f4c95d] py-4 text-[14px] font-black text-black active:scale-[0.99] shadow-md hover:bg-[#e0b54e]"
-                  >
-                    Ver meu cartão de carimbos
-                  </button>
+
+                  {isRegistered ? (
+                    <div className="relative z-10 mt-6 flex gap-2">
+                      <button
+                        onClick={() => navigate({ to: "/c/$slug/creditos", params: { slug } })}
+                        className="flex-1 rounded-[18px] bg-[#f4c95d] py-3.5 text-[13px] font-black text-black active:scale-[0.99] shadow-md hover:bg-[#e0b54e]"
+                      >
+                        Ver meus créditos
+                      </button>
+                      <button
+                        onClick={() => navigate({ to: "/c/$slug/clube", params: { slug } })}
+                        className="rounded-[18px] border border-white/20 bg-white/10 px-4 py-3.5 text-[13px] font-bold text-white hover:bg-white/20"
+                      >
+                        Clube
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setLeadModalOpen(true)}
+                      className="relative z-10 mt-6 flex w-full items-center justify-center gap-2 rounded-[18px] bg-[#f4c95d] py-4 text-[14px] font-black text-black active:scale-[0.99] shadow-md hover:bg-[#e0b54e]"
+                    >
+                      <Sparkles className="h-4 w-4" /> Cadastrar (+100 créditos)
+                    </button>
+                  )}
                 </motion.article>
               )}
             </div>
@@ -275,7 +357,7 @@ function PublicMerchant() {
                   ? setComboOpen(true)
                   : o.id === "review"
                   ? window.open(merchant.googleReview, "_blank")
-                  : toast("Cupom selecionado!")
+                  : requireLeadCheck(o.title, () => toast.success(`Cupom "${o.title}" resgatado com sucesso!`))
               }
             />
           ))}
@@ -293,15 +375,15 @@ function PublicMerchant() {
               offer={o}
               onAction={() =>
                 o.id === "club"
-                  ? navigate({ to: "/c/$slug/clube", params: { slug } })
+                  ? requireLeadCheck("Clube de Fidelidade", () => navigate({ to: "/c/$slug/clube", params: { slug } }))
                   : toast("Em breve por aqui")
               }
             />
           ))}
         </div>
 
-        {/* Cartão de Fidelidade Interativo */}
-        {settings.club && (
+        {/* Cartão de Fidelidade Interativo (Exibido para cadastrados, ou ocultado se exigir cadastro prévio) */}
+        {settings.club && (!settings.requireRegistrationForBenefits || isRegistered) && (
           <div className="mt-5 rounded-3xl border border-border bg-surface p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -347,6 +429,33 @@ function PublicMerchant() {
                 Abrir Cartão →
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Caso não tenha cadastro e o estabelecimento exija lead: exibe convite para ativar o programa */}
+        {settings.club && settings.requireRegistrationForBenefits && !isRegistered && (
+          <div className="mt-5 rounded-3xl border border-dashed border-[#f4c95d]/40 bg-[#f4c95d]/5 p-5 text-center">
+            <div className="mx-auto grid h-10 w-10 place-items-center rounded-2xl bg-[#f4c95d]/20 text-[#f4c95d]">
+              <Lock className="h-5 w-5" />
+            </div>
+            <h4 className="mt-2 text-[14.5px] font-bold text-foreground">
+              Programa de Fidelidade {merchant.name}
+            </h4>
+            <p className="mt-1 text-[12px] text-muted-foreground max-w-xs mx-auto">
+              Cadastre-se neste estabelecimento para começar a colecionar selos e desbloquear recompensas exclusivas.
+            </p>
+            <button
+              onClick={() => {
+                setLeadModalInfo({
+                  title: `Ativar Fidelidade no ${merchant.name}`,
+                  description: `Cadastre-se para liberar seu cartão de carimbos e ganhar 100 créditos no ${merchant.name}.`,
+                });
+                setLeadModalOpen(true);
+              }}
+              className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-[#f4c95d] px-4 py-2.5 text-[12px] font-black text-black shadow-sm hover:bg-[#e0b54e] active:scale-95"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> Ativar meu cartão fidelidade
+            </button>
           </div>
         )}
 
@@ -426,6 +535,19 @@ function PublicMerchant() {
           Experiência criada com <span className="font-bold text-foreground">AvaliaTap</span>
         </p>
       </section>
+
+      {/* Multitenant Lead Capture Modal */}
+      <LeadCaptureModal
+        isOpen={leadModalOpen}
+        onClose={() => {
+          setLeadModalOpen(false);
+          setLeadModalInfo(null);
+        }}
+        slug={slug}
+        merchantName={merchant.name}
+        title={leadModalInfo?.title}
+        description={leadModalInfo?.description}
+      />
     </div>
   );
 }

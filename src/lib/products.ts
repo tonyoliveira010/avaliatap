@@ -50,7 +50,7 @@ export const plans: Plan[] = [
   { id: "onetime", name: "Compra única", desc: "Pague uma vez, sem recorrência", discount: 1 },
 ];
 
-export const productsByMerchant: Record<string, Product[]> = {
+export const defaultProductsByMerchant: Record<string, Product[]> = {
   "barbearia-alpha": [
     {
       id: "pomada",
@@ -62,9 +62,11 @@ export const productsByMerchant: Record<string, Product[]> = {
       badge: "Mais vendido",
       rating: 4.9,
       reviews: "Amado por 2 mil+ clientes",
-      features: ["Efeito matte", "Fácil de lavar"],
-      shipping: "🚚 Frete grátis acima de R$150",
+      features: ["Efeito matte", "Fácil de lavar", "Fragrância amadeirada"],
+      shipping: "🚚 Frete grátis acima de R$ 150 ou retire no balcão",
       promo: "🕒 Peça até 18h e retire hoje",
+      kind: "Produto",
+      active: true,
     },
     {
       id: "oleo-barba",
@@ -73,11 +75,14 @@ export const productsByMerchant: Record<string, Product[]> = {
       price: 39.9,
       oldPrice: 54.9,
       emoji: "🧔",
+      badge: "Recomendado",
       rating: 4.8,
       reviews: "Amado por 900+ clientes",
-      features: ["Óleo natural", "Vitamina E"],
-      shipping: "🚚 Frete grátis acima de R$150",
-      promo: "🎁 Leve 2 e ganhe um pente",
+      features: ["Óleo 100% natural", "Vitamina E", "Sem oleosidade excessiva"],
+      shipping: "🚚 Frete grátis acima de R$ 150 ou retire no balcão",
+      promo: "🎁 Leve 2 e ganhe um pente de madeira",
+      kind: "Produto",
+      active: true,
     },
     {
       id: "kit-alpha",
@@ -86,12 +91,46 @@ export const productsByMerchant: Record<string, Product[]> = {
       price: 119.9,
       oldPrice: 159.9,
       emoji: "🎁",
-      badge: "Kit da casa",
-      rating: 5,
+      badge: "Melhor Oferta",
+      rating: 5.0,
       reviews: "Amado por 500+ clientes",
-      features: ["3 produtos", "Melhor custo"],
+      features: ["3 produtos essenciais", "Melhor custo-benefício", "Caixa de presente"],
       shipping: "🚚 Frete grátis nesta compra",
-      promo: "🕒 Estoque limitado desta semana",
+      promo: "🕒 Estoque limitado da semana",
+      kind: "Produto",
+      active: true,
+    },
+    {
+      id: "corte-cabelo",
+      name: "Corte de Cabelo Masculino",
+      desc: "Corte moderno ou clássico com lavagem especial, finalização com pomada e toalha quente.",
+      price: 65.0,
+      oldPrice: 80.0,
+      emoji: "✂️",
+      badge: "Popular",
+      rating: 4.9,
+      reviews: "Mais de 3.500 cortes realizados",
+      features: ["Lavagem inclusa", "Toalha aromatizada", "Consultoria de estilo"],
+      shipping: "📍 Atendimento com hora marcada",
+      promo: "⭐ Ganhe 10% de desconto no primeiro agendamento",
+      kind: "Serviço",
+      active: true,
+    },
+    {
+      id: "barba-terapia",
+      name: "Barba Terapia com Toalha Quente",
+      desc: "Desenho e alinhamento da barba com navalha, toalha quente e massagem facial relaxante.",
+      price: 55.0,
+      oldPrice: 65.0,
+      emoji: "💈",
+      badge: "Destaque",
+      rating: 5.0,
+      reviews: "Avaliado 5 estrelas por 1.800 clientes",
+      features: ["Toalha quente", "Balm pós-barba", "Esfoliação facial"],
+      shipping: "📍 Atendimento com hora marcada",
+      promo: "☕ Acompanha expresso ou chopp cortesia",
+      kind: "Serviço",
+      active: true,
     },
   ],
   "cafe-lumiere": [
@@ -105,9 +144,11 @@ export const productsByMerchant: Record<string, Product[]> = {
       badge: "Mais vendido",
       rating: 4.9,
       reviews: "Amado por 1,5 mil+ clientes",
-      features: ["Torra artesanal", "250g"],
-      shipping: "🚚 Frete grátis acima de R$150",
+      features: ["Torra artesanal", "100% Arábica", "250g"],
+      shipping: "🚚 Frete grátis acima de R$ 150",
       promo: "🕒 Torra fresca toda semana",
+      kind: "Produto",
+      active: true,
     },
     {
       id: "caneca",
@@ -115,47 +156,70 @@ export const productsByMerchant: Record<string, Product[]> = {
       desc: "Cerâmica esmaltada de 300ml, feita à mão por um ateliê parceiro do bairro.",
       price: 59.9,
       emoji: "🍵",
+      badge: "Edição Limitada",
       rating: 4.7,
       reviews: "Amado por 300+ clientes",
-      features: ["Feita à mão", "300ml"],
-      shipping: "🚚 Frete grátis acima de R$150",
-      promo: "🎁 Ganhe um café ao levar a caneca",
+      features: ["Feita à mão", "300ml cerâmica nobre"],
+      shipping: "🚚 Frete grátis acima de R$ 150",
+      promo: "🎁 Ganhe um café expresso ao levar a caneca",
+      kind: "Produto",
+      active: true,
     },
   ],
 };
 
+export const productsByMerchant = defaultProductsByMerchant;
+
 export function getProducts(slug: string): Product[] {
-  return productsByMerchant[slug] ?? [];
+  return defaultProductsByMerchant[slug] ?? [];
 }
 
 export const catalogKey = (slug: string) => `avaliatap-catalogo-${slug}`;
 
-export function getVisibleProducts(slug: string): Product[] {
+export function getAllCatalogProducts(slug: string): Product[] {
   const defaults = getProducts(slug);
   if (typeof window === "undefined") return defaults;
   try {
     const saved = window.localStorage.getItem(catalogKey(slug));
     if (!saved) return defaults;
     const parsed: unknown = JSON.parse(saved);
-    if (!Array.isArray(parsed)) return defaults;
-    return (parsed as Product[]).filter((item) => item.active !== false);
+    if (!Array.isArray(parsed) || parsed.length === 0) return defaults;
+    return parsed as Product[];
   } catch {
     return defaults;
   }
 }
 
+export function getVisibleProducts(slug: string): Product[] {
+  const all = getAllCatalogProducts(slug);
+  return all.filter((item) => item.active !== false);
+}
+
+export function saveCatalogProducts(slug: string, products: Product[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(catalogKey(slug), JSON.stringify(products));
+  window.dispatchEvent(new Event("avaliatap-catalog-update"));
+}
+
 export function useCatalogProducts(slug: string): Product[] {
-  const [products, setProducts] = useState(() => getProducts(slug));
+  const [products, setProducts] = useState(() => getVisibleProducts(slug));
   useEffect(() => {
     const refresh = () => setProducts(getVisibleProducts(slug));
     refresh();
     window.addEventListener("storage", refresh);
-    return () => window.removeEventListener("storage", refresh);
+    window.addEventListener("avaliatap-catalog-update", refresh);
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("avaliatap-catalog-update", refresh);
+    };
   }, [slug]);
   return products;
 }
 
 export function getProduct(slug: string, productId: string): Product | undefined {
+  const all = getAllCatalogProducts(slug);
+  const found = all.find((p) => p.id === productId);
+  if (found) return found;
   return getProducts(slug).find((p) => p.id === productId);
 }
 
