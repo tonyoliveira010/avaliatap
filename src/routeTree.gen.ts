@@ -13,6 +13,7 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NfcRouteImport } from './routes/nfc'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as BeneficiariosRouteImport } from './routes/beneficiarios'
@@ -49,6 +50,11 @@ const LandingRoute = LandingRouteImport.update({
 const FinanceiroRoute = FinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoRoute = CatalogoRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
   '/catalogo': typeof CatalogoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
   '/catalogo': typeof CatalogoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/beneficiarios': typeof BeneficiariosRoute
   '/campanhas': typeof CampanhasRoute
   '/catalogo': typeof CatalogoRoute
+  '/configuracoes': typeof ConfiguracoesRoute
   '/financeiro': typeof FinanceiroRoute
   '/landing': typeof LandingRoute
   '/nfc': typeof NfcRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/beneficiarios'
     | '/campanhas'
     | '/catalogo'
+    | '/configuracoes'
     | '/financeiro'
     | '/landing'
     | '/nfc'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/beneficiarios'
     | '/campanhas'
     | '/catalogo'
+    | '/configuracoes'
     | '/financeiro'
     | '/landing'
     | '/nfc'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/beneficiarios'
     | '/campanhas'
     | '/catalogo'
+    | '/configuracoes'
     | '/financeiro'
     | '/landing'
     | '/nfc'
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   BeneficiariosRoute: typeof BeneficiariosRoute
   CampanhasRoute: typeof CampanhasRoute
   CatalogoRoute: typeof CatalogoRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
   FinanceiroRoute: typeof FinanceiroRoute
   LandingRoute: typeof LandingRoute
   NfcRoute: typeof NfcRoute
@@ -314,6 +327,13 @@ declare module '@tanstack/react-router' {
       path: '/financeiro'
       fullPath: '/financeiro'
       preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogo': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   BeneficiariosRoute: BeneficiariosRoute,
   CampanhasRoute: CampanhasRoute,
   CatalogoRoute: CatalogoRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
   FinanceiroRoute: FinanceiroRoute,
   LandingRoute: LandingRoute,
   NfcRoute: NfcRoute,
